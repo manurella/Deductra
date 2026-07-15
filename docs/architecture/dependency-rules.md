@@ -36,4 +36,4 @@ A new architecture decision record is required when a change introduces or mater
 - a dependency-direction exception;
 - a supported Python or platform boundary.
 
-Architecture enforcement translates these rules into mechanical checks. A check may be changed only with the governing documentation and decision record in the same reviewed change.
+Architecture enforcement in `tests/architecture` translates these rules into mechanical checks. The current contracts cover the public path allowlist, single-package layout, M0 product boundary, package metadata, Docker stage design, and production import roots. A check may be changed only with the governing documentation and decision record in the same reviewed change.

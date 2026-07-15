@@ -30,6 +30,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-install-project
 
 COPY LICENSE README.md pyproject.toml uv.lock ./
+COPY Dockerfile ./
+COPY docs/ docs/
 COPY src/ src/
 COPY tests/ tests/
 

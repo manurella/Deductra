@@ -11,8 +11,9 @@ Deductra is in the M0 foundation milestone. The repository currently has:
 - development, test, CI-artifact, builder, and non-root runtime container stages;
 - contributor, commit, pull-request, conduct, and security contracts;
 - pull-request CI, scheduled security checks, tag-driven GitHub Releases, and GHCR publication;
-- canonical public governance and architecture documentation.
+- canonical public governance and architecture documentation;
+- automated repository, package, import, dependency, and Docker architecture contracts.
 
 No product feature is implemented and no stable public API is promised.
 
-The remaining M0 foundation work is automated architecture enforcement and final milestone verification. Product implementation begins only after the M0 exit criteria are accepted.
+M0 foundation implementation is complete pending owner review, hosted CI confirmation, repository-rule configuration, and final milestone acceptance. Product implementation begins only after those exit conditions are accepted.

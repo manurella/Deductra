@@ -7,3 +7,5 @@ Deductra begins as one Python distribution with one import root. Architecture is
 - [Architecture decisions](decisions/README.md) records significant decisions and their consequences.
 
 These documents describe current accepted constraints. They do not imply that future product subsystems already exist.
+
+The executable contracts live in `tests/architecture`. They run in local hooks, the normal test suite, Docker's test stage, and the dedicated pull-request `Architecture` check.

@@ -13,5 +13,6 @@ This log summarizes accepted project-level decisions. Architecturally significan
 | D-005 | Use multi-stage, non-root Docker images and BuildKit-aware builds. | Accepted | [@manurella](https://github.com/manurella) | [Foundation overview](../architecture/overview.md) |
 | D-006 | Publish tagged wheels, source distributions, GitHub Releases, and GHCR images; do not publish to PyPI during M0. | Accepted | [@manurella](https://github.com/manurella) | [Project governance](project-governance.md) |
 | D-007 | Require scoped Conventional Commits, immutable workflow action pins, and least-privilege automation. | Accepted | [@manurella](https://github.com/manurella) | [Project governance](project-governance.md) |
+| D-008 | Enforce the public repository allowlist, single-package boundary, M0 dependency policy, Docker stages, and import roots with architecture tests. | Accepted | [@manurella](https://github.com/manurella) | [Dependency rules](../architecture/dependency-rules.md) |
 
 New decisions receive the next sequential identifier. A superseding decision retains the old entry and links both records rather than erasing the earlier ruling.

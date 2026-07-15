@@ -53,6 +53,7 @@ uv run ruff format --check .
 uv run ruff check .
 uv run pyright
 uv run pytest
+uv run pytest tests/architecture
 uv run python scripts/check_docs.py
 uv build
 docker buildx build --target test .

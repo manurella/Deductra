@@ -22,6 +22,12 @@ repos:
         language: system
         pass_filenames: false
         files: (^|/)scripts/check_docs\.py$|\.md$
+      - id: architecture
+        name: architecture
+        entry: uv run pytest -q tests/architecture
+        language: system
+        pass_filenames: false
+        always_run: true
       - id: conventional-commit
         name: conventional commit
         entry: uv run python scripts/check_conventions.py --commit-msg-file
