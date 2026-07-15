@@ -1,8 +1,8 @@
 # Deductra
 
-Deductra is an early-stage Python project for structured deductive-reasoning experiences. The repository is currently completing its M0 engineering foundation; it does not yet provide a puzzle engine, solver, generator, user interface, or stable public API.
+Deductra is an early-stage Python project for structured, proof-carrying deductive reasoning. Its M0 engineering foundation is complete, and M1 begins with family-neutral immutable puzzle contracts. It does not yet provide a solver, generator, user interface, or stable public API.
 
-## Foundation status
+## Current status
 
 The current repository provides:
 
@@ -11,8 +11,9 @@ The current repository provides:
 - multi-stage development, test, artifact, and non-root runtime containers;
 - pull-request quality, compatibility, architecture, Docker, documentation, and security checks;
 - tag-driven wheel, source-distribution, GitHub Release, and GHCR publication.
+- strict, immutable domain models and a versioned JSON Schema for puzzle specifications.
 
-Runtime dependencies remain intentionally empty during M0.
+Pydantic is the sole runtime dependency for M1's validated domain boundary.
 
 ## Documentation
 
@@ -25,7 +26,7 @@ Runtime dependencies remain intentionally empty during M0.
 
 ## Development
 
-Install the locked environment and run the foundation checks:
+Install the locked environment and run the project checks:
 
 ```shell
 uv sync --locked --all-groups

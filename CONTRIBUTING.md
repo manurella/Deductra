@@ -1,6 +1,6 @@
 # Contributing to Deductra
 
-Thank you for helping build Deductra. The project is currently establishing its M0 engineering foundation. Contributions must remain within the approved change boundary and must not introduce product features prematurely.
+Thank you for helping build Deductra. The project is implementing its proof-carrying common core in bounded packets. Contributions must remain within the approved packet boundary and must not introduce later subsystems prematurely.
 
 Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). Report vulnerabilities through the private process in [SECURITY.md](SECURITY.md), not through public issues.
 

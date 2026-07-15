@@ -1,0 +1,4219 @@
+{
+  "$defs": {
+    "Add": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "add",
+          "default": "add",
+          "title": "Kind",
+          "type": "string"
+        },
+        "operands": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "add": "#/$defs/Add",
+                "constant": "#/$defs/Constant",
+                "exact_divide": "#/$defs/ExactDivide",
+                "modulo": "#/$defs/Modulo",
+                "multiply": "#/$defs/Multiply",
+                "negate": "#/$defs/Negate",
+                "subtract": "#/$defs/Subtract",
+                "variable_reference": "#/$defs/VariableReference"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Constant"
+              },
+              {
+                "$ref": "#/$defs/VariableReference"
+              },
+              {
+                "$ref": "#/$defs/Add"
+              },
+              {
+                "$ref": "#/$defs/Subtract"
+              },
+              {
+                "$ref": "#/$defs/Multiply"
+              },
+              {
+                "$ref": "#/$defs/ExactDivide"
+              },
+              {
+                "$ref": "#/$defs/Modulo"
+              },
+              {
+                "$ref": "#/$defs/Negate"
+              }
+            ]
+          },
+          "title": "Operands",
+          "type": "array"
+        }
+      },
+      "required": [
+        "operands"
+      ],
+      "title": "Add",
+      "type": "object"
+    },
+    "AdjacencyConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "constraint_id": {
+          "$ref": "#/$defs/ConstraintId"
+        },
+        "kind": {
+          "const": "adjacency",
+          "default": "adjacency",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "left_variable_id": {
+          "$ref": "#/$defs/VariableId"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "right_variable_id": {
+          "$ref": "#/$defs/VariableId"
+        },
+        "severity": {
+          "default": "hard",
+          "enum": [
+            "hard",
+            "instructional"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_clue_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Clue Id"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "left_variable_id",
+        "right_variable_id"
+      ],
+      "title": "AdjacencyConstraint",
+      "type": "object"
+    },
+    "AggregateAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "comparator": {
+          "enum": [
+            "eq",
+            "ne",
+            "lt",
+            "le",
+            "gt",
+            "ge"
+          ],
+          "title": "Comparator",
+          "type": "string"
+        },
+        "kind": {
+          "const": "aggregate",
+          "default": "aggregate",
+          "title": "Kind",
+          "type": "string"
+        },
+        "members": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Members",
+          "type": "array"
+        },
+        "operator": {
+          "enum": [
+            "sum",
+            "count",
+            "min",
+            "max",
+            "parity"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "operator",
+        "members",
+        "comparator",
+        "target"
+      ],
+      "title": "AggregateAtom",
+      "type": "object"
+    },
+    "AllDifferent": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "all_different",
+          "default": "all_different",
+          "title": "Kind",
+          "type": "string"
+        },
+        "operands": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "add": "#/$defs/Add",
+                "constant": "#/$defs/Constant",
+                "exact_divide": "#/$defs/ExactDivide",
+                "modulo": "#/$defs/Modulo",
+                "multiply": "#/$defs/Multiply",
+                "negate": "#/$defs/Negate",
+                "subtract": "#/$defs/Subtract",
+                "variable_reference": "#/$defs/VariableReference"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Constant"
+              },
+              {
+                "$ref": "#/$defs/VariableReference"
+              },
+              {
+                "$ref": "#/$defs/Add"
+              },
+              {
+                "$ref": "#/$defs/Subtract"
+              },
+              {
+                "$ref": "#/$defs/Multiply"
+              },
+              {
+                "$ref": "#/$defs/ExactDivide"
+              },
+              {
+                "$ref": "#/$defs/Modulo"
+              },
+              {
+                "$ref": "#/$defs/Negate"
+              }
+            ]
+          },
+          "title": "Operands",
+          "type": "array"
+        }
+      },
+      "required": [
+        "operands"
+      ],
+      "title": "AllDifferent",
+      "type": "object"
+    },
+    "AllDifferentConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "constraint_id": {
+          "$ref": "#/$defs/ConstraintId"
+        },
+        "kind": {
+          "const": "all_different",
+          "default": "all_different",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "severity": {
+          "default": "hard",
+          "enum": [
+            "hard",
+            "instructional"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_clue_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Clue Id"
+        },
+        "variable_ids": {
+          "items": {
+            "$ref": "#/$defs/VariableId"
+          },
+          "title": "Variable Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "variable_ids"
+      ],
+      "title": "AllDifferentConstraint",
+      "type": "object"
+    },
+    "And": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "and",
+          "default": "and",
+          "title": "Kind",
+          "type": "string"
+        },
+        "operands": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "all_different": "#/$defs/AllDifferent",
+                "and": "#/$defs/And",
+                "cardinality": "#/$defs/Cardinality",
+                "equal": "#/$defs/Equal",
+                "equivalent": "#/$defs/Equivalent",
+                "greater_than": "#/$defs/GreaterThan",
+                "greater_than_or_equal": "#/$defs/GreaterThanOrEqual",
+                "implies": "#/$defs/Implies",
+                "less_than": "#/$defs/LessThan",
+                "less_than_or_equal": "#/$defs/LessThanOrEqual",
+                "not": "#/$defs/Not",
+                "not_equal": "#/$defs/NotEqual",
+                "or": "#/$defs/Or",
+                "xor": "#/$defs/Xor"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Equal"
+              },
+              {
+                "$ref": "#/$defs/NotEqual"
+              },
+              {
+                "$ref": "#/$defs/LessThan"
+              },
+              {
+                "$ref": "#/$defs/LessThanOrEqual"
+              },
+              {
+                "$ref": "#/$defs/GreaterThan"
+              },
+              {
+                "$ref": "#/$defs/GreaterThanOrEqual"
+              },
+              {
+                "$ref": "#/$defs/And"
+              },
+              {
+                "$ref": "#/$defs/Or"
+              },
+              {
+                "$ref": "#/$defs/Not"
+              },
+              {
+                "$ref": "#/$defs/Xor"
+              },
+              {
+                "$ref": "#/$defs/Implies"
+              },
+              {
+                "$ref": "#/$defs/Equivalent"
+              },
+              {
+                "$ref": "#/$defs/Cardinality"
+              },
+              {
+                "$ref": "#/$defs/AllDifferent"
+              }
+            ]
+          },
+          "title": "Operands",
+          "type": "array"
+        }
+      },
+      "required": [
+        "operands"
+      ],
+      "title": "And",
+      "type": "object"
+    },
+    "ArithmeticConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "constraint_id": {
+          "$ref": "#/$defs/ConstraintId"
+        },
+        "expression": {
+          "discriminator": {
+            "mapping": {
+              "all_different": "#/$defs/AllDifferent",
+              "and": "#/$defs/And",
+              "cardinality": "#/$defs/Cardinality",
+              "equal": "#/$defs/Equal",
+              "equivalent": "#/$defs/Equivalent",
+              "greater_than": "#/$defs/GreaterThan",
+              "greater_than_or_equal": "#/$defs/GreaterThanOrEqual",
+              "implies": "#/$defs/Implies",
+              "less_than": "#/$defs/LessThan",
+              "less_than_or_equal": "#/$defs/LessThanOrEqual",
+              "not": "#/$defs/Not",
+              "not_equal": "#/$defs/NotEqual",
+              "or": "#/$defs/Or",
+              "xor": "#/$defs/Xor"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Equal"
+            },
+            {
+              "$ref": "#/$defs/NotEqual"
+            },
+            {
+              "$ref": "#/$defs/LessThan"
+            },
+            {
+              "$ref": "#/$defs/LessThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/GreaterThan"
+            },
+            {
+              "$ref": "#/$defs/GreaterThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/And"
+            },
+            {
+              "$ref": "#/$defs/Or"
+            },
+            {
+              "$ref": "#/$defs/Not"
+            },
+            {
+              "$ref": "#/$defs/Xor"
+            },
+            {
+              "$ref": "#/$defs/Implies"
+            },
+            {
+              "$ref": "#/$defs/Equivalent"
+            },
+            {
+              "$ref": "#/$defs/Cardinality"
+            },
+            {
+              "$ref": "#/$defs/AllDifferent"
+            }
+          ],
+          "title": "Expression"
+        },
+        "kind": {
+          "const": "arithmetic",
+          "default": "arithmetic",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "severity": {
+          "default": "hard",
+          "enum": [
+            "hard",
+            "instructional"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_clue_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Clue Id"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "expression"
+      ],
+      "title": "ArithmeticConstraint",
+      "type": "object"
+    },
+    "AssignmentAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "assignment",
+          "default": "assignment",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "AssignmentAtom",
+      "type": "object"
+    },
+    "AssociationConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "constraint_id": {
+          "$ref": "#/$defs/ConstraintId"
+        },
+        "kind": {
+          "const": "association",
+          "default": "association",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "left_variable_id": {
+          "$ref": "#/$defs/VariableId"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "right_variable_id": {
+          "$ref": "#/$defs/VariableId"
+        },
+        "severity": {
+          "default": "hard",
+          "enum": [
+            "hard",
+            "instructional"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_clue_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Clue Id"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "left_variable_id",
+        "right_variable_id"
+      ],
+      "title": "AssociationConstraint",
+      "type": "object"
+    },
+    "Atom": {
+      "discriminator": {
+        "mapping": {
+          "aggregate": "#/$defs/AggregateAtom",
+          "assignment": "#/$defs/AssignmentAtom",
+          "exclusion": "#/$defs/ExclusionAtom",
+          "relation": "#/$defs/RelationAtom",
+          "truth": "#/$defs/TruthAtom"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AssignmentAtom"
+        },
+        {
+          "$ref": "#/$defs/ExclusionAtom"
+        },
+        {
+          "$ref": "#/$defs/RelationAtom"
+        },
+        {
+          "$ref": "#/$defs/AggregateAtom"
+        },
+        {
+          "$ref": "#/$defs/TruthAtom"
+        }
+      ]
+    },
+    "CageConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "constraint_id": {
+          "$ref": "#/$defs/ConstraintId"
+        },
+        "kind": {
+          "const": "cage",
+          "default": "cage",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "operator": {
+          "enum": [
+            "sum",
+            "product",
+            "difference",
+            "quotient"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "severity": {
+          "default": "hard",
+          "enum": [
+            "hard",
+            "instructional"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_clue_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Clue Id"
+        },
+        "target": {
+          "title": "Target",
+          "type": "integer"
+        },
+        "variable_ids": {
+          "items": {
+            "$ref": "#/$defs/VariableId"
+          },
+          "title": "Variable Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "variable_ids",
+        "operator",
+        "target"
+      ],
+      "title": "CageConstraint",
+      "type": "object"
+    },
+    "CapacityConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "capacity": {
+          "title": "Capacity",
+          "type": "integer"
+        },
+        "constraint_id": {
+          "$ref": "#/$defs/ConstraintId"
+        },
+        "kind": {
+          "const": "capacity",
+          "default": "capacity",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "severity": {
+          "default": "hard",
+          "enum": [
+            "hard",
+            "instructional"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_clue_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Clue Id"
+        },
+        "variable_ids": {
+          "items": {
+            "$ref": "#/$defs/VariableId"
+          },
+          "title": "Variable Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "variable_ids",
+        "capacity"
+      ],
+      "title": "CapacityConstraint",
+      "type": "object"
+    },
+    "Cardinality": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "cardinality",
+          "default": "cardinality",
+          "title": "Kind",
+          "type": "string"
+        },
+        "maximum": {
+          "title": "Maximum",
+          "type": "integer"
+        },
+        "minimum": {
+          "title": "Minimum",
+          "type": "integer"
+        },
+        "operands": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "all_different": "#/$defs/AllDifferent",
+                "and": "#/$defs/And",
+                "cardinality": "#/$defs/Cardinality",
+                "equal": "#/$defs/Equal",
+                "equivalent": "#/$defs/Equivalent",
+                "greater_than": "#/$defs/GreaterThan",
+                "greater_than_or_equal": "#/$defs/GreaterThanOrEqual",
+                "implies": "#/$defs/Implies",
+                "less_than": "#/$defs/LessThan",
+                "less_than_or_equal": "#/$defs/LessThanOrEqual",
+                "not": "#/$defs/Not",
+                "not_equal": "#/$defs/NotEqual",
+                "or": "#/$defs/Or",
+                "xor": "#/$defs/Xor"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Equal"
+              },
+              {
+                "$ref": "#/$defs/NotEqual"
+              },
+              {
+                "$ref": "#/$defs/LessThan"
+              },
+              {
+                "$ref": "#/$defs/LessThanOrEqual"
+              },
+              {
+                "$ref": "#/$defs/GreaterThan"
+              },
+              {
+                "$ref": "#/$defs/GreaterThanOrEqual"
+              },
+              {
+                "$ref": "#/$defs/And"
+              },
+              {
+                "$ref": "#/$defs/Or"
+              },
+              {
+                "$ref": "#/$defs/Not"
+              },
+              {
+                "$ref": "#/$defs/Xor"
+              },
+              {
+                "$ref": "#/$defs/Implies"
+              },
+              {
+                "$ref": "#/$defs/Equivalent"
+              },
+              {
+                "$ref": "#/$defs/Cardinality"
+              },
+              {
+                "$ref": "#/$defs/AllDifferent"
+              }
+            ]
+          },
+          "title": "Operands",
+          "type": "array"
+        }
+      },
+      "required": [
+        "operands",
+        "minimum",
+        "maximum"
+      ],
+      "title": "Cardinality",
+      "type": "object"
+    },
+    "CardinalityConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "constraint_id": {
+          "$ref": "#/$defs/ConstraintId"
+        },
+        "kind": {
+          "const": "cardinality",
+          "default": "cardinality",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "maximum": {
+          "title": "Maximum",
+          "type": "integer"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "minimum": {
+          "title": "Minimum",
+          "type": "integer"
+        },
+        "severity": {
+          "default": "hard",
+          "enum": [
+            "hard",
+            "instructional"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_clue_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Clue Id"
+        },
+        "value_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ValueId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "variable_ids": {
+          "items": {
+            "$ref": "#/$defs/VariableId"
+          },
+          "title": "Variable Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "variable_ids",
+        "minimum",
+        "maximum"
+      ],
+      "title": "CardinalityConstraint",
+      "type": "object"
+    },
+    "Clue": {
+      "additionalProperties": false,
+      "description": "Presentation text and provenance links for compiled constraints.",
+      "properties": {
+        "clue_id": {
+          "$ref": "#/$defs/ClueId"
+        },
+        "constraint_ids": {
+          "items": {
+            "$ref": "#/$defs/ConstraintId"
+          },
+          "title": "Constraint Ids",
+          "type": "array"
+        },
+        "instructional_redundancy": {
+          "default": false,
+          "title": "Instructional Redundancy",
+          "type": "boolean"
+        },
+        "locale": {
+          "title": "Locale",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "template_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template Id"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "clue_id",
+        "text",
+        "constraint_ids",
+        "locale"
+      ],
+      "title": "Clue",
+      "type": "object"
+    },
+    "ClueId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "CompositeConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "constraint_id": {
+          "$ref": "#/$defs/ConstraintId"
+        },
+        "constraint_ids": {
+          "items": {
+            "$ref": "#/$defs/ConstraintId"
+          },
+          "title": "Constraint Ids",
+          "type": "array"
+        },
+        "kind": {
+          "const": "composite",
+          "default": "composite",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "operator": {
+          "enum": [
+            "and",
+            "or"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "severity": {
+          "default": "hard",
+          "enum": [
+            "hard",
+            "instructional"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_clue_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Clue Id"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "operator",
+        "constraint_ids"
+      ],
+      "title": "CompositeConstraint",
+      "type": "object"
+    },
+    "Constant": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "constant",
+          "default": "constant",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "format": "fraction",
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "Constant",
+      "type": "object"
+    },
+    "Constraint": {
+      "discriminator": {
+        "mapping": {
+          "adjacency": "#/$defs/AdjacencyConstraint",
+          "all_different": "#/$defs/AllDifferentConstraint",
+          "arithmetic": "#/$defs/ArithmeticConstraint",
+          "association": "#/$defs/AssociationConstraint",
+          "cage": "#/$defs/CageConstraint",
+          "capacity": "#/$defs/CapacityConstraint",
+          "cardinality": "#/$defs/CardinalityConstraint",
+          "composite": "#/$defs/CompositeConstraint",
+          "distance": "#/$defs/DistanceConstraint",
+          "domain": "#/$defs/DomainConstraint",
+          "equivalence": "#/$defs/EquivalenceConstraint",
+          "implication": "#/$defs/ImplicationConstraint",
+          "order": "#/$defs/OrderConstraint",
+          "proposition": "#/$defs/PropositionConstraint",
+          "region": "#/$defs/RegionConstraint",
+          "selection": "#/$defs/SelectionConstraint"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DomainConstraint"
+        },
+        {
+          "$ref": "#/$defs/AllDifferentConstraint"
+        },
+        {
+          "$ref": "#/$defs/ArithmeticConstraint"
+        },
+        {
+          "$ref": "#/$defs/CardinalityConstraint"
+        },
+        {
+          "$ref": "#/$defs/AssociationConstraint"
+        },
+        {
+          "$ref": "#/$defs/OrderConstraint"
+        },
+        {
+          "$ref": "#/$defs/AdjacencyConstraint"
+        },
+        {
+          "$ref": "#/$defs/DistanceConstraint"
+        },
+        {
+          "$ref": "#/$defs/RegionConstraint"
+        },
+        {
+          "$ref": "#/$defs/CageConstraint"
+        },
+        {
+          "$ref": "#/$defs/SelectionConstraint"
+        },
+        {
+          "$ref": "#/$defs/CapacityConstraint"
+        },
+        {
+          "$ref": "#/$defs/ImplicationConstraint"
+        },
+        {
+          "$ref": "#/$defs/EquivalenceConstraint"
+        },
+        {
+          "$ref": "#/$defs/PropositionConstraint"
+        },
+        {
+          "$ref": "#/$defs/CompositeConstraint"
+        }
+      ]
+    },
+    "ConstraintId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "DisplaySpec": {
+      "additionalProperties": false,
+      "description": "Family-neutral presentation semantics, separate from solver authority.",
+      "properties": {
+        "accessibility_labels": {
+          "default": [],
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Accessibility Labels",
+          "type": "array"
+        },
+        "locale": {
+          "default": "en",
+          "title": "Locale",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "title": "DisplaySpec",
+      "type": "object"
+    },
+    "DistanceConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "constraint_id": {
+          "$ref": "#/$defs/ConstraintId"
+        },
+        "distance": {
+          "title": "Distance",
+          "type": "integer"
+        },
+        "kind": {
+          "const": "distance",
+          "default": "distance",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "left_variable_id": {
+          "$ref": "#/$defs/VariableId"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "right_variable_id": {
+          "$ref": "#/$defs/VariableId"
+        },
+        "severity": {
+          "default": "hard",
+          "enum": [
+            "hard",
+            "instructional"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_clue_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Clue Id"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "left_variable_id",
+        "right_variable_id",
+        "distance"
+      ],
+      "title": "DistanceConstraint",
+      "type": "object"
+    },
+    "Domain": {
+      "additionalProperties": false,
+      "description": "An immutable collection of values available to variables.",
+      "properties": {
+        "distinct_by_default": {
+          "default": false,
+          "title": "Distinct By Default",
+          "type": "boolean"
+        },
+        "domain_id": {
+          "$ref": "#/$defs/DomainId"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "ordered": {
+          "title": "Ordered",
+          "type": "boolean"
+        },
+        "values": {
+          "items": {
+            "$ref": "#/$defs/DomainValue"
+          },
+          "title": "Values",
+          "type": "array"
+        }
+      },
+      "required": [
+        "domain_id",
+        "values",
+        "ordered"
+      ],
+      "title": "Domain",
+      "type": "object"
+    },
+    "DomainConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_value_ids": {
+          "items": {
+            "$ref": "#/$defs/ValueId"
+          },
+          "title": "Allowed Value Ids",
+          "type": "array"
+        },
+        "constraint_id": {
+          "$ref": "#/$defs/ConstraintId"
+        },
+        "kind": {
+          "const": "domain",
+          "default": "domain",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "severity": {
+          "default": "hard",
+          "enum": [
+            "hard",
+            "instructional"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_clue_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Clue Id"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "variable_id",
+        "allowed_value_ids"
+      ],
+      "title": "DomainConstraint",
+      "type": "object"
+    },
+    "DomainId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "DomainValue": {
+      "additionalProperties": false,
+      "description": "A labelled member of a puzzle domain.",
+      "properties": {
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "numeric_value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "format": "fraction",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Numeric Value"
+        },
+        "ordinal": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ordinal"
+        },
+        "symbol": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Symbol"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        }
+      },
+      "required": [
+        "value_id",
+        "label"
+      ],
+      "title": "DomainValue",
+      "type": "object"
+    },
+    "Equal": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "equal",
+          "default": "equal",
+          "title": "Kind",
+          "type": "string"
+        },
+        "left": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Left"
+        },
+        "right": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Right"
+        }
+      },
+      "required": [
+        "left",
+        "right"
+      ],
+      "title": "Equal",
+      "type": "object"
+    },
+    "EquivalenceConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "constraint_id": {
+          "$ref": "#/$defs/ConstraintId"
+        },
+        "kind": {
+          "const": "equivalence",
+          "default": "equivalence",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "left": {
+          "discriminator": {
+            "mapping": {
+              "all_different": "#/$defs/AllDifferent",
+              "and": "#/$defs/And",
+              "cardinality": "#/$defs/Cardinality",
+              "equal": "#/$defs/Equal",
+              "equivalent": "#/$defs/Equivalent",
+              "greater_than": "#/$defs/GreaterThan",
+              "greater_than_or_equal": "#/$defs/GreaterThanOrEqual",
+              "implies": "#/$defs/Implies",
+              "less_than": "#/$defs/LessThan",
+              "less_than_or_equal": "#/$defs/LessThanOrEqual",
+              "not": "#/$defs/Not",
+              "not_equal": "#/$defs/NotEqual",
+              "or": "#/$defs/Or",
+              "xor": "#/$defs/Xor"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Equal"
+            },
+            {
+              "$ref": "#/$defs/NotEqual"
+            },
+            {
+              "$ref": "#/$defs/LessThan"
+            },
+            {
+              "$ref": "#/$defs/LessThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/GreaterThan"
+            },
+            {
+              "$ref": "#/$defs/GreaterThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/And"
+            },
+            {
+              "$ref": "#/$defs/Or"
+            },
+            {
+              "$ref": "#/$defs/Not"
+            },
+            {
+              "$ref": "#/$defs/Xor"
+            },
+            {
+              "$ref": "#/$defs/Implies"
+            },
+            {
+              "$ref": "#/$defs/Equivalent"
+            },
+            {
+              "$ref": "#/$defs/Cardinality"
+            },
+            {
+              "$ref": "#/$defs/AllDifferent"
+            }
+          ],
+          "title": "Left"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "right": {
+          "discriminator": {
+            "mapping": {
+              "all_different": "#/$defs/AllDifferent",
+              "and": "#/$defs/And",
+              "cardinality": "#/$defs/Cardinality",
+              "equal": "#/$defs/Equal",
+              "equivalent": "#/$defs/Equivalent",
+              "greater_than": "#/$defs/GreaterThan",
+              "greater_than_or_equal": "#/$defs/GreaterThanOrEqual",
+              "implies": "#/$defs/Implies",
+              "less_than": "#/$defs/LessThan",
+              "less_than_or_equal": "#/$defs/LessThanOrEqual",
+              "not": "#/$defs/Not",
+              "not_equal": "#/$defs/NotEqual",
+              "or": "#/$defs/Or",
+              "xor": "#/$defs/Xor"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Equal"
+            },
+            {
+              "$ref": "#/$defs/NotEqual"
+            },
+            {
+              "$ref": "#/$defs/LessThan"
+            },
+            {
+              "$ref": "#/$defs/LessThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/GreaterThan"
+            },
+            {
+              "$ref": "#/$defs/GreaterThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/And"
+            },
+            {
+              "$ref": "#/$defs/Or"
+            },
+            {
+              "$ref": "#/$defs/Not"
+            },
+            {
+              "$ref": "#/$defs/Xor"
+            },
+            {
+              "$ref": "#/$defs/Implies"
+            },
+            {
+              "$ref": "#/$defs/Equivalent"
+            },
+            {
+              "$ref": "#/$defs/Cardinality"
+            },
+            {
+              "$ref": "#/$defs/AllDifferent"
+            }
+          ],
+          "title": "Right"
+        },
+        "severity": {
+          "default": "hard",
+          "enum": [
+            "hard",
+            "instructional"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_clue_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Clue Id"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "left",
+        "right"
+      ],
+      "title": "EquivalenceConstraint",
+      "type": "object"
+    },
+    "Equivalent": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "equivalent",
+          "default": "equivalent",
+          "title": "Kind",
+          "type": "string"
+        },
+        "left": {
+          "discriminator": {
+            "mapping": {
+              "all_different": "#/$defs/AllDifferent",
+              "and": "#/$defs/And",
+              "cardinality": "#/$defs/Cardinality",
+              "equal": "#/$defs/Equal",
+              "equivalent": "#/$defs/Equivalent",
+              "greater_than": "#/$defs/GreaterThan",
+              "greater_than_or_equal": "#/$defs/GreaterThanOrEqual",
+              "implies": "#/$defs/Implies",
+              "less_than": "#/$defs/LessThan",
+              "less_than_or_equal": "#/$defs/LessThanOrEqual",
+              "not": "#/$defs/Not",
+              "not_equal": "#/$defs/NotEqual",
+              "or": "#/$defs/Or",
+              "xor": "#/$defs/Xor"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Equal"
+            },
+            {
+              "$ref": "#/$defs/NotEqual"
+            },
+            {
+              "$ref": "#/$defs/LessThan"
+            },
+            {
+              "$ref": "#/$defs/LessThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/GreaterThan"
+            },
+            {
+              "$ref": "#/$defs/GreaterThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/And"
+            },
+            {
+              "$ref": "#/$defs/Or"
+            },
+            {
+              "$ref": "#/$defs/Not"
+            },
+            {
+              "$ref": "#/$defs/Xor"
+            },
+            {
+              "$ref": "#/$defs/Implies"
+            },
+            {
+              "$ref": "#/$defs/Equivalent"
+            },
+            {
+              "$ref": "#/$defs/Cardinality"
+            },
+            {
+              "$ref": "#/$defs/AllDifferent"
+            }
+          ],
+          "title": "Left"
+        },
+        "right": {
+          "discriminator": {
+            "mapping": {
+              "all_different": "#/$defs/AllDifferent",
+              "and": "#/$defs/And",
+              "cardinality": "#/$defs/Cardinality",
+              "equal": "#/$defs/Equal",
+              "equivalent": "#/$defs/Equivalent",
+              "greater_than": "#/$defs/GreaterThan",
+              "greater_than_or_equal": "#/$defs/GreaterThanOrEqual",
+              "implies": "#/$defs/Implies",
+              "less_than": "#/$defs/LessThan",
+              "less_than_or_equal": "#/$defs/LessThanOrEqual",
+              "not": "#/$defs/Not",
+              "not_equal": "#/$defs/NotEqual",
+              "or": "#/$defs/Or",
+              "xor": "#/$defs/Xor"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Equal"
+            },
+            {
+              "$ref": "#/$defs/NotEqual"
+            },
+            {
+              "$ref": "#/$defs/LessThan"
+            },
+            {
+              "$ref": "#/$defs/LessThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/GreaterThan"
+            },
+            {
+              "$ref": "#/$defs/GreaterThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/And"
+            },
+            {
+              "$ref": "#/$defs/Or"
+            },
+            {
+              "$ref": "#/$defs/Not"
+            },
+            {
+              "$ref": "#/$defs/Xor"
+            },
+            {
+              "$ref": "#/$defs/Implies"
+            },
+            {
+              "$ref": "#/$defs/Equivalent"
+            },
+            {
+              "$ref": "#/$defs/Cardinality"
+            },
+            {
+              "$ref": "#/$defs/AllDifferent"
+            }
+          ],
+          "title": "Right"
+        }
+      },
+      "required": [
+        "left",
+        "right"
+      ],
+      "title": "Equivalent",
+      "type": "object"
+    },
+    "ExactDivide": {
+      "additionalProperties": false,
+      "properties": {
+        "dividend": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Dividend"
+        },
+        "divisor": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Divisor"
+        },
+        "kind": {
+          "const": "exact_divide",
+          "default": "exact_divide",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dividend",
+        "divisor"
+      ],
+      "title": "ExactDivide",
+      "type": "object"
+    },
+    "ExclusionAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "exclusion",
+          "default": "exclusion",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "ExclusionAtom",
+      "type": "object"
+    },
+    "GenerationId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "GenerationLineage": {
+      "additionalProperties": false,
+      "description": "Minimal lineage link retained when a complete generated spec is stored.",
+      "properties": {
+        "generation_id": {
+          "$ref": "#/$defs/GenerationId"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "parent_revision_ids": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PuzzleRevisionId"
+          },
+          "title": "Parent Revision Ids",
+          "type": "array"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "required": [
+        "generation_id"
+      ],
+      "title": "GenerationLineage",
+      "type": "object"
+    },
+    "GreaterThan": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "greater_than",
+          "default": "greater_than",
+          "title": "Kind",
+          "type": "string"
+        },
+        "left": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Left"
+        },
+        "right": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Right"
+        }
+      },
+      "required": [
+        "left",
+        "right"
+      ],
+      "title": "GreaterThan",
+      "type": "object"
+    },
+    "GreaterThanOrEqual": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "greater_than_or_equal",
+          "default": "greater_than_or_equal",
+          "title": "Kind",
+          "type": "string"
+        },
+        "left": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Left"
+        },
+        "right": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Right"
+        }
+      },
+      "required": [
+        "left",
+        "right"
+      ],
+      "title": "GreaterThanOrEqual",
+      "type": "object"
+    },
+    "ImplicationConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "conclusion": {
+          "discriminator": {
+            "mapping": {
+              "all_different": "#/$defs/AllDifferent",
+              "and": "#/$defs/And",
+              "cardinality": "#/$defs/Cardinality",
+              "equal": "#/$defs/Equal",
+              "equivalent": "#/$defs/Equivalent",
+              "greater_than": "#/$defs/GreaterThan",
+              "greater_than_or_equal": "#/$defs/GreaterThanOrEqual",
+              "implies": "#/$defs/Implies",
+              "less_than": "#/$defs/LessThan",
+              "less_than_or_equal": "#/$defs/LessThanOrEqual",
+              "not": "#/$defs/Not",
+              "not_equal": "#/$defs/NotEqual",
+              "or": "#/$defs/Or",
+              "xor": "#/$defs/Xor"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Equal"
+            },
+            {
+              "$ref": "#/$defs/NotEqual"
+            },
+            {
+              "$ref": "#/$defs/LessThan"
+            },
+            {
+              "$ref": "#/$defs/LessThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/GreaterThan"
+            },
+            {
+              "$ref": "#/$defs/GreaterThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/And"
+            },
+            {
+              "$ref": "#/$defs/Or"
+            },
+            {
+              "$ref": "#/$defs/Not"
+            },
+            {
+              "$ref": "#/$defs/Xor"
+            },
+            {
+              "$ref": "#/$defs/Implies"
+            },
+            {
+              "$ref": "#/$defs/Equivalent"
+            },
+            {
+              "$ref": "#/$defs/Cardinality"
+            },
+            {
+              "$ref": "#/$defs/AllDifferent"
+            }
+          ],
+          "title": "Conclusion"
+        },
+        "constraint_id": {
+          "$ref": "#/$defs/ConstraintId"
+        },
+        "kind": {
+          "const": "implication",
+          "default": "implication",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "premise": {
+          "discriminator": {
+            "mapping": {
+              "all_different": "#/$defs/AllDifferent",
+              "and": "#/$defs/And",
+              "cardinality": "#/$defs/Cardinality",
+              "equal": "#/$defs/Equal",
+              "equivalent": "#/$defs/Equivalent",
+              "greater_than": "#/$defs/GreaterThan",
+              "greater_than_or_equal": "#/$defs/GreaterThanOrEqual",
+              "implies": "#/$defs/Implies",
+              "less_than": "#/$defs/LessThan",
+              "less_than_or_equal": "#/$defs/LessThanOrEqual",
+              "not": "#/$defs/Not",
+              "not_equal": "#/$defs/NotEqual",
+              "or": "#/$defs/Or",
+              "xor": "#/$defs/Xor"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Equal"
+            },
+            {
+              "$ref": "#/$defs/NotEqual"
+            },
+            {
+              "$ref": "#/$defs/LessThan"
+            },
+            {
+              "$ref": "#/$defs/LessThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/GreaterThan"
+            },
+            {
+              "$ref": "#/$defs/GreaterThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/And"
+            },
+            {
+              "$ref": "#/$defs/Or"
+            },
+            {
+              "$ref": "#/$defs/Not"
+            },
+            {
+              "$ref": "#/$defs/Xor"
+            },
+            {
+              "$ref": "#/$defs/Implies"
+            },
+            {
+              "$ref": "#/$defs/Equivalent"
+            },
+            {
+              "$ref": "#/$defs/Cardinality"
+            },
+            {
+              "$ref": "#/$defs/AllDifferent"
+            }
+          ],
+          "title": "Premise"
+        },
+        "severity": {
+          "default": "hard",
+          "enum": [
+            "hard",
+            "instructional"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_clue_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Clue Id"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "premise",
+        "conclusion"
+      ],
+      "title": "ImplicationConstraint",
+      "type": "object"
+    },
+    "Implies": {
+      "additionalProperties": false,
+      "properties": {
+        "conclusion": {
+          "discriminator": {
+            "mapping": {
+              "all_different": "#/$defs/AllDifferent",
+              "and": "#/$defs/And",
+              "cardinality": "#/$defs/Cardinality",
+              "equal": "#/$defs/Equal",
+              "equivalent": "#/$defs/Equivalent",
+              "greater_than": "#/$defs/GreaterThan",
+              "greater_than_or_equal": "#/$defs/GreaterThanOrEqual",
+              "implies": "#/$defs/Implies",
+              "less_than": "#/$defs/LessThan",
+              "less_than_or_equal": "#/$defs/LessThanOrEqual",
+              "not": "#/$defs/Not",
+              "not_equal": "#/$defs/NotEqual",
+              "or": "#/$defs/Or",
+              "xor": "#/$defs/Xor"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Equal"
+            },
+            {
+              "$ref": "#/$defs/NotEqual"
+            },
+            {
+              "$ref": "#/$defs/LessThan"
+            },
+            {
+              "$ref": "#/$defs/LessThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/GreaterThan"
+            },
+            {
+              "$ref": "#/$defs/GreaterThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/And"
+            },
+            {
+              "$ref": "#/$defs/Or"
+            },
+            {
+              "$ref": "#/$defs/Not"
+            },
+            {
+              "$ref": "#/$defs/Xor"
+            },
+            {
+              "$ref": "#/$defs/Implies"
+            },
+            {
+              "$ref": "#/$defs/Equivalent"
+            },
+            {
+              "$ref": "#/$defs/Cardinality"
+            },
+            {
+              "$ref": "#/$defs/AllDifferent"
+            }
+          ],
+          "title": "Conclusion"
+        },
+        "kind": {
+          "const": "implies",
+          "default": "implies",
+          "title": "Kind",
+          "type": "string"
+        },
+        "premise": {
+          "discriminator": {
+            "mapping": {
+              "all_different": "#/$defs/AllDifferent",
+              "and": "#/$defs/And",
+              "cardinality": "#/$defs/Cardinality",
+              "equal": "#/$defs/Equal",
+              "equivalent": "#/$defs/Equivalent",
+              "greater_than": "#/$defs/GreaterThan",
+              "greater_than_or_equal": "#/$defs/GreaterThanOrEqual",
+              "implies": "#/$defs/Implies",
+              "less_than": "#/$defs/LessThan",
+              "less_than_or_equal": "#/$defs/LessThanOrEqual",
+              "not": "#/$defs/Not",
+              "not_equal": "#/$defs/NotEqual",
+              "or": "#/$defs/Or",
+              "xor": "#/$defs/Xor"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Equal"
+            },
+            {
+              "$ref": "#/$defs/NotEqual"
+            },
+            {
+              "$ref": "#/$defs/LessThan"
+            },
+            {
+              "$ref": "#/$defs/LessThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/GreaterThan"
+            },
+            {
+              "$ref": "#/$defs/GreaterThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/And"
+            },
+            {
+              "$ref": "#/$defs/Or"
+            },
+            {
+              "$ref": "#/$defs/Not"
+            },
+            {
+              "$ref": "#/$defs/Xor"
+            },
+            {
+              "$ref": "#/$defs/Implies"
+            },
+            {
+              "$ref": "#/$defs/Equivalent"
+            },
+            {
+              "$ref": "#/$defs/Cardinality"
+            },
+            {
+              "$ref": "#/$defs/AllDifferent"
+            }
+          ],
+          "title": "Premise"
+        }
+      },
+      "required": [
+        "premise",
+        "conclusion"
+      ],
+      "title": "Implies",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "LessThan": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "less_than",
+          "default": "less_than",
+          "title": "Kind",
+          "type": "string"
+        },
+        "left": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Left"
+        },
+        "right": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Right"
+        }
+      },
+      "required": [
+        "left",
+        "right"
+      ],
+      "title": "LessThan",
+      "type": "object"
+    },
+    "LessThanOrEqual": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "less_than_or_equal",
+          "default": "less_than_or_equal",
+          "title": "Kind",
+          "type": "string"
+        },
+        "left": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Left"
+        },
+        "right": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Right"
+        }
+      },
+      "required": [
+        "left",
+        "right"
+      ],
+      "title": "LessThanOrEqual",
+      "type": "object"
+    },
+    "Modulo": {
+      "additionalProperties": false,
+      "properties": {
+        "dividend": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Dividend"
+        },
+        "divisor": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Divisor"
+        },
+        "kind": {
+          "const": "modulo",
+          "default": "modulo",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dividend",
+        "divisor"
+      ],
+      "title": "Modulo",
+      "type": "object"
+    },
+    "Multiply": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "multiply",
+          "default": "multiply",
+          "title": "Kind",
+          "type": "string"
+        },
+        "operands": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "add": "#/$defs/Add",
+                "constant": "#/$defs/Constant",
+                "exact_divide": "#/$defs/ExactDivide",
+                "modulo": "#/$defs/Modulo",
+                "multiply": "#/$defs/Multiply",
+                "negate": "#/$defs/Negate",
+                "subtract": "#/$defs/Subtract",
+                "variable_reference": "#/$defs/VariableReference"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Constant"
+              },
+              {
+                "$ref": "#/$defs/VariableReference"
+              },
+              {
+                "$ref": "#/$defs/Add"
+              },
+              {
+                "$ref": "#/$defs/Subtract"
+              },
+              {
+                "$ref": "#/$defs/Multiply"
+              },
+              {
+                "$ref": "#/$defs/ExactDivide"
+              },
+              {
+                "$ref": "#/$defs/Modulo"
+              },
+              {
+                "$ref": "#/$defs/Negate"
+              }
+            ]
+          },
+          "title": "Operands",
+          "type": "array"
+        }
+      },
+      "required": [
+        "operands"
+      ],
+      "title": "Multiply",
+      "type": "object"
+    },
+    "Negate": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "negate",
+          "default": "negate",
+          "title": "Kind",
+          "type": "string"
+        },
+        "operand": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Operand"
+        }
+      },
+      "required": [
+        "operand"
+      ],
+      "title": "Negate",
+      "type": "object"
+    },
+    "Not": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "not",
+          "default": "not",
+          "title": "Kind",
+          "type": "string"
+        },
+        "operand": {
+          "discriminator": {
+            "mapping": {
+              "all_different": "#/$defs/AllDifferent",
+              "and": "#/$defs/And",
+              "cardinality": "#/$defs/Cardinality",
+              "equal": "#/$defs/Equal",
+              "equivalent": "#/$defs/Equivalent",
+              "greater_than": "#/$defs/GreaterThan",
+              "greater_than_or_equal": "#/$defs/GreaterThanOrEqual",
+              "implies": "#/$defs/Implies",
+              "less_than": "#/$defs/LessThan",
+              "less_than_or_equal": "#/$defs/LessThanOrEqual",
+              "not": "#/$defs/Not",
+              "not_equal": "#/$defs/NotEqual",
+              "or": "#/$defs/Or",
+              "xor": "#/$defs/Xor"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Equal"
+            },
+            {
+              "$ref": "#/$defs/NotEqual"
+            },
+            {
+              "$ref": "#/$defs/LessThan"
+            },
+            {
+              "$ref": "#/$defs/LessThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/GreaterThan"
+            },
+            {
+              "$ref": "#/$defs/GreaterThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/And"
+            },
+            {
+              "$ref": "#/$defs/Or"
+            },
+            {
+              "$ref": "#/$defs/Not"
+            },
+            {
+              "$ref": "#/$defs/Xor"
+            },
+            {
+              "$ref": "#/$defs/Implies"
+            },
+            {
+              "$ref": "#/$defs/Equivalent"
+            },
+            {
+              "$ref": "#/$defs/Cardinality"
+            },
+            {
+              "$ref": "#/$defs/AllDifferent"
+            }
+          ],
+          "title": "Operand"
+        }
+      },
+      "required": [
+        "operand"
+      ],
+      "title": "Not",
+      "type": "object"
+    },
+    "NotEqual": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "not_equal",
+          "default": "not_equal",
+          "title": "Kind",
+          "type": "string"
+        },
+        "left": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Left"
+        },
+        "right": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Right"
+        }
+      },
+      "required": [
+        "left",
+        "right"
+      ],
+      "title": "NotEqual",
+      "type": "object"
+    },
+    "Or": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "or",
+          "default": "or",
+          "title": "Kind",
+          "type": "string"
+        },
+        "operands": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "all_different": "#/$defs/AllDifferent",
+                "and": "#/$defs/And",
+                "cardinality": "#/$defs/Cardinality",
+                "equal": "#/$defs/Equal",
+                "equivalent": "#/$defs/Equivalent",
+                "greater_than": "#/$defs/GreaterThan",
+                "greater_than_or_equal": "#/$defs/GreaterThanOrEqual",
+                "implies": "#/$defs/Implies",
+                "less_than": "#/$defs/LessThan",
+                "less_than_or_equal": "#/$defs/LessThanOrEqual",
+                "not": "#/$defs/Not",
+                "not_equal": "#/$defs/NotEqual",
+                "or": "#/$defs/Or",
+                "xor": "#/$defs/Xor"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Equal"
+              },
+              {
+                "$ref": "#/$defs/NotEqual"
+              },
+              {
+                "$ref": "#/$defs/LessThan"
+              },
+              {
+                "$ref": "#/$defs/LessThanOrEqual"
+              },
+              {
+                "$ref": "#/$defs/GreaterThan"
+              },
+              {
+                "$ref": "#/$defs/GreaterThanOrEqual"
+              },
+              {
+                "$ref": "#/$defs/And"
+              },
+              {
+                "$ref": "#/$defs/Or"
+              },
+              {
+                "$ref": "#/$defs/Not"
+              },
+              {
+                "$ref": "#/$defs/Xor"
+              },
+              {
+                "$ref": "#/$defs/Implies"
+              },
+              {
+                "$ref": "#/$defs/Equivalent"
+              },
+              {
+                "$ref": "#/$defs/Cardinality"
+              },
+              {
+                "$ref": "#/$defs/AllDifferent"
+              }
+            ]
+          },
+          "title": "Operands",
+          "type": "array"
+        }
+      },
+      "required": [
+        "operands"
+      ],
+      "title": "Or",
+      "type": "object"
+    },
+    "OrderConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "after_variable_id": {
+          "$ref": "#/$defs/VariableId"
+        },
+        "before_variable_id": {
+          "$ref": "#/$defs/VariableId"
+        },
+        "constraint_id": {
+          "$ref": "#/$defs/ConstraintId"
+        },
+        "kind": {
+          "const": "order",
+          "default": "order",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "severity": {
+          "default": "hard",
+          "enum": [
+            "hard",
+            "instructional"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_clue_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Clue Id"
+        },
+        "strict": {
+          "default": true,
+          "title": "Strict",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "before_variable_id",
+        "after_variable_id"
+      ],
+      "title": "OrderConstraint",
+      "type": "object"
+    },
+    "PropositionConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "constraint_id": {
+          "$ref": "#/$defs/ConstraintId"
+        },
+        "expression": {
+          "discriminator": {
+            "mapping": {
+              "all_different": "#/$defs/AllDifferent",
+              "and": "#/$defs/And",
+              "cardinality": "#/$defs/Cardinality",
+              "equal": "#/$defs/Equal",
+              "equivalent": "#/$defs/Equivalent",
+              "greater_than": "#/$defs/GreaterThan",
+              "greater_than_or_equal": "#/$defs/GreaterThanOrEqual",
+              "implies": "#/$defs/Implies",
+              "less_than": "#/$defs/LessThan",
+              "less_than_or_equal": "#/$defs/LessThanOrEqual",
+              "not": "#/$defs/Not",
+              "not_equal": "#/$defs/NotEqual",
+              "or": "#/$defs/Or",
+              "xor": "#/$defs/Xor"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Equal"
+            },
+            {
+              "$ref": "#/$defs/NotEqual"
+            },
+            {
+              "$ref": "#/$defs/LessThan"
+            },
+            {
+              "$ref": "#/$defs/LessThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/GreaterThan"
+            },
+            {
+              "$ref": "#/$defs/GreaterThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/And"
+            },
+            {
+              "$ref": "#/$defs/Or"
+            },
+            {
+              "$ref": "#/$defs/Not"
+            },
+            {
+              "$ref": "#/$defs/Xor"
+            },
+            {
+              "$ref": "#/$defs/Implies"
+            },
+            {
+              "$ref": "#/$defs/Equivalent"
+            },
+            {
+              "$ref": "#/$defs/Cardinality"
+            },
+            {
+              "$ref": "#/$defs/AllDifferent"
+            }
+          ],
+          "title": "Expression"
+        },
+        "kind": {
+          "const": "proposition",
+          "default": "proposition",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "severity": {
+          "default": "hard",
+          "enum": [
+            "hard",
+            "instructional"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_clue_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Clue Id"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "expression"
+      ],
+      "title": "PropositionConstraint",
+      "type": "object"
+    },
+    "ProvenanceBundle": {
+      "additionalProperties": false,
+      "description": "Immutable provenance references attached to a puzzle revision.",
+      "properties": {
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "references": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ProvenanceReference"
+          },
+          "title": "References",
+          "type": "array"
+        }
+      },
+      "title": "ProvenanceBundle",
+      "type": "object"
+    },
+    "ProvenanceId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ProvenanceReference": {
+      "additionalProperties": false,
+      "description": "A source entity or producing activity supporting the specification.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "entity",
+            "activity",
+            "agent"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "provenance_id": {
+          "$ref": "#/$defs/ProvenanceId"
+        }
+      },
+      "required": [
+        "provenance_id",
+        "kind",
+        "label"
+      ],
+      "title": "ProvenanceReference",
+      "type": "object"
+    },
+    "PuzzleId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "PuzzleIdentity": {
+      "additionalProperties": false,
+      "description": "Versioned identity and authorship for one immutable puzzle revision.",
+      "properties": {
+        "author": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Author"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "family_id": {
+          "title": "Family Id",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "parent_revision_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PuzzleRevisionId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "puzzle_id": {
+          "$ref": "#/$defs/PuzzleId"
+        },
+        "revision_id": {
+          "$ref": "#/$defs/PuzzleRevisionId"
+        },
+        "schema_version": {
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_kind": {
+          "enum": [
+            "golden",
+            "generated",
+            "user",
+            "imported"
+          ],
+          "title": "Source Kind",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "puzzle_id",
+        "revision_id",
+        "family_id",
+        "schema_version",
+        "title",
+        "source_kind",
+        "created_at"
+      ],
+      "title": "PuzzleIdentity",
+      "type": "object"
+    },
+    "PuzzleRevisionId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "RegionConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "constraint_id": {
+          "$ref": "#/$defs/ConstraintId"
+        },
+        "kind": {
+          "const": "region",
+          "default": "region",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "severity": {
+          "default": "hard",
+          "enum": [
+            "hard",
+            "instructional"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_clue_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Clue Id"
+        },
+        "variable_ids": {
+          "items": {
+            "$ref": "#/$defs/VariableId"
+          },
+          "title": "Variable Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "variable_ids"
+      ],
+      "title": "RegionConstraint",
+      "type": "object"
+    },
+    "RelationAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "arguments": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Arguments",
+          "type": "array"
+        },
+        "kind": {
+          "const": "relation",
+          "default": "relation",
+          "title": "Kind",
+          "type": "string"
+        },
+        "relation": {
+          "title": "Relation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "relation",
+        "arguments"
+      ],
+      "title": "RelationAtom",
+      "type": "object"
+    },
+    "SelectionConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "constraint_id": {
+          "$ref": "#/$defs/ConstraintId"
+        },
+        "kind": {
+          "const": "selection",
+          "default": "selection",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "maximum": {
+          "title": "Maximum",
+          "type": "integer"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "minimum": {
+          "title": "Minimum",
+          "type": "integer"
+        },
+        "severity": {
+          "default": "hard",
+          "enum": [
+            "hard",
+            "instructional"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_clue_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Clue Id"
+        },
+        "variable_ids": {
+          "items": {
+            "$ref": "#/$defs/VariableId"
+          },
+          "title": "Variable Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "variable_ids",
+        "minimum",
+        "maximum"
+      ],
+      "title": "SelectionConstraint",
+      "type": "object"
+    },
+    "Subtract": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "subtract",
+          "default": "subtract",
+          "title": "Kind",
+          "type": "string"
+        },
+        "left": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Left"
+        },
+        "right": {
+          "discriminator": {
+            "mapping": {
+              "add": "#/$defs/Add",
+              "constant": "#/$defs/Constant",
+              "exact_divide": "#/$defs/ExactDivide",
+              "modulo": "#/$defs/Modulo",
+              "multiply": "#/$defs/Multiply",
+              "negate": "#/$defs/Negate",
+              "subtract": "#/$defs/Subtract",
+              "variable_reference": "#/$defs/VariableReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Constant"
+            },
+            {
+              "$ref": "#/$defs/VariableReference"
+            },
+            {
+              "$ref": "#/$defs/Add"
+            },
+            {
+              "$ref": "#/$defs/Subtract"
+            },
+            {
+              "$ref": "#/$defs/Multiply"
+            },
+            {
+              "$ref": "#/$defs/ExactDivide"
+            },
+            {
+              "$ref": "#/$defs/Modulo"
+            },
+            {
+              "$ref": "#/$defs/Negate"
+            }
+          ],
+          "title": "Right"
+        }
+      },
+      "required": [
+        "left",
+        "right"
+      ],
+      "title": "Subtract",
+      "type": "object"
+    },
+    "TruthAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "truth",
+          "default": "truth",
+          "title": "Kind",
+          "type": "string"
+        },
+        "proposition_id": {
+          "title": "Proposition Id",
+          "type": "string"
+        },
+        "truth_value": {
+          "title": "Truth Value",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "proposition_id",
+        "truth_value"
+      ],
+      "title": "TruthAtom",
+      "type": "object"
+    },
+    "ValueId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "Variable": {
+      "additionalProperties": false,
+      "description": "A named unknown whose candidates come from one domain.",
+      "properties": {
+        "coordinates": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Coordinates"
+        },
+        "domain_id": {
+          "$ref": "#/$defs/DomainId"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "role": {
+          "enum": [
+            "cell",
+            "entity_assignment",
+            "position",
+            "selection",
+            "answer",
+            "arithmetic"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "label",
+        "domain_id",
+        "role"
+      ],
+      "title": "Variable",
+      "type": "object"
+    },
+    "VariableId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "VariableReference": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "variable_reference",
+          "default": "variable_reference",
+          "title": "Kind",
+          "type": "string"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id"
+      ],
+      "title": "VariableReference",
+      "type": "object"
+    },
+    "Xor": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "xor",
+          "default": "xor",
+          "title": "Kind",
+          "type": "string"
+        },
+        "left": {
+          "discriminator": {
+            "mapping": {
+              "all_different": "#/$defs/AllDifferent",
+              "and": "#/$defs/And",
+              "cardinality": "#/$defs/Cardinality",
+              "equal": "#/$defs/Equal",
+              "equivalent": "#/$defs/Equivalent",
+              "greater_than": "#/$defs/GreaterThan",
+              "greater_than_or_equal": "#/$defs/GreaterThanOrEqual",
+              "implies": "#/$defs/Implies",
+              "less_than": "#/$defs/LessThan",
+              "less_than_or_equal": "#/$defs/LessThanOrEqual",
+              "not": "#/$defs/Not",
+              "not_equal": "#/$defs/NotEqual",
+              "or": "#/$defs/Or",
+              "xor": "#/$defs/Xor"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Equal"
+            },
+            {
+              "$ref": "#/$defs/NotEqual"
+            },
+            {
+              "$ref": "#/$defs/LessThan"
+            },
+            {
+              "$ref": "#/$defs/LessThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/GreaterThan"
+            },
+            {
+              "$ref": "#/$defs/GreaterThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/And"
+            },
+            {
+              "$ref": "#/$defs/Or"
+            },
+            {
+              "$ref": "#/$defs/Not"
+            },
+            {
+              "$ref": "#/$defs/Xor"
+            },
+            {
+              "$ref": "#/$defs/Implies"
+            },
+            {
+              "$ref": "#/$defs/Equivalent"
+            },
+            {
+              "$ref": "#/$defs/Cardinality"
+            },
+            {
+              "$ref": "#/$defs/AllDifferent"
+            }
+          ],
+          "title": "Left"
+        },
+        "right": {
+          "discriminator": {
+            "mapping": {
+              "all_different": "#/$defs/AllDifferent",
+              "and": "#/$defs/And",
+              "cardinality": "#/$defs/Cardinality",
+              "equal": "#/$defs/Equal",
+              "equivalent": "#/$defs/Equivalent",
+              "greater_than": "#/$defs/GreaterThan",
+              "greater_than_or_equal": "#/$defs/GreaterThanOrEqual",
+              "implies": "#/$defs/Implies",
+              "less_than": "#/$defs/LessThan",
+              "less_than_or_equal": "#/$defs/LessThanOrEqual",
+              "not": "#/$defs/Not",
+              "not_equal": "#/$defs/NotEqual",
+              "or": "#/$defs/Or",
+              "xor": "#/$defs/Xor"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Equal"
+            },
+            {
+              "$ref": "#/$defs/NotEqual"
+            },
+            {
+              "$ref": "#/$defs/LessThan"
+            },
+            {
+              "$ref": "#/$defs/LessThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/GreaterThan"
+            },
+            {
+              "$ref": "#/$defs/GreaterThanOrEqual"
+            },
+            {
+              "$ref": "#/$defs/And"
+            },
+            {
+              "$ref": "#/$defs/Or"
+            },
+            {
+              "$ref": "#/$defs/Not"
+            },
+            {
+              "$ref": "#/$defs/Xor"
+            },
+            {
+              "$ref": "#/$defs/Implies"
+            },
+            {
+              "$ref": "#/$defs/Equivalent"
+            },
+            {
+              "$ref": "#/$defs/Cardinality"
+            },
+            {
+              "$ref": "#/$defs/AllDifferent"
+            }
+          ],
+          "title": "Right"
+        }
+      },
+      "required": [
+        "left",
+        "right"
+      ],
+      "title": "Xor",
+      "type": "object"
+    }
+  },
+  "$id": "urn:deductra:schema:puzzle-spec:1",
+  "additionalProperties": false,
+  "description": "Validated family-neutral contract for one complete puzzle revision.",
+  "properties": {
+    "clues": {
+      "items": {
+        "$ref": "#/$defs/Clue"
+      },
+      "title": "Clues",
+      "type": "array"
+    },
+    "constraints": {
+      "items": {
+        "$ref": "#/$defs/Constraint"
+      },
+      "title": "Constraints",
+      "type": "array"
+    },
+    "display_spec": {
+      "$ref": "#/$defs/DisplaySpec"
+    },
+    "domains": {
+      "items": {
+        "$ref": "#/$defs/Domain"
+      },
+      "title": "Domains",
+      "type": "array"
+    },
+    "generation_lineage": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GenerationLineage"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "givens": {
+      "items": {
+        "$ref": "#/$defs/Atom"
+      },
+      "title": "Givens",
+      "type": "array"
+    },
+    "identity": {
+      "$ref": "#/$defs/PuzzleIdentity"
+    },
+    "metadata": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Metadata",
+      "type": "object"
+    },
+    "provenance": {
+      "$ref": "#/$defs/ProvenanceBundle"
+    },
+    "variables": {
+      "items": {
+        "$ref": "#/$defs/Variable"
+      },
+      "title": "Variables",
+      "type": "array"
+    }
+  },
+  "required": [
+    "identity",
+    "domains",
+    "variables",
+    "constraints",
+    "clues",
+    "givens",
+    "display_spec",
+    "provenance"
+  ],
+  "title": "Deductra Puzzle Specification v1",
+  "type": "object"
+}

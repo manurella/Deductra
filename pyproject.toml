@@ -5,19 +5,21 @@ build-backend = "hatchling.build"
 [project]
 name = "deductra"
 version = "0.0.0"
-description = "The professional foundation for the Deductra project."
+description = "Typed foundations for proof-carrying deductive reasoning."
 readme = "README.md"
 requires-python = ">=3.13,<3.15"
 license = "MIT"
 classifiers = [
-  "Development Status :: 1 - Planning",
+  "Development Status :: 2 - Pre-Alpha",
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
   "Typing :: Typed",
 ]
-dependencies = []
+dependencies = [
+  "pydantic>=2.13,<3",
+]
 
 [dependency-groups]
 dev = [

@@ -35,6 +35,8 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "SECURITY.md",
         "docs/README.md",
         "docs/architecture/README.md",
+        "docs/architecture/core-domain-contracts.md",
+        "docs/architecture/decisions/0002-common-core-schema.md",
         "docs/architecture/decisions/0001-single-package-foundation.md",
         "docs/architecture/decisions/README.md",
         "docs/architecture/dependency-rules.md",
@@ -45,12 +47,25 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/governance/project-governance.md",
         "docs/governance/risk-register.md",
         "pyproject.toml",
+        "schemas/puzzle-spec-v1.schema.json",
         "scripts/check_conventions.py",
         "scripts/check_docs.py",
+        "scripts/export_json_schema.py",
         "src/deductra/__init__.py",
+        "src/deductra/domain/__init__.py",
+        "src/deductra/domain/atoms.py",
+        "src/deductra/domain/base.py",
+        "src/deductra/domain/constraints.py",
+        "src/deductra/domain/expressions.py",
+        "src/deductra/domain/ids.py",
+        "src/deductra/domain/puzzle.py",
+        "src/deductra/domain/schema.py",
+        "src/deductra/domain/serialization.py",
+        "src/deductra/domain/values.py",
         "src/deductra/py.typed",
         "tests/architecture/test_import_boundaries.py",
         "tests/architecture/test_repository_contracts.py",
+        "tests/domain/test_core_schema.py",
         "tests/test_package.py",
         "uv.lock",
     }
@@ -131,18 +146,31 @@ def test_source_tree_has_one_distribution_package() -> None:
     assert packages == ["deductra"]
 
 
-def test_m0_package_contains_no_product_modules() -> None:
-    """Keep M0 limited to typed package metadata."""
+def test_m1_package_contains_only_approved_core_schema_modules() -> None:
+    """Keep CR-001 limited to the approved domain schema surface."""
     package_root = REPOSITORY_ROOT / "src" / "deductra"
     public_files = {
         path.relative_to(package_root).as_posix()
         for path in package_root.rglob("*")
         if path.is_file() and "__pycache__" not in path.parts
     }
-    assert public_files == {"__init__.py", "py.typed"}
+    assert public_files == {
+        "__init__.py",
+        "domain/__init__.py",
+        "domain/atoms.py",
+        "domain/base.py",
+        "domain/constraints.py",
+        "domain/expressions.py",
+        "domain/ids.py",
+        "domain/puzzle.py",
+        "domain/schema.py",
+        "domain/serialization.py",
+        "domain/values.py",
+        "py.typed",
+    }
 
 
-def test_project_metadata_preserves_foundation_boundaries() -> None:
+def test_project_metadata_preserves_package_boundaries() -> None:
     """Enforce the accepted package, Python, build, and dependency policy."""
     configuration = project_configuration()
     project = cast(dict[str, Any], configuration["project"])
@@ -151,7 +179,7 @@ def test_project_metadata_preserves_foundation_boundaries() -> None:
 
     assert project["name"] == "deductra"
     assert project["requires-python"] == ">=3.13,<3.15"
-    assert project["dependencies"] == []
+    assert project["dependencies"] == ["pydantic>=2.13,<3"]
     assert build_system["build-backend"] == "hatchling.build"
     assert hatch["build"]["targets"]["wheel"]["packages"] == ["src/deductra"]
 

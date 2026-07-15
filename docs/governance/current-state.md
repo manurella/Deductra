@@ -2,10 +2,10 @@
 
 Last reviewed: 2026-07-15
 
-Deductra is in the M0 foundation milestone. The repository currently has:
+Deductra has completed M0 and is beginning M1, the common proof-carrying core. The repository currently has:
 
 - a clean public scaffold and repository-hygiene policy;
-- one typed `src/deductra` package with no runtime dependencies;
+- one typed `src/deductra` package with Pydantic as its sole runtime dependency;
 - Python 3.13 and 3.14 compatibility;
 - a uv lockfile and Hatchling build configuration;
 - development, test, CI-artifact, builder, and non-root runtime container stages;
@@ -13,7 +13,8 @@ Deductra is in the M0 foundation milestone. The repository currently has:
 - pull-request CI, scheduled security checks, tag-driven GitHub Releases, and GHCR publication;
 - canonical public governance and architecture documentation;
 - automated repository, package, import, dependency, and Docker architecture contracts.
+- strict immutable puzzle-domain models, canonical serialization, and a checked-in PuzzleSpec v1 JSON Schema.
 
-No product feature is implemented and no stable public API is promised.
+CR-001 implements data contracts only. No solver, generator, puzzle-family adapter, UI, report, memory, agent, or stable public API exists.
 
-M0 foundation implementation is complete pending owner review, hosted CI confirmation, repository-rule configuration, and final milestone acceptance. Product implementation begins only after those exit conditions are accepted.
+The owner accepted the M0 foundation after local and hosted CI verification. Branch protection and private vulnerability reporting were explicitly deferred by the owner and are not M1 blockers; this residual repository-administration risk remains recorded. CR-001 is the active implementation packet.

@@ -32,6 +32,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 COPY LICENSE README.md pyproject.toml uv.lock ./
 COPY Dockerfile ./
 COPY docs/ docs/
+COPY schemas/ schemas/
 COPY src/ src/
 COPY tests/ tests/
 
