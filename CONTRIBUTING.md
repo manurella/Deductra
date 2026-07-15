@@ -2,6 +2,8 @@
 
 Thank you for helping build Deductra. The project is currently establishing its M0 engineering foundation. Contributions must remain within the approved change boundary and must not introduce product features prematurely.
 
+Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). Report vulnerabilities through the private process in [SECURITY.md](SECURITY.md), not through public issues.
+
 ## Development prerequisites
 
 - Python 3.13 or 3.14
@@ -51,6 +53,7 @@ uv run ruff format --check .
 uv run ruff check .
 uv run pyright
 uv run pytest
+uv run python scripts/check_docs.py
 uv build
 docker buildx build --target test .
 docker buildx build --target runtime .
@@ -90,5 +93,7 @@ uv run pre-commit install --hook-type pre-commit --hook-type commit-msg
 ## Pull requests
 
 Pull requests must describe the objective, scope, evidence, architecture impact, risks, and rollback. Keep the branch current with `main`, resolve review conversations, and ensure every required check passes before merge.
+
+Changes to a public contract or architectural boundary must update the relevant [governance](docs/governance/README.md), [architecture documentation](docs/architecture/README.md), or architecture decision record in the same pull request.
 
 Do not begin a follow-on change merely because the current pull request is waiting for review.

@@ -1,0 +1,14 @@
+# Foundation Risk Register
+
+Last reviewed: 2026-07-15
+
+Probability and impact use the values Low, Medium, and High. The repository owner is accountable for review until responsibility is delegated publicly.
+
+| ID | Risk | Probability | Impact | Leading indicator | Mitigation | Contingency | Owner | Review point |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| R-001 | Foundation work expands into unreviewed product implementation. | Medium | High | Product modules or behavior appear before M0 closes. | Keep changes bounded and review current-state scope in every pull request. | Revert or separate the out-of-scope change. | [@manurella](https://github.com/manurella) | M0 exit |
+| R-002 | Dependency or workflow supply-chain compromise. | Low | High | Unexpected lock changes, mutable action references, or audit findings. | Lock dependencies, pin actions to full SHAs, run dependency review and scheduled audits. | Block release, revoke credentials, restore trusted pins, and publish an advisory when required. | [@manurella](https://github.com/manurella) | Every dependency change |
+| R-003 | Python 3.14 ecosystem compatibility regresses. | Medium | Medium | Compatibility CI or container builds fail on Python 3.14. | Test Python 3.13 and 3.14 and keep the runtime dependency set minimal. | Hold the affected update or document a time-bounded compatibility exception. | [@manurella](https://github.com/manurella) | Every dependency update |
+| R-004 | Documentation and implementation drift apart. | Medium | Medium | Broken links, stale current state, or contracts changed without documentation. | Run documentation checks in local hooks and pull-request CI. | Correct the canonical document in the same change that resolves the drift. | [@manurella](https://github.com/manurella) | Every contract change |
+| R-005 | Sensitive or temporary material enters public history. | Low | High | Repository-hygiene review or secret scanning finds an unexpected artifact. | Maintain generic ignore rules, local-only exclusions, and explicit contributor guidance. | Revoke exposed secrets immediately and follow an evidence-preserving history-remediation plan. | [@manurella](https://github.com/manurella) | Every pull request |
+| R-006 | A release workflow publishes unintended or unverified artifacts. | Low | High | A tag does not match project version or is not reachable from `main`. | Restrict publication to version tags, verify ancestry and version, and attest artifacts. | Remove affected artifacts, revoke the release, correct the tag through documented recovery, and investigate. | [@manurella](https://github.com/manurella) | Every release |

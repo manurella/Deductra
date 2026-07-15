@@ -16,6 +16,12 @@ repos:
         entry: uv run ruff check
         language: system
         types_or: [python, pyi]
+      - id: documentation
+        name: documentation
+        entry: uv run python scripts/check_docs.py
+        language: system
+        pass_filenames: false
+        files: (^|/)scripts/check_docs\.py$|\.md$
       - id: conventional-commit
         name: conventional commit
         entry: uv run python scripts/check_conventions.py --commit-msg-file
