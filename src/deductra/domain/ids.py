@@ -25,3 +25,6 @@ type BranchId = Identifier
 type ProducerId = Identifier
 type CorrelationId = Identifier
 type CausationId = Identifier
+type StateId = Identifier
+type SnapshotId = Identifier
+type ContradictionId = Identifier

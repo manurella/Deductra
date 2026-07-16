@@ -37,8 +37,10 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/architecture/README.md",
         "docs/architecture/core-domain-contracts.md",
         "docs/architecture/event-protocol-and-store.md",
+        "docs/architecture/state-reduction-and-replay.md",
         "docs/architecture/decisions/0002-common-core-schema.md",
         "docs/architecture/decisions/0003-canonical-event-store.md",
+        "docs/architecture/decisions/0004-immutable-state-reduction.md",
         "docs/architecture/decisions/0001-single-package-foundation.md",
         "docs/architecture/decisions/README.md",
         "docs/architecture/dependency-rules.md",
@@ -51,6 +53,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "pyproject.toml",
         "schemas/puzzle-spec-v1.schema.json",
         "schemas/event-envelope-v1.schema.json",
+        "schemas/puzzle-state-v1.schema.json",
         "scripts/check_conventions.py",
         "scripts/check_docs.py",
         "scripts/export_json_schema.py",
@@ -68,17 +71,22 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "src/deductra/memory/__init__.py",
         "src/deductra/memory/event_store.py",
         "src/deductra/memory/sqlite_store.py",
+        "src/deductra/memory/snapshots.py",
         "src/deductra/py.typed",
         "src/deductra/reasoning/__init__.py",
         "src/deductra/reasoning/events.py",
+        "src/deductra/reasoning/branches.py",
         "src/deductra/reasoning/integrity.py",
+        "src/deductra/reasoning/reducer.py",
         "src/deductra/reasoning/schema.py",
+        "src/deductra/reasoning/state.py",
         "tests/architecture/test_import_boundaries.py",
         "tests/architecture/test_repository_contracts.py",
         "tests/domain/test_core_schema.py",
         "tests/memory/test_sqlite_event_store.py",
         "tests/reasoning/test_event_schema.py",
         "tests/reasoning/test_events.py",
+        "tests/reasoning/test_state_reducer.py",
         "tests/test_package.py",
         "uv.lock",
     }
@@ -89,11 +97,14 @@ REQUIRED_FOUNDATION_PATHS = frozenset(
         "README.md",
         "docs/architecture/dependency-rules.md",
         "docs/architecture/event-protocol-and-store.md",
+        "docs/architecture/state-reduction-and-replay.md",
         "docs/governance/project-governance.md",
         "pyproject.toml",
         "src/deductra/__init__.py",
         "src/deductra/memory/event_store.py",
         "src/deductra/reasoning/events.py",
+        "src/deductra/reasoning/reducer.py",
+        "src/deductra/reasoning/state.py",
         "src/deductra/py.typed",
         "tests/architecture/test_import_boundaries.py",
         "tests/architecture/test_repository_contracts.py",
@@ -163,7 +174,7 @@ def test_source_tree_has_one_distribution_package() -> None:
 
 
 def test_m1_package_contains_only_approved_packet_modules() -> None:
-    """Keep M1 limited to the CR-001 and CR-002 package surfaces."""
+    """Keep M1 limited to the CR-001 through CR-003 package surfaces."""
     package_root = REPOSITORY_ROOT / "src" / "deductra"
     public_files = {
         path.relative_to(package_root).as_posix()
@@ -185,11 +196,15 @@ def test_m1_package_contains_only_approved_packet_modules() -> None:
         "memory/__init__.py",
         "memory/event_store.py",
         "memory/sqlite_store.py",
+        "memory/snapshots.py",
         "py.typed",
         "reasoning/__init__.py",
+        "reasoning/branches.py",
         "reasoning/events.py",
         "reasoning/integrity.py",
+        "reasoning/reducer.py",
         "reasoning/schema.py",
+        "reasoning/state.py",
     }
 
 

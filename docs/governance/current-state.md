@@ -15,8 +15,10 @@ Deductra has completed M0 and is beginning M1, the common proof-carrying core. T
 - automated repository, package, import, dependency, and Docker architecture contracts;
 - strict immutable puzzle-domain models, canonical serialization, and a checked-in PuzzleSpec v1 JSON Schema;
 - immutable lifecycle-event envelopes, deterministic hash-chain verification, and a checked-in EventEnvelope v1 JSON Schema;
-- an append-only event-store port and transactional SQLite adapter.
+- an append-only event-store port and transactional SQLite adapter;
+- immutable PuzzleState projections, pure deterministic reduction, retained contradiction branches, replay, and integrity-protected snapshots;
+- a checked-in PuzzleState v1 JSON Schema.
 
-CR-001 and CR-002 implement data, event, integrity, and persistence contracts only. No state reducer, solver, generator, puzzle-family adapter, UI, report system, learning memory, agent runtime, or stable public API exists.
+CR-001 through CR-003 implement data, event, persistence, and state-projection contracts only. No proof verifier, solver backend, generator, puzzle-family adapter, UI, report system, learning memory, agent runtime, or stable public API exists.
 
-The owner accepted the M0 foundation after local and hosted CI verification. Branch protection and private vulnerability reporting were explicitly deferred by the owner and are not M1 blockers; this residual repository-administration risk remains recorded. CR-002 is the active implementation packet, with state-level reducer acceptance explicitly reserved for CR-003.
+The owner accepted the M0 foundation after local and hosted CI verification. Branch protection and private vulnerability reporting were explicitly deferred by the owner and are not M1 blockers; this residual repository-administration risk remains recorded. CR-003 is the active implementation packet; proof verification remains reserved for CR-004.

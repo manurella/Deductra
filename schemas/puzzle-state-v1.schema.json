@@ -1,0 +1,312 @@
+{
+  "$defs": {
+    "AggregateAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "comparator": {
+          "enum": [
+            "eq",
+            "ne",
+            "lt",
+            "le",
+            "gt",
+            "ge"
+          ],
+          "title": "Comparator",
+          "type": "string"
+        },
+        "kind": {
+          "const": "aggregate",
+          "default": "aggregate",
+          "title": "Kind",
+          "type": "string"
+        },
+        "members": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Members",
+          "type": "array"
+        },
+        "operator": {
+          "enum": [
+            "sum",
+            "count",
+            "min",
+            "max",
+            "parity"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "operator",
+        "members",
+        "comparator",
+        "target"
+      ],
+      "title": "AggregateAtom",
+      "type": "object"
+    },
+    "AssignmentAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "assignment",
+          "default": "assignment",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "AssignmentAtom",
+      "type": "object"
+    },
+    "Atom": {
+      "discriminator": {
+        "mapping": {
+          "aggregate": "#/$defs/AggregateAtom",
+          "assignment": "#/$defs/AssignmentAtom",
+          "exclusion": "#/$defs/ExclusionAtom",
+          "relation": "#/$defs/RelationAtom",
+          "truth": "#/$defs/TruthAtom"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AssignmentAtom"
+        },
+        {
+          "$ref": "#/$defs/ExclusionAtom"
+        },
+        {
+          "$ref": "#/$defs/RelationAtom"
+        },
+        {
+          "$ref": "#/$defs/AggregateAtom"
+        },
+        {
+          "$ref": "#/$defs/TruthAtom"
+        }
+      ]
+    },
+    "BranchId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "CandidateDomains": {
+      "additionalProperties": {
+        "items": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "type": "array",
+        "uniqueItems": true
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/VariableId"
+      },
+      "type": "object"
+    },
+    "ConstraintId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ContradictionId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ExclusionAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "exclusion",
+          "default": "exclusion",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "ExclusionAtom",
+      "type": "object"
+    },
+    "PuzzleRevisionId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "RelationAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "arguments": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Arguments",
+          "type": "array"
+        },
+        "kind": {
+          "const": "relation",
+          "default": "relation",
+          "title": "Kind",
+          "type": "string"
+        },
+        "relation": {
+          "title": "Relation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "relation",
+        "arguments"
+      ],
+      "title": "RelationAtom",
+      "type": "object"
+    },
+    "Sha256Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "StateId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "TruthAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "truth",
+          "default": "truth",
+          "title": "Kind",
+          "type": "string"
+        },
+        "proposition_id": {
+          "title": "Proposition Id",
+          "type": "string"
+        },
+        "truth_value": {
+          "title": "Truth Value",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "proposition_id",
+        "truth_value"
+      ],
+      "title": "TruthAtom",
+      "type": "object"
+    },
+    "ValueId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "VariableId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "$id": "urn:deductra:schema:puzzle-state:1",
+  "additionalProperties": false,
+  "description": "One immutable, hash-addressed projection of a puzzle branch.",
+  "properties": {
+    "active_constraint_ids": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ConstraintId"
+      },
+      "title": "Active Constraint Ids",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "asserted_atoms": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Atom"
+      },
+      "title": "Asserted Atoms",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "branch_id": {
+      "$ref": "#/$defs/BranchId"
+    },
+    "candidate_domains": {
+      "$ref": "#/$defs/CandidateDomains"
+    },
+    "contradiction_ids": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ContradictionId"
+      },
+      "title": "Contradiction Ids",
+      "type": "array"
+    },
+    "puzzle_revision_id": {
+      "$ref": "#/$defs/PuzzleRevisionId"
+    },
+    "rejected_atoms": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Atom"
+      },
+      "title": "Rejected Atoms",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "sequence_no": {
+      "minimum": 0,
+      "title": "Sequence No",
+      "type": "integer"
+    },
+    "solved": {
+      "title": "Solved",
+      "type": "boolean"
+    },
+    "state_hash": {
+      "$ref": "#/$defs/Sha256Digest"
+    },
+    "state_id": {
+      "$ref": "#/$defs/StateId"
+    }
+  },
+  "required": [
+    "state_id",
+    "puzzle_revision_id",
+    "sequence_no",
+    "branch_id",
+    "candidate_domains",
+    "solved",
+    "state_hash"
+  ],
+  "title": "Deductra Puzzle State v1",
+  "type": "object"
+}

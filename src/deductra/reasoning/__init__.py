@@ -1,6 +1,10 @@
 """Canonical reasoning-event contracts and integrity verification."""
 
 from deductra.reasoning.events import (
+    BranchClosed,
+    BranchOpened,
+    CandidatesEliminated,
+    ContradictionDetected,
     EventEnvelope,
     InitialStateCreated,
     ProducerRef,
@@ -8,6 +12,7 @@ from deductra.reasoning.events import (
     TraceCompleted,
     TraceFailed,
     TraceStarted,
+    ValueAssigned,
 )
 from deductra.reasoning.integrity import (
     GENESIS_EVENT_HASH,
@@ -17,19 +22,50 @@ from deductra.reasoning.integrity import (
     verify_chain,
     verify_event,
 )
+from deductra.reasoning.reducer import (
+    SearchDisclosureError,
+    StateConflictError,
+    StateReductionError,
+    UnsupportedStateEventError,
+    reduce_state,
+    replay_projection,
+)
+from deductra.reasoning.state import (
+    PuzzleState,
+    StateValidation,
+    compute_state_hash,
+    create_initial_state,
+    validate_state,
+)
 
 __all__ = [
     "GENESIS_EVENT_HASH",
+    "BranchClosed",
+    "BranchOpened",
+    "CandidatesEliminated",
     "ChainVerification",
+    "ContradictionDetected",
     "EventEnvelope",
     "InitialStateCreated",
     "ProducerRef",
+    "PuzzleState",
     "PuzzleValidated",
+    "SearchDisclosureError",
+    "StateConflictError",
+    "StateReductionError",
+    "StateValidation",
     "TraceCompleted",
     "TraceFailed",
     "TraceStarted",
+    "UnsupportedStateEventError",
+    "ValueAssigned",
     "compute_event_hash",
+    "compute_state_hash",
+    "create_initial_state",
+    "reduce_state",
+    "replay_projection",
     "seal_event",
+    "validate_state",
     "verify_chain",
     "verify_event",
 ]

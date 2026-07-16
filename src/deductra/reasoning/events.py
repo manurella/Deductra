@@ -7,20 +7,26 @@ from typing import Annotated, Literal
 
 from pydantic import Field, model_validator
 
+from deductra.domain.atoms import Atom
 from deductra.domain.base import DomainModel, MetadataModel
 from deductra.domain.ids import (
     AttemptId,
     BranchId,
     CausationId,
+    ContradictionId,
     CorrelationId,
     EventId,
     ProducerId,
     PuzzleRevisionId,
+    StateId,
     TraceId,
+    ValueId,
+    VariableId,
 )
 
 type Sha256Digest = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
 type EventSchemaVersion = Annotated[str, Field(pattern=r"^[1-9][0-9]*\.[0-9]+\.[0-9]+$")]
+type ReasoningOrigin = Literal["given", "human_rule", "assumption", "search", "system"]
 
 
 class ProducerRef(MetadataModel):
@@ -67,8 +73,76 @@ class TraceFailed(MetadataModel):
     message: str
 
 
+class CandidatesEliminated(MetadataModel):
+    """Remove verified candidates from one variable's current domain."""
+
+    kind: Literal["candidates_eliminated"] = "candidates_eliminated"
+    variable_id: VariableId
+    value_ids: tuple[ValueId, ...]
+    source_state_hash: Sha256Digest
+    result_state_id: StateId
+    origin: ReasoningOrigin
+
+    @model_validator(mode="after")
+    def validate_candidates(self) -> CandidatesEliminated:
+        if not self.value_ids:
+            raise ValueError("candidate elimination must contain at least one value")
+        if len(self.value_ids) != len(set(self.value_ids)):
+            raise ValueError("candidate elimination values must be unique")
+        return self
+
+
+class ValueAssigned(MetadataModel):
+    """Project one verified assignment into the immutable puzzle state."""
+
+    kind: Literal["value_assigned"] = "value_assigned"
+    variable_id: VariableId
+    value_id: ValueId
+    source_state_hash: Sha256Digest
+    result_state_id: StateId
+    origin: ReasoningOrigin
+
+
+class BranchOpened(MetadataModel):
+    """Open an explicit assumption or search branch from a retained parent state."""
+
+    kind: Literal["branch_opened"] = "branch_opened"
+    parent_branch_id: BranchId
+    opened_from_state_hash: Sha256Digest
+    assumption: Atom
+    method: Literal["assumption", "search", "demonstration"]
+    result_state_id: StateId
+
+
+class ContradictionDetected(MetadataModel):
+    """Mark the current branch contradictory without deleting its projection."""
+
+    kind: Literal["contradiction_detected"] = "contradiction_detected"
+    contradiction_id: ContradictionId
+    source_state_hash: Sha256Digest
+    result_state_id: StateId
+    category: str
+
+
+class BranchClosed(MetadataModel):
+    """Close a retained non-root branch and return projection focus to its parent."""
+
+    kind: Literal["branch_closed"] = "branch_closed"
+    source_state_hash: Sha256Digest
+    status: Literal["contradicted", "solved", "abandoned"]
+
+
 type ReasoningEventPayload = Annotated[
-    TraceStarted | PuzzleValidated | InitialStateCreated | TraceCompleted | TraceFailed,
+    TraceStarted
+    | PuzzleValidated
+    | InitialStateCreated
+    | TraceCompleted
+    | TraceFailed
+    | CandidatesEliminated
+    | ValueAssigned
+    | BranchOpened
+    | ContradictionDetected
+    | BranchClosed,
     Field(discriminator="kind"),
 ]
 

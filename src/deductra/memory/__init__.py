@@ -7,6 +7,12 @@ from deductra.memory.event_store import (
     StreamConflictError,
     StreamIntegrityError,
 )
+from deductra.memory.snapshots import (
+    StateSnapshot,
+    compute_snapshot_hash,
+    create_snapshot,
+    verify_snapshot,
+)
 from deductra.memory.sqlite_store import SQLiteEventStore
 
 __all__ = [
@@ -14,6 +20,10 @@ __all__ = [
     "EventStore",
     "EventStoreError",
     "SQLiteEventStore",
+    "StateSnapshot",
     "StreamConflictError",
     "StreamIntegrityError",
+    "compute_snapshot_hash",
+    "create_snapshot",
+    "verify_snapshot",
 ]

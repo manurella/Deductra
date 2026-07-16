@@ -5,6 +5,9 @@ Architecture decision records preserve why a significant technical choice was ma
 ## Records
 
 - [ADR-0001: Use one Python package for the foundation](0001-single-package-foundation.md)
+- [ADR-0002: Establish a common immutable core schema](0002-common-core-schema.md)
+- [ADR-0003: Persist canonical events in tamper-evident SQLite streams](0003-canonical-event-store.md)
+- [ADR-0004: Derive immutable state through retained branch projections](0004-immutable-state-reduction.md)
 
 ## Lifecycle
 
