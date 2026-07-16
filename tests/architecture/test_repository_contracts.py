@@ -45,6 +45,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/architecture/event-sourced-memory-projections.md",
         "docs/architecture/report-contract-and-rendering.md",
         "docs/architecture/agent-runtime-boundary.md",
+        "docs/architecture/logic-equations-specification.md",
         "docs/architecture/decisions/0002-common-core-schema.md",
         "docs/architecture/decisions/0003-canonical-event-store.md",
         "docs/architecture/decisions/0004-immutable-state-reduction.md",
@@ -54,6 +55,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/architecture/decisions/0008-gate-generation-on-deterministic-evidence.md",
         "docs/architecture/decisions/0009-derive-memory-views-from-events.md",
         "docs/architecture/decisions/0010-keep-agents-optional-and-non-authoritative.md",
+        "docs/architecture/decisions/0011-specialize-families-through-common-specifications.md",
         "docs/architecture/decisions/0001-single-package-foundation.md",
         "docs/architecture/decisions/README.md",
         "docs/architecture/dependency-rules.md",
@@ -75,6 +77,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "schemas/memory-projections-v1.schema.json",
         "schemas/report-model-v1.schema.json",
         "schemas/agent-boundary-v1.schema.json",
+        "schemas/logic-equations-spec-v1.schema.json",
         "scripts/check_conventions.py",
         "scripts/check_docs.py",
         "scripts/export_json_schema.py",
@@ -95,6 +98,10 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "src/deductra/domain/schema.py",
         "src/deductra/domain/serialization.py",
         "src/deductra/domain/values.py",
+        "src/deductra/families/__init__.py",
+        "src/deductra/families/logic_equations/__init__.py",
+        "src/deductra/families/logic_equations/schema.py",
+        "src/deductra/families/logic_equations/specification.py",
         "src/deductra/graph/__init__.py",
         "src/deductra/graph/export.py",
         "src/deductra/graph/model.py",
@@ -150,6 +157,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "tests/agent_runtime/test_runtime.py",
         "tests/agent_runtime/test_schema.py",
         "tests/domain/test_core_schema.py",
+        "tests/families/logic_equations/test_specification.py",
         "tests/graph/test_hypergraph_projection.py",
         "tests/generation/test_generation_contracts.py",
         "tests/memory/test_sqlite_event_store.py",
@@ -250,8 +258,8 @@ def test_source_tree_has_one_distribution_package() -> None:
     assert packages == ["deductra"]
 
 
-def test_m1_package_contains_only_approved_packet_modules() -> None:
-    """Keep M1 limited to the CR-001 through CR-010 package surfaces."""
+def test_package_contains_only_approved_packet_modules() -> None:
+    """Keep the package limited to approved M1 and FAM-LE-001 surfaces."""
     package_root = REPOSITORY_ROOT / "src" / "deductra"
     public_files = {
         path.relative_to(package_root).as_posix()
@@ -276,6 +284,10 @@ def test_m1_package_contains_only_approved_packet_modules() -> None:
         "domain/schema.py",
         "domain/serialization.py",
         "domain/values.py",
+        "families/__init__.py",
+        "families/logic_equations/__init__.py",
+        "families/logic_equations/schema.py",
+        "families/logic_equations/specification.py",
         "graph/__init__.py",
         "graph/export.py",
         "graph/model.py",

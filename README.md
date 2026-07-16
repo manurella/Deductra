@@ -1,6 +1,6 @@
 # Deductra
 
-Deductra is an early-stage Python project for structured, proof-carrying deductive reasoning. Its M0 engineering foundation is complete, and M1 currently provides family-neutral immutable puzzle, event, state-projection, bounded proof-verification, human-rule orchestration, reasoning-hypergraph, generator-foundation, and rebuildable-memory contracts. It does not yet provide puzzle-family rules, search, a concrete puzzle generator, a user interface, or a stable public API.
+Deductra is an early-stage Python project for structured, proof-carrying deductive reasoning. Its M0 engineering foundation and M1 common core are complete. M2 is validating that core with a typed Logic Equations family specification. The project does not yet provide puzzle-family rules, search, a concrete puzzle generator, a user interface, or a stable public API.
 
 ## Current status
 
@@ -19,6 +19,7 @@ The current repository provides:
 - deterministic evidence-closed reasoning hypergraphs with visual-neutral JSON export.
 - immutable generation requests, reproducible candidate lineage, evaluator ports, and fail-closed quarantine.
 - deterministic attempt, learning-evidence, novelty, and artifact projections rebuilt from events.
+- a validated finite-domain, all-different Logic Equations specification.
 
 The admitted runtime dependencies and their rationale are recorded in the [dependency admissions](docs/governance/dependency-admissions.md).
 

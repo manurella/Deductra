@@ -13,6 +13,7 @@ Deductra begins as one Python distribution with one import root. Architecture is
 - [Event-sourced memory projections](event-sourced-memory-projections.md) defines CR-008 attempt, learning-evidence, novelty, and artifact views with exact replay rebuilds.
 - [Report contract and rendering](report-contract-and-rendering.md) defines CR-009 evidence closure, theme isolation, semantic HTML, and protocol-isolated PDF derivation.
 - [Optional agent runtime boundary](agent-runtime-boundary.md) defines CR-010 typed proposals, tool allowlists, guardrails, offline mode, and the isolated SDK adapter.
+- [Logic Equations specification](logic-equations-specification.md) defines FAM-LE-001's finite-domain arithmetic-assignment shape and validation boundary.
 - [Dependency rules](dependency-rules.md) defines the dependency direction that implementation and enforcement must preserve.
 - [Architecture decisions](decisions/README.md) records significant decisions and their consequences.
 

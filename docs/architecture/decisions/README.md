@@ -14,6 +14,7 @@ Architecture decision records preserve why a significant technical choice was ma
 - [ADR-0008: Gate generation on deterministic evidence](0008-gate-generation-on-deterministic-evidence.md)
 - [ADR-0009: Derive memory views from immutable events](0009-derive-memory-views-from-events.md)
 - [ADR-0010: Keep agents optional and non-authoritative](0010-keep-agents-optional-and-non-authoritative.md)
+- [ADR-0011: Specialize families through the common puzzle specification](0011-specialize-families-through-common-specifications.md)
 
 ## Lifecycle
 

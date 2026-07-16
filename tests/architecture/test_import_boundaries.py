@@ -198,6 +198,21 @@ def test_generation_package_depends_only_on_evidence_contracts() -> None:
     assert not violations, f"generation imports authoritative outer layers: {violations}"
 
 
+def test_family_packages_specialize_only_common_domain_contracts() -> None:
+    """Keep concrete family specifications independent of outer capabilities."""
+    violations: dict[str, list[str]] = {}
+    allowed = ("deductra.domain", "deductra.families")
+    for source in sorted((PACKAGE_ROOT / "families").rglob("*.py")):
+        outward = {
+            module
+            for module in imported_modules(source)
+            if module.startswith("deductra.") and not module.startswith(allowed)
+        }
+        if outward:
+            violations[source.relative_to(REPOSITORY_ROOT).as_posix()] = sorted(outward)
+    assert not violations, f"family specifications import outer capabilities: {violations}"
+
+
 def test_reports_are_downstream_of_authoritative_contracts() -> None:
     """Keep reports derived from canonical contracts and independent of adapters."""
     violations: dict[str, list[str]] = {}

@@ -2,7 +2,7 @@
 
 Last reviewed: 2026-07-16
 
-Deductra has completed M0 and is beginning M1, the common proof-carrying core. The repository currently has:
+Deductra has completed M0 and M1 and is beginning M2 with the Logic Equations reference kernel. The repository currently has:
 
 - a clean public scaffold and repository-hygiene policy;
 - one typed `src/deductra` package with reviewed, locked runtime dependencies;
@@ -43,7 +43,10 @@ Deductra has completed M0 and is beginning M1, the common proof-carrying core. T
 - a typed optional AgentRuntime port, deterministic disabled mode, and isolated SDK adapter;
 - fail-closed task, tool, evidence, hidden-search, solution-authority, and state-mutation guardrails;
 - a fixed seven-case agent safety evaluation suite and checked-in AgentBoundary v1 JSON Schema.
+- a typed Logic Equations specialization of the common immutable puzzle contract;
+- validated `1..n` permutation-domain, all-different, expression, clue, and reference invariants;
+- a checked-in Logic Equations Specification v1 JSON Schema.
 
-CR-001 through CR-010 implement data, event, persistence, state projection, bounded verification, human-rule orchestration, deterministic hypergraph projection, generator-foundation contracts, rebuildable memory views, evidence-closed report derivation, and an optional non-authoritative agent boundary. The engine contains no concrete family rules and never falls back to search. The hypergraph and memory indexes are read-only projections without authority over canonical history. Learning views contain descriptive evidence counts only. The generation boundary constructs no puzzles and contains no family logic, solver coordinator, difficulty algorithm, similarity algorithm, persistence, or playable queue. No concrete generator, puzzle-family adapter, UI, report composer, named agent behavior, learning analyst, or stable public API exists. Report renderers and agent proposals do not decide canonical facts.
+CR-001 through CR-010 implement data, event, persistence, state projection, bounded verification, human-rule orchestration, deterministic hypergraph projection, generator-foundation contracts, rebuildable memory views, evidence-closed report derivation, and an optional non-authoritative agent boundary. FAM-LE-001 adds only the first concrete family specification. The engine contains no concrete family rules and never falls back to search. The hypergraph and memory indexes are read-only projections without authority over canonical history. Learning views contain descriptive evidence counts only. The generation boundary constructs no puzzles and contains no family logic, solver coordinator, difficulty algorithm, similarity algorithm, persistence, or playable queue. No parser, concrete generator, puzzle-family solver adapter, CLI, UI, report composer, named agent behavior, learning analyst, Golden puzzle, or stable public API exists. Report renderers and agent proposals do not decide canonical facts.
 
-The owner accepted the M0 foundation after local and hosted CI verification. Branch protection and private vulnerability reporting were explicitly deferred by the owner and are not M1 blockers; this residual repository-administration risk remains recorded. CR-010 is the active implementation packet.
+The owner accepted the M0 foundation after local and hosted CI verification. Branch protection and private vulnerability reporting were explicitly deferred by the owner and are not M1 or M2 blockers; this residual repository-administration risk remains recorded. FAM-LE-001 is the active implementation packet.
