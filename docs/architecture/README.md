@@ -8,6 +8,7 @@ Deductra begins as one Python distribution with one import root. Architecture is
 - [State reduction and replay](state-reduction-and-replay.md) defines CR-003 immutable projections, branch retention, and snapshots.
 - [Verification contracts and backends](verification-contracts-and-backends.md) defines CR-004 proof obligations, independent encodings, certificates, and reducer authority.
 - [Human reasoning engine](human-reasoning-engine.md) defines CR-005 rule discovery, deterministic policies, verified orchestration, and stalled outcomes.
+- [Directed reasoning hypergraph](reasoning-hypergraph.md) defines CR-006 typed incidence projection, deterministic identifiers, evidence closure, and visual-neutral export.
 - [Dependency rules](dependency-rules.md) defines the dependency direction that implementation and enforcement must preserve.
 - [Architecture decisions](decisions/README.md) records significant decisions and their consequences.
 

@@ -1,0 +1,193 @@
+{
+  "$defs": {
+    "DirectedHyperedge": {
+      "additionalProperties": false,
+      "description": "One directed many-to-many incidence relation.",
+      "properties": {
+        "attributes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Attributes",
+          "type": "object"
+        },
+        "edge_id": {
+          "$ref": "#/$defs/HyperedgeId"
+        },
+        "edge_type": {
+          "$ref": "#/$defs/HyperedgeType"
+        },
+        "head_vertex_ids": {
+          "items": {
+            "$ref": "#/$defs/GraphVertexId"
+          },
+          "title": "Head Vertex Ids",
+          "type": "array"
+        },
+        "sequence_no": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sequence No"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "tail_vertex_ids": {
+          "items": {
+            "$ref": "#/$defs/GraphVertexId"
+          },
+          "title": "Tail Vertex Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "edge_id",
+        "edge_type",
+        "source_id",
+        "tail_vertex_ids",
+        "head_vertex_ids",
+        "attributes"
+      ],
+      "title": "DirectedHyperedge",
+      "type": "object"
+    },
+    "GraphVertex": {
+      "additionalProperties": false,
+      "description": "One typed immutable vertex projected from a canonical source object.",
+      "properties": {
+        "attributes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Attributes",
+          "type": "object"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "vertex_id": {
+          "$ref": "#/$defs/GraphVertexId"
+        },
+        "vertex_type": {
+          "$ref": "#/$defs/VertexType"
+        }
+      },
+      "required": [
+        "vertex_id",
+        "vertex_type",
+        "source_id",
+        "content_hash",
+        "attributes"
+      ],
+      "title": "GraphVertex",
+      "type": "object"
+    },
+    "GraphVertexId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "HyperedgeId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "HyperedgeType": {
+      "enum": [
+        "constrains",
+        "derives",
+        "eliminates",
+        "assigns",
+        "assumes",
+        "contradicts",
+        "retracts",
+        "verifies",
+        "generates",
+        "uses_evidence",
+        "supersedes",
+        "projects_to",
+        "explains",
+        "recommends"
+      ],
+      "title": "HyperedgeType",
+      "type": "string"
+    },
+    "JsonValue": {},
+    "PuzzleRevisionId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "Sha256Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "VertexType": {
+      "enum": [
+        "domain_object",
+        "atom",
+        "constraint",
+        "clue",
+        "state",
+        "event",
+        "assumption",
+        "contradiction",
+        "solution",
+        "user_action",
+        "agent_proposal",
+        "report_section"
+      ],
+      "title": "VertexType",
+      "type": "string"
+    }
+  },
+  "$id": "urn:deductra:schema:reasoning-hypergraph:1",
+  "additionalProperties": false,
+  "description": "Visual-neutral deterministic projection of canonical reasoning objects.",
+  "properties": {
+    "edges": {
+      "items": {
+        "$ref": "#/$defs/DirectedHyperedge"
+      },
+      "title": "Edges",
+      "type": "array"
+    },
+    "graph_hash": {
+      "$ref": "#/$defs/Sha256Digest"
+    },
+    "puzzle_revision_id": {
+      "$ref": "#/$defs/PuzzleRevisionId"
+    },
+    "source_trace_hash": {
+      "$ref": "#/$defs/Sha256Digest"
+    },
+    "vertices": {
+      "items": {
+        "$ref": "#/$defs/GraphVertex"
+      },
+      "title": "Vertices",
+      "type": "array"
+    }
+  },
+  "required": [
+    "puzzle_revision_id",
+    "source_trace_hash",
+    "vertices",
+    "edges",
+    "graph_hash"
+  ],
+  "title": "Deductra Reasoning Hypergraph v1",
+  "type": "object"
+}

@@ -32,3 +32,5 @@ type ObligationId = Identifier
 type CertificateId = Identifier
 type RuleId = Identifier
 type RuleCandidateId = Identifier
+type GraphVertexId = Identifier
+type HyperedgeId = Identifier

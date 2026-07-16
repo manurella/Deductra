@@ -258,6 +258,11 @@
       "minLength": 1,
       "type": "string"
     },
+    "ConstraintId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
     "ContradictionDetected": {
       "additionalProperties": false,
       "description": "Mark the current branch contradictory without deleting its projection.",
@@ -456,6 +461,14 @@
           "title": "Certificate Ids",
           "type": "array"
         },
+        "conclusions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Atom"
+          },
+          "title": "Conclusions",
+          "type": "array"
+        },
         "event_id": {
           "anyOf": [
             {
@@ -478,6 +491,14 @@
             }
           ],
           "default": null
+        },
+        "premises": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Atom"
+          },
+          "title": "Premises",
+          "type": "array"
         },
         "proposal_hash": {
           "anyOf": [
@@ -505,8 +526,19 @@
           ],
           "default": null
         },
+        "rule": {
+          "$ref": "#/$defs/RuleReference"
+        },
         "source_state_hash": {
           "$ref": "#/$defs/Sha256Digest"
+        },
+        "supporting_constraints": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ConstraintId"
+          },
+          "title": "Supporting Constraints",
+          "type": "array"
         },
         "verification_status": {
           "$ref": "#/$defs/DeductionAuthorityStatus"
@@ -515,6 +547,7 @@
       "required": [
         "candidate_id",
         "source_state_hash",
+        "rule",
         "verification_status",
         "reason"
       ],
@@ -744,6 +777,49 @@
       "maxLength": 255,
       "minLength": 1,
       "type": "string"
+    },
+    "RuleId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "RuleReference": {
+      "additionalProperties": false,
+      "description": "Stable identity and teaching rank for one versioned human rule.",
+      "properties": {
+        "family_scope": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Family Scope",
+          "type": "array"
+        },
+        "rule_id": {
+          "$ref": "#/$defs/RuleId"
+        },
+        "rule_version": {
+          "title": "Rule Version",
+          "type": "string"
+        },
+        "technique_rank": {
+          "minimum": 0,
+          "title": "Technique Rank",
+          "type": "integer"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "rule_version",
+        "title",
+        "technique_rank"
+      ],
+      "title": "RuleReference",
+      "type": "object"
     },
     "Sha256Digest": {
       "pattern": "^[0-9a-f]{64}$",

@@ -9,9 +9,9 @@ from typing import Literal, Protocol, Self, runtime_checkable
 
 from pydantic import model_validator
 
-from deductra.domain.atoms import AssignmentAtom, ExclusionAtom
+from deductra.domain.atoms import AssignmentAtom, Atom, ExclusionAtom
 from deductra.domain.base import DomainModel
-from deductra.domain.ids import CertificateId, ObligationId, RuleCandidateId
+from deductra.domain.ids import CertificateId, ConstraintId, ObligationId, RuleCandidateId
 from deductra.domain.puzzle import PuzzleSpec
 from deductra.domain.serialization import canonical_sha256
 from deductra.reasoning.events import (
@@ -28,6 +28,7 @@ from deductra.reasoning.rules import (
     ReasoningRule,
     RuleApplicationCandidate,
     RuleContractError,
+    RuleReference,
     discover_rule_applications,
 )
 from deductra.reasoning.state import PuzzleState, validate_state
@@ -110,6 +111,10 @@ class HumanReasoningAttempt(DomainModel):
 
     candidate_id: RuleCandidateId
     source_state_hash: Sha256Digest
+    rule: RuleReference
+    premises: tuple[Atom, ...] = ()
+    conclusions: tuple[Atom, ...] = ()
+    supporting_constraints: tuple[ConstraintId, ...] = ()
     proposal_hash: Sha256Digest | None = None
     obligation_id: ObligationId | None = None
     verification_status: DeductionAuthorityStatus
@@ -117,6 +122,22 @@ class HumanReasoningAttempt(DomainModel):
     reason: str
     event_id: str | None = None
     result_state_hash: Sha256Digest | None = None
+
+    @model_validator(mode="after")
+    def validate_attempt_evidence(self) -> Self:
+        if self.verification_status in {
+            DeductionAuthorityStatus.BACKEND_VERIFIED,
+            DeductionAuthorityStatus.CROSS_VERIFIED,
+        } and (
+            self.proposal_hash is None
+            or self.obligation_id is None
+            or not self.certificate_ids
+            or len(self.conclusions) != 1
+            or self.event_id is None
+            or self.result_state_hash is None
+        ):
+            raise ValueError("verified attempts require complete deduction evidence")
+        return self
 
 
 class HumanSolveTrace(DomainModel):
@@ -299,6 +320,9 @@ class HumanReasoningEngine:
                     HumanReasoningAttempt(
                         candidate_id=candidate.candidate_id,
                         source_state_hash=current.state_hash,
+                        rule=candidate.rule,
+                        premises=candidate.premises,
+                        supporting_constraints=candidate.supporting_constraints,
                         verification_status=DeductionAuthorityStatus.REJECTED,
                         reason=f"invalid rule proposal: {error}",
                     )
@@ -353,6 +377,10 @@ class HumanReasoningEngine:
                     HumanReasoningAttempt(
                         candidate_id=candidate.candidate_id,
                         source_state_hash=current.state_hash,
+                        rule=proposal.rule,
+                        premises=proposal.premises,
+                        conclusions=proposal.conclusions,
+                        supporting_constraints=proposal.supporting_constraints,
                         proposal_hash=proposal_hash,
                         obligation_id=authority.obligation_id,
                         verification_status=authority.status,
@@ -392,6 +420,10 @@ class HumanReasoningEngine:
                 HumanReasoningAttempt(
                     candidate_id=candidate.candidate_id,
                     source_state_hash=current.state_hash,
+                    rule=proposal.rule,
+                    premises=proposal.premises,
+                    conclusions=proposal.conclusions,
+                    supporting_constraints=proposal.supporting_constraints,
                     proposal_hash=proposal_hash,
                     obligation_id=authority.obligation_id,
                     verification_status=authority.status,
