@@ -36,7 +36,9 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/README.md",
         "docs/architecture/README.md",
         "docs/architecture/core-domain-contracts.md",
+        "docs/architecture/event-protocol-and-store.md",
         "docs/architecture/decisions/0002-common-core-schema.md",
+        "docs/architecture/decisions/0003-canonical-event-store.md",
         "docs/architecture/decisions/0001-single-package-foundation.md",
         "docs/architecture/decisions/README.md",
         "docs/architecture/dependency-rules.md",
@@ -48,6 +50,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/governance/risk-register.md",
         "pyproject.toml",
         "schemas/puzzle-spec-v1.schema.json",
+        "schemas/event-envelope-v1.schema.json",
         "scripts/check_conventions.py",
         "scripts/check_docs.py",
         "scripts/export_json_schema.py",
@@ -62,10 +65,20 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "src/deductra/domain/schema.py",
         "src/deductra/domain/serialization.py",
         "src/deductra/domain/values.py",
+        "src/deductra/memory/__init__.py",
+        "src/deductra/memory/event_store.py",
+        "src/deductra/memory/sqlite_store.py",
         "src/deductra/py.typed",
+        "src/deductra/reasoning/__init__.py",
+        "src/deductra/reasoning/events.py",
+        "src/deductra/reasoning/integrity.py",
+        "src/deductra/reasoning/schema.py",
         "tests/architecture/test_import_boundaries.py",
         "tests/architecture/test_repository_contracts.py",
         "tests/domain/test_core_schema.py",
+        "tests/memory/test_sqlite_event_store.py",
+        "tests/reasoning/test_event_schema.py",
+        "tests/reasoning/test_events.py",
         "tests/test_package.py",
         "uv.lock",
     }
@@ -75,9 +88,12 @@ REQUIRED_FOUNDATION_PATHS = frozenset(
         "Dockerfile",
         "README.md",
         "docs/architecture/dependency-rules.md",
+        "docs/architecture/event-protocol-and-store.md",
         "docs/governance/project-governance.md",
         "pyproject.toml",
         "src/deductra/__init__.py",
+        "src/deductra/memory/event_store.py",
+        "src/deductra/reasoning/events.py",
         "src/deductra/py.typed",
         "tests/architecture/test_import_boundaries.py",
         "tests/architecture/test_repository_contracts.py",
@@ -146,8 +162,8 @@ def test_source_tree_has_one_distribution_package() -> None:
     assert packages == ["deductra"]
 
 
-def test_m1_package_contains_only_approved_core_schema_modules() -> None:
-    """Keep CR-001 limited to the approved domain schema surface."""
+def test_m1_package_contains_only_approved_packet_modules() -> None:
+    """Keep M1 limited to the CR-001 and CR-002 package surfaces."""
     package_root = REPOSITORY_ROOT / "src" / "deductra"
     public_files = {
         path.relative_to(package_root).as_posix()
@@ -166,7 +182,14 @@ def test_m1_package_contains_only_approved_core_schema_modules() -> None:
         "domain/schema.py",
         "domain/serialization.py",
         "domain/values.py",
+        "memory/__init__.py",
+        "memory/event_store.py",
+        "memory/sqlite_store.py",
         "py.typed",
+        "reasoning/__init__.py",
+        "reasoning/events.py",
+        "reasoning/integrity.py",
+        "reasoning/schema.py",
     }
 
 

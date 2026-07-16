@@ -79,6 +79,36 @@ def test_domain_package_does_not_import_outer_product_layers() -> None:
     assert not violations, f"domain imports outer product layers: {violations}"
 
 
+def test_reasoning_package_does_not_import_persistence_or_outer_layers() -> None:
+    """Allow reasoning to depend on domain contracts but never persistence details."""
+    violations: dict[str, list[str]] = {}
+    allowed = ("deductra.domain", "deductra.reasoning")
+    for source in sorted((PACKAGE_ROOT / "reasoning").glob("*.py")):
+        outward = {
+            module
+            for module in imported_modules(source)
+            if module.startswith("deductra.") and not module.startswith(allowed)
+        }
+        if outward:
+            violations[source.relative_to(REPOSITORY_ROOT).as_posix()] = sorted(outward)
+    assert not violations, f"reasoning imports persistence or outer layers: {violations}"
+
+
+def test_memory_package_depends_only_on_inward_contracts() -> None:
+    """Keep persistence adapters dependent on domain and reasoning, never delivery layers."""
+    violations: dict[str, list[str]] = {}
+    allowed = ("deductra.domain", "deductra.reasoning", "deductra.memory")
+    for source in sorted((PACKAGE_ROOT / "memory").glob("*.py")):
+        outward = {
+            module
+            for module in imported_modules(source)
+            if module.startswith("deductra.") and not module.startswith(allowed)
+        }
+        if outward:
+            violations[source.relative_to(REPOSITORY_ROOT).as_posix()] = sorted(outward)
+    assert not violations, f"memory imports outer layers: {violations}"
+
+
 def test_import_analysis_detects_an_undeclared_root(tmp_path: Path) -> None:
     """Prove that the import classifier sees an unapproved external root."""
     source = tmp_path / "module.py"

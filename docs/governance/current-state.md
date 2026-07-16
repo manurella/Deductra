@@ -1,6 +1,6 @@
 # Current State
 
-Last reviewed: 2026-07-15
+Last reviewed: 2026-07-16
 
 Deductra has completed M0 and is beginning M1, the common proof-carrying core. The repository currently has:
 
@@ -12,9 +12,11 @@ Deductra has completed M0 and is beginning M1, the common proof-carrying core. T
 - contributor, commit, pull-request, conduct, and security contracts;
 - pull-request CI, scheduled security checks, tag-driven GitHub Releases, and GHCR publication;
 - canonical public governance and architecture documentation;
-- automated repository, package, import, dependency, and Docker architecture contracts.
-- strict immutable puzzle-domain models, canonical serialization, and a checked-in PuzzleSpec v1 JSON Schema.
+- automated repository, package, import, dependency, and Docker architecture contracts;
+- strict immutable puzzle-domain models, canonical serialization, and a checked-in PuzzleSpec v1 JSON Schema;
+- immutable lifecycle-event envelopes, deterministic hash-chain verification, and a checked-in EventEnvelope v1 JSON Schema;
+- an append-only event-store port and transactional SQLite adapter.
 
-CR-001 implements data contracts only. No solver, generator, puzzle-family adapter, UI, report, memory, agent, or stable public API exists.
+CR-001 and CR-002 implement data, event, integrity, and persistence contracts only. No state reducer, solver, generator, puzzle-family adapter, UI, report system, learning memory, agent runtime, or stable public API exists.
 
-The owner accepted the M0 foundation after local and hosted CI verification. Branch protection and private vulnerability reporting were explicitly deferred by the owner and are not M1 blockers; this residual repository-administration risk remains recorded. CR-001 is the active implementation packet.
+The owner accepted the M0 foundation after local and hosted CI verification. Branch protection and private vulnerability reporting were explicitly deferred by the owner and are not M1 blockers; this residual repository-administration risk remains recorded. CR-002 is the active implementation packet, with state-level reducer acceptance explicitly reserved for CR-003.

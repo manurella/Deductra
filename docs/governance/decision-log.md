@@ -1,6 +1,6 @@
 # Decision Log
 
-Last reviewed: 2026-07-15
+Last reviewed: 2026-07-16
 
 This log summarizes accepted project-level decisions. Architecturally significant decisions link to a detailed record containing context and consequences.
 
@@ -16,5 +16,6 @@ This log summarizes accepted project-level decisions. Architecturally significan
 | D-008 | Enforce the public repository allowlist, single-package boundary, M0 dependency policy, Docker stages, and import roots with architecture tests. | Accepted | [@manurella](https://github.com/manurella) | [Dependency rules](../architecture/dependency-rules.md) |
 | D-009 | Accept M0 after local and hosted CI verification; defer branch protection and private vulnerability reporting without blocking M1. | Accepted | [@manurella](https://github.com/manurella) | [Current state](current-state.md) |
 | D-010 | Establish the immutable family-neutral domain schema and admit Pydantic as M1's first runtime dependency. | Accepted | [@manurella](https://github.com/manurella) | [ADR-0002](../architecture/decisions/0002-common-core-schema.md) |
+| D-011 | Store canonical lifecycle events in zero-based tamper-evident streams through a repository port and transactional SQLite adapter. | Accepted | [@manurella](https://github.com/manurella) | [ADR-0003](../architecture/decisions/0003-canonical-event-store.md) |
 
 New decisions receive the next sequential identifier. A superseding decision retains the old entry and links both records rather than erasing the earlier ruling.

@@ -1,6 +1,6 @@
 # Project Risk Register
 
-Last reviewed: 2026-07-15
+Last reviewed: 2026-07-16
 
 Probability and impact use the values Low, Medium, and High. The repository owner is accountable for review until responsibility is delegated publicly.
 
@@ -13,3 +13,4 @@ Probability and impact use the values Low, Medium, and High. The repository owne
 | R-005 | Sensitive or temporary material enters public history. | Low | High | Repository-hygiene review or secret scanning finds an unexpected artifact. | Maintain generic ignore rules, local-only exclusions, and explicit contributor guidance. | Revoke exposed secrets immediately and follow an evidence-preserving history-remediation plan. | [@manurella](https://github.com/manurella) | Every pull request |
 | R-006 | A release workflow publishes unintended or unverified artifacts. | Low | High | A tag does not match project version or is not reachable from `main`. | Restrict publication to version tags, verify ancestry and version, and attest artifacts. | Remove affected artifacts, revoke the release, correct the tag through documented recovery, and investigate. | [@manurella](https://github.com/manurella) | Every release |
 | R-007 | Direct changes can reach `main`, and private vulnerability reports are unavailable. | Medium | High | An unreviewed push lands or a reporter avoids public disclosure without a private channel. | Use disciplined pull requests and the published security contact while repository controls are deferred. | Enable branch protection and private vulnerability reporting when the owner chooses to adopt the controls. | [@manurella](https://github.com/manurella) | Each milestone |
+| R-008 | Persisted events or indexed stream metadata diverge or are altered. | Low | High | Chain verification, representation checks, or replay fail. | Store canonical envelopes with indexed identity and hashes; verify before reads and appends; keep the log append-only. | Quarantine the stream, preserve evidence, restore from a verified source, and investigate before projection or reporting. | [@manurella](https://github.com/manurella) | Every event or migration change |

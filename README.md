@@ -12,6 +12,7 @@ The current repository provides:
 - pull-request quality, compatibility, architecture, Docker, documentation, and security checks;
 - tag-driven wheel, source-distribution, GitHub Release, and GHCR publication.
 - strict, immutable domain models and a versioned JSON Schema for puzzle specifications.
+- canonical lifecycle events with tamper-evident hash chains and transactional SQLite storage.
 
 Pydantic is the sole runtime dependency for M1's validated domain boundary.
 

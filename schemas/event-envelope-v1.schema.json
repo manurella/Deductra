@@ -1,0 +1,350 @@
+{
+  "$defs": {
+    "AttemptId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "BranchId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "CausationId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "CorrelationId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "EventId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "EventSchemaVersion": {
+      "pattern": "^[1-9][0-9]*\\.[0-9]+\\.[0-9]+$",
+      "type": "string"
+    },
+    "InitialStateCreated": {
+      "additionalProperties": false,
+      "description": "Identify the immutable genesis state prepared for later reduction.",
+      "properties": {
+        "kind": {
+          "const": "initial_state_created",
+          "default": "initial_state_created",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "state_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        }
+      },
+      "required": [
+        "state_hash"
+      ],
+      "title": "InitialStateCreated",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ProducerId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ProducerRef": {
+      "additionalProperties": false,
+      "description": "Identity of the deterministic component that emitted an event.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "system",
+            "human",
+            "rule_engine",
+            "solver",
+            "tool",
+            "agent"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "producer_id": {
+          "$ref": "#/$defs/ProducerId"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "producer_id",
+        "kind",
+        "version"
+      ],
+      "title": "ProducerRef",
+      "type": "object"
+    },
+    "PuzzleRevisionId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "PuzzleValidated": {
+      "additionalProperties": false,
+      "description": "Record successful structural validation of the puzzle specification.",
+      "properties": {
+        "kind": {
+          "const": "puzzle_validated",
+          "default": "puzzle_validated",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "puzzle_spec_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        }
+      },
+      "required": [
+        "puzzle_spec_hash"
+      ],
+      "title": "PuzzleValidated",
+      "type": "object"
+    },
+    "ReasoningEventPayload": {
+      "discriminator": {
+        "mapping": {
+          "initial_state_created": "#/$defs/InitialStateCreated",
+          "puzzle_validated": "#/$defs/PuzzleValidated",
+          "trace_completed": "#/$defs/TraceCompleted",
+          "trace_failed": "#/$defs/TraceFailed",
+          "trace_started": "#/$defs/TraceStarted"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TraceStarted"
+        },
+        {
+          "$ref": "#/$defs/PuzzleValidated"
+        },
+        {
+          "$ref": "#/$defs/InitialStateCreated"
+        },
+        {
+          "$ref": "#/$defs/TraceCompleted"
+        },
+        {
+          "$ref": "#/$defs/TraceFailed"
+        }
+      ]
+    },
+    "Sha256Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "TraceCompleted": {
+      "additionalProperties": false,
+      "description": "Close a trace after its final state has been persisted.",
+      "properties": {
+        "final_state_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "kind": {
+          "const": "trace_completed",
+          "default": "trace_completed",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "final_state_hash"
+      ],
+      "title": "TraceCompleted",
+      "type": "object"
+    },
+    "TraceFailed": {
+      "additionalProperties": false,
+      "description": "Close a trace with a stable machine-readable failure classification.",
+      "properties": {
+        "error_code": {
+          "title": "Error Code",
+          "type": "string"
+        },
+        "kind": {
+          "const": "trace_failed",
+          "default": "trace_failed",
+          "title": "Kind",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "error_code",
+        "message"
+      ],
+      "title": "TraceFailed",
+      "type": "object"
+    },
+    "TraceId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "TraceStarted": {
+      "additionalProperties": false,
+      "description": "Begin a canonical reasoning trace for one immutable puzzle revision.",
+      "properties": {
+        "kind": {
+          "const": "trace_started",
+          "default": "trace_started",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "puzzle_spec_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        }
+      },
+      "required": [
+        "puzzle_spec_hash"
+      ],
+      "title": "TraceStarted",
+      "type": "object"
+    }
+  },
+  "$id": "urn:deductra:schema:event-envelope:1",
+  "additionalProperties": false,
+  "description": "Canonical event plus ordering, causality, provenance, and integrity fields.",
+  "properties": {
+    "attempt_id": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AttemptId"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "branch_id": {
+      "$ref": "#/$defs/BranchId"
+    },
+    "causation_id": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CausationId"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "correlation_id": {
+      "$ref": "#/$defs/CorrelationId"
+    },
+    "event_hash": {
+      "$ref": "#/$defs/Sha256Digest"
+    },
+    "event_id": {
+      "$ref": "#/$defs/EventId"
+    },
+    "event_type": {
+      "title": "Event Type",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "payload": {
+      "$ref": "#/$defs/ReasoningEventPayload"
+    },
+    "previous_event_hash": {
+      "$ref": "#/$defs/Sha256Digest"
+    },
+    "producer": {
+      "$ref": "#/$defs/ProducerRef"
+    },
+    "puzzle_revision_id": {
+      "$ref": "#/$defs/PuzzleRevisionId"
+    },
+    "schema_version": {
+      "$ref": "#/$defs/EventSchemaVersion"
+    },
+    "sequence_no": {
+      "minimum": 0,
+      "title": "Sequence No",
+      "type": "integer"
+    },
+    "trace_id": {
+      "$ref": "#/$defs/TraceId"
+    }
+  },
+  "required": [
+    "event_id",
+    "trace_id",
+    "puzzle_revision_id",
+    "branch_id",
+    "sequence_no",
+    "event_type",
+    "schema_version",
+    "occurred_at",
+    "producer",
+    "correlation_id",
+    "previous_event_hash",
+    "event_hash",
+    "payload"
+  ],
+  "title": "Deductra Event Envelope v1",
+  "type": "object"
+}
