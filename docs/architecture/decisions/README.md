@@ -9,6 +9,7 @@ Architecture decision records preserve why a significant technical choice was ma
 - [ADR-0003: Persist canonical events in tamper-evident SQLite streams](0003-canonical-event-store.md)
 - [ADR-0004: Derive immutable state through retained branch projections](0004-immutable-state-reduction.md)
 - [ADR-0005: Verify deductions through independent solver encodings](0005-independent-proof-verification.md)
+- [ADR-0006: Separate human rule proposals from verification authority](0006-verified-human-reasoning-loop.md)
 
 ## Lifecycle
 

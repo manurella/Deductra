@@ -16,6 +16,7 @@ from deductra.verification.coordinator import (
     apply_verified_event,
 )
 from deductra.verification.cpsat_backend import CpSatProofBackend
+from deductra.verification.rule_authority import VerifiedRuleAuthority
 from deductra.verification.z3_backend import Z3ProofBackend
 
 __all__ = [
@@ -30,6 +31,7 @@ __all__ = [
     "VerificationRecord",
     "VerificationRejectedError",
     "VerificationStatus",
+    "VerifiedRuleAuthority",
     "Z3ProofBackend",
     "apply_verified_event",
 ]

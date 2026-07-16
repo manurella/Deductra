@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from deductra.reasoning.engine import HumanSolveTrace
 from deductra.reasoning.events import EventEnvelope
 from deductra.reasoning.state import PuzzleState
 
@@ -43,6 +44,27 @@ def rendered_puzzle_state_json_schema() -> str:
     return (
         json.dumps(
             puzzle_state_json_schema(),
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n"
+    )
+
+
+def human_solve_trace_json_schema() -> dict[str, Any]:
+    """Return the versioned HumanSolveTrace JSON Schema."""
+    schema = HumanSolveTrace.model_json_schema()
+    schema["$id"] = "urn:deductra:schema:human-solve-trace:1"
+    schema["title"] = "Deductra Human Solve Trace v1"
+    return schema
+
+
+def rendered_human_solve_trace_json_schema() -> str:
+    """Return the normalized checked-in human-solve trace schema."""
+    return (
+        json.dumps(
+            human_solve_trace_json_schema(),
             ensure_ascii=False,
             indent=2,
             sort_keys=True,

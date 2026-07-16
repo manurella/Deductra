@@ -30,3 +30,5 @@ type SnapshotId = Identifier
 type ContradictionId = Identifier
 type ObligationId = Identifier
 type CertificateId = Identifier
+type RuleId = Identifier
+type RuleCandidateId = Identifier

@@ -1,0 +1,999 @@
+{
+  "$defs": {
+    "AggregateAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "comparator": {
+          "enum": [
+            "eq",
+            "ne",
+            "lt",
+            "le",
+            "gt",
+            "ge"
+          ],
+          "title": "Comparator",
+          "type": "string"
+        },
+        "kind": {
+          "const": "aggregate",
+          "default": "aggregate",
+          "title": "Kind",
+          "type": "string"
+        },
+        "members": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Members",
+          "type": "array"
+        },
+        "operator": {
+          "enum": [
+            "sum",
+            "count",
+            "min",
+            "max",
+            "parity"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "operator",
+        "members",
+        "comparator",
+        "target"
+      ],
+      "title": "AggregateAtom",
+      "type": "object"
+    },
+    "AssignmentAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "assignment",
+          "default": "assignment",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "AssignmentAtom",
+      "type": "object"
+    },
+    "Atom": {
+      "discriminator": {
+        "mapping": {
+          "aggregate": "#/$defs/AggregateAtom",
+          "assignment": "#/$defs/AssignmentAtom",
+          "exclusion": "#/$defs/ExclusionAtom",
+          "relation": "#/$defs/RelationAtom",
+          "truth": "#/$defs/TruthAtom"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AssignmentAtom"
+        },
+        {
+          "$ref": "#/$defs/ExclusionAtom"
+        },
+        {
+          "$ref": "#/$defs/RelationAtom"
+        },
+        {
+          "$ref": "#/$defs/AggregateAtom"
+        },
+        {
+          "$ref": "#/$defs/TruthAtom"
+        }
+      ]
+    },
+    "AttemptId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "BranchClosed": {
+      "additionalProperties": false,
+      "description": "Close a retained non-root branch and return projection focus to its parent.",
+      "properties": {
+        "kind": {
+          "const": "branch_closed",
+          "default": "branch_closed",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "source_state_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "status": {
+          "enum": [
+            "contradicted",
+            "solved",
+            "abandoned"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_state_hash",
+        "status"
+      ],
+      "title": "BranchClosed",
+      "type": "object"
+    },
+    "BranchId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "BranchOpened": {
+      "additionalProperties": false,
+      "description": "Open an explicit assumption or search branch from a retained parent state.",
+      "properties": {
+        "assumption": {
+          "$ref": "#/$defs/Atom"
+        },
+        "kind": {
+          "const": "branch_opened",
+          "default": "branch_opened",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "method": {
+          "enum": [
+            "assumption",
+            "search",
+            "demonstration"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "opened_from_state_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "parent_branch_id": {
+          "$ref": "#/$defs/BranchId"
+        },
+        "result_state_id": {
+          "$ref": "#/$defs/StateId"
+        }
+      },
+      "required": [
+        "parent_branch_id",
+        "opened_from_state_hash",
+        "assumption",
+        "method",
+        "result_state_id"
+      ],
+      "title": "BranchOpened",
+      "type": "object"
+    },
+    "CandidatesEliminated": {
+      "additionalProperties": false,
+      "description": "Remove verified candidates from one variable's current domain.",
+      "properties": {
+        "kind": {
+          "const": "candidates_eliminated",
+          "default": "candidates_eliminated",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "origin": {
+          "$ref": "#/$defs/ReasoningOrigin"
+        },
+        "result_state_id": {
+          "$ref": "#/$defs/StateId"
+        },
+        "source_state_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "value_ids": {
+          "items": {
+            "$ref": "#/$defs/ValueId"
+          },
+          "title": "Value Ids",
+          "type": "array"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_ids",
+        "source_state_hash",
+        "result_state_id",
+        "origin"
+      ],
+      "title": "CandidatesEliminated",
+      "type": "object"
+    },
+    "CausationId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "CertificateId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ContradictionDetected": {
+      "additionalProperties": false,
+      "description": "Mark the current branch contradictory without deleting its projection.",
+      "properties": {
+        "category": {
+          "title": "Category",
+          "type": "string"
+        },
+        "contradiction_id": {
+          "$ref": "#/$defs/ContradictionId"
+        },
+        "kind": {
+          "const": "contradiction_detected",
+          "default": "contradiction_detected",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "result_state_id": {
+          "$ref": "#/$defs/StateId"
+        },
+        "source_state_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        }
+      },
+      "required": [
+        "contradiction_id",
+        "source_state_hash",
+        "result_state_id",
+        "category"
+      ],
+      "title": "ContradictionDetected",
+      "type": "object"
+    },
+    "ContradictionId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "CorrelationId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "DeductionAuthorityStatus": {
+      "description": "Backend-neutral authority outcome consumed by the human loop.",
+      "enum": [
+        "backend_verified",
+        "cross_verified",
+        "rejected",
+        "inconclusive",
+        "quarantined"
+      ],
+      "title": "DeductionAuthorityStatus",
+      "type": "string"
+    },
+    "EventEnvelope": {
+      "additionalProperties": false,
+      "description": "Canonical event plus ordering, causality, provenance, and integrity fields.",
+      "properties": {
+        "attempt_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AttemptId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "branch_id": {
+          "$ref": "#/$defs/BranchId"
+        },
+        "causation_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CausationId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "correlation_id": {
+          "$ref": "#/$defs/CorrelationId"
+        },
+        "event_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "event_id": {
+          "$ref": "#/$defs/EventId"
+        },
+        "event_type": {
+          "title": "Event Type",
+          "type": "string"
+        },
+        "occurred_at": {
+          "format": "date-time",
+          "title": "Occurred At",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/ReasoningEventPayload"
+        },
+        "previous_event_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "producer": {
+          "$ref": "#/$defs/ProducerRef"
+        },
+        "puzzle_revision_id": {
+          "$ref": "#/$defs/PuzzleRevisionId"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/EventSchemaVersion"
+        },
+        "sequence_no": {
+          "minimum": 0,
+          "title": "Sequence No",
+          "type": "integer"
+        },
+        "trace_id": {
+          "$ref": "#/$defs/TraceId"
+        }
+      },
+      "required": [
+        "event_id",
+        "trace_id",
+        "puzzle_revision_id",
+        "branch_id",
+        "sequence_no",
+        "event_type",
+        "schema_version",
+        "occurred_at",
+        "producer",
+        "correlation_id",
+        "previous_event_hash",
+        "event_hash",
+        "payload"
+      ],
+      "title": "EventEnvelope",
+      "type": "object"
+    },
+    "EventId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "EventSchemaVersion": {
+      "pattern": "^[1-9][0-9]*\\.[0-9]+\\.[0-9]+$",
+      "type": "string"
+    },
+    "ExclusionAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "exclusion",
+          "default": "exclusion",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "ExclusionAtom",
+      "type": "object"
+    },
+    "HumanReasoningAttempt": {
+      "additionalProperties": false,
+      "description": "Stable logical record of one selected human-rule candidate.",
+      "properties": {
+        "candidate_id": {
+          "$ref": "#/$defs/RuleCandidateId"
+        },
+        "certificate_ids": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CertificateId"
+          },
+          "title": "Certificate Ids",
+          "type": "array"
+        },
+        "event_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Id"
+        },
+        "obligation_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ObligationId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "proposal_hash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256Digest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "result_state_hash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256Digest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_state_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "verification_status": {
+          "$ref": "#/$defs/DeductionAuthorityStatus"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "source_state_hash",
+        "verification_status",
+        "reason"
+      ],
+      "title": "HumanReasoningAttempt",
+      "type": "object"
+    },
+    "HumanSolveStatus": {
+      "description": "Terminal classification for one bounded human-rule run.",
+      "enum": [
+        "solved",
+        "stalled",
+        "inconclusive",
+        "quarantined",
+        "limit_reached"
+      ],
+      "title": "HumanSolveStatus",
+      "type": "string"
+    },
+    "InitialStateCreated": {
+      "additionalProperties": false,
+      "description": "Identify the immutable genesis state prepared for later reduction.",
+      "properties": {
+        "kind": {
+          "const": "initial_state_created",
+          "default": "initial_state_created",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "state_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        }
+      },
+      "required": [
+        "state_hash"
+      ],
+      "title": "InitialStateCreated",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ObligationId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ProducerId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ProducerRef": {
+      "additionalProperties": false,
+      "description": "Identity of the deterministic component that emitted an event.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "system",
+            "human",
+            "rule_engine",
+            "solver",
+            "tool",
+            "agent"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "producer_id": {
+          "$ref": "#/$defs/ProducerId"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "producer_id",
+        "kind",
+        "version"
+      ],
+      "title": "ProducerRef",
+      "type": "object"
+    },
+    "PuzzleRevisionId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "PuzzleValidated": {
+      "additionalProperties": false,
+      "description": "Record successful structural validation of the puzzle specification.",
+      "properties": {
+        "kind": {
+          "const": "puzzle_validated",
+          "default": "puzzle_validated",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "puzzle_spec_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        }
+      },
+      "required": [
+        "puzzle_spec_hash"
+      ],
+      "title": "PuzzleValidated",
+      "type": "object"
+    },
+    "ReasoningEventPayload": {
+      "discriminator": {
+        "mapping": {
+          "branch_closed": "#/$defs/BranchClosed",
+          "branch_opened": "#/$defs/BranchOpened",
+          "candidates_eliminated": "#/$defs/CandidatesEliminated",
+          "contradiction_detected": "#/$defs/ContradictionDetected",
+          "initial_state_created": "#/$defs/InitialStateCreated",
+          "puzzle_validated": "#/$defs/PuzzleValidated",
+          "trace_completed": "#/$defs/TraceCompleted",
+          "trace_failed": "#/$defs/TraceFailed",
+          "trace_started": "#/$defs/TraceStarted",
+          "value_assigned": "#/$defs/ValueAssigned"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TraceStarted"
+        },
+        {
+          "$ref": "#/$defs/PuzzleValidated"
+        },
+        {
+          "$ref": "#/$defs/InitialStateCreated"
+        },
+        {
+          "$ref": "#/$defs/TraceCompleted"
+        },
+        {
+          "$ref": "#/$defs/TraceFailed"
+        },
+        {
+          "$ref": "#/$defs/CandidatesEliminated"
+        },
+        {
+          "$ref": "#/$defs/ValueAssigned"
+        },
+        {
+          "$ref": "#/$defs/BranchOpened"
+        },
+        {
+          "$ref": "#/$defs/ContradictionDetected"
+        },
+        {
+          "$ref": "#/$defs/BranchClosed"
+        }
+      ]
+    },
+    "ReasoningOrigin": {
+      "enum": [
+        "given",
+        "human_rule",
+        "assumption",
+        "search",
+        "system"
+      ],
+      "type": "string"
+    },
+    "ReasoningPolicy": {
+      "description": "Supported family-neutral human deduction selection policies.",
+      "enum": [
+        "teaching_first",
+        "shortest_trace",
+        "max_information_gain",
+        "family_canonical"
+      ],
+      "title": "ReasoningPolicy",
+      "type": "string"
+    },
+    "RelationAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "arguments": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Arguments",
+          "type": "array"
+        },
+        "kind": {
+          "const": "relation",
+          "default": "relation",
+          "title": "Kind",
+          "type": "string"
+        },
+        "relation": {
+          "title": "Relation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "relation",
+        "arguments"
+      ],
+      "title": "RelationAtom",
+      "type": "object"
+    },
+    "RuleCandidateId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "Sha256Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "StateId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "TraceCompleted": {
+      "additionalProperties": false,
+      "description": "Close a trace after its final state has been persisted.",
+      "properties": {
+        "final_state_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "kind": {
+          "const": "trace_completed",
+          "default": "trace_completed",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "final_state_hash"
+      ],
+      "title": "TraceCompleted",
+      "type": "object"
+    },
+    "TraceFailed": {
+      "additionalProperties": false,
+      "description": "Close a trace with a stable machine-readable failure classification.",
+      "properties": {
+        "error_code": {
+          "title": "Error Code",
+          "type": "string"
+        },
+        "kind": {
+          "const": "trace_failed",
+          "default": "trace_failed",
+          "title": "Kind",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "error_code",
+        "message"
+      ],
+      "title": "TraceFailed",
+      "type": "object"
+    },
+    "TraceId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "TraceStarted": {
+      "additionalProperties": false,
+      "description": "Begin a canonical reasoning trace for one immutable puzzle revision.",
+      "properties": {
+        "kind": {
+          "const": "trace_started",
+          "default": "trace_started",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "puzzle_spec_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        }
+      },
+      "required": [
+        "puzzle_spec_hash"
+      ],
+      "title": "TraceStarted",
+      "type": "object"
+    },
+    "TruthAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "truth",
+          "default": "truth",
+          "title": "Kind",
+          "type": "string"
+        },
+        "proposition_id": {
+          "title": "Proposition Id",
+          "type": "string"
+        },
+        "truth_value": {
+          "title": "Truth Value",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "proposition_id",
+        "truth_value"
+      ],
+      "title": "TruthAtom",
+      "type": "object"
+    },
+    "ValueAssigned": {
+      "additionalProperties": false,
+      "description": "Project one verified assignment into the immutable puzzle state.",
+      "properties": {
+        "kind": {
+          "const": "value_assigned",
+          "default": "value_assigned",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "origin": {
+          "$ref": "#/$defs/ReasoningOrigin"
+        },
+        "result_state_id": {
+          "$ref": "#/$defs/StateId"
+        },
+        "source_state_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id",
+        "source_state_hash",
+        "result_state_id",
+        "origin"
+      ],
+      "title": "ValueAssigned",
+      "type": "object"
+    },
+    "ValueId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "VariableId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "$id": "urn:deductra:schema:human-solve-trace:1",
+  "additionalProperties": false,
+  "description": "Canonical logical trace of a bounded human-rule solve run.",
+  "properties": {
+    "attempts": {
+      "items": {
+        "$ref": "#/$defs/HumanReasoningAttempt"
+      },
+      "title": "Attempts",
+      "type": "array"
+    },
+    "events": {
+      "items": {
+        "$ref": "#/$defs/EventEnvelope"
+      },
+      "title": "Events",
+      "type": "array"
+    },
+    "final_state_hash": {
+      "$ref": "#/$defs/Sha256Digest"
+    },
+    "initial_state_hash": {
+      "$ref": "#/$defs/Sha256Digest"
+    },
+    "policy": {
+      "$ref": "#/$defs/ReasoningPolicy"
+    },
+    "puzzle_revision_id": {
+      "title": "Puzzle Revision Id",
+      "type": "string"
+    },
+    "stalled_reason": {
+      "anyOf": [
+        {
+          "enum": [
+            "HUMAN_RULES_EXHAUSTED",
+            "MAX_STEPS_REACHED"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stalled Reason"
+    },
+    "status": {
+      "$ref": "#/$defs/HumanSolveStatus"
+    },
+    "trace_hash": {
+      "$ref": "#/$defs/Sha256Digest"
+    },
+    "trace_id": {
+      "title": "Trace Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "trace_id",
+    "puzzle_revision_id",
+    "policy",
+    "status",
+    "initial_state_hash",
+    "final_state_hash",
+    "attempts",
+    "events",
+    "trace_hash"
+  ],
+  "title": "Deductra Human Solve Trace v1",
+  "type": "object"
+}

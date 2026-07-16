@@ -1,5 +1,16 @@
 """Canonical reasoning-event contracts and integrity verification."""
 
+from deductra.reasoning.engine import (
+    DeductionAuthority,
+    DeductionAuthorityResult,
+    DeductionAuthorityStatus,
+    HumanReasoningAttempt,
+    HumanReasoningEngine,
+    HumanSolveContext,
+    HumanSolveStatus,
+    HumanSolveTrace,
+    compute_human_trace_hash,
+)
 from deductra.reasoning.events import (
     BranchClosed,
     BranchOpened,
@@ -22,6 +33,7 @@ from deductra.reasoning.integrity import (
     verify_chain,
     verify_event,
 )
+from deductra.reasoning.policy import ReasoningPolicy, select_rule_application
 from deductra.reasoning.reducer import (
     SearchDisclosureError,
     StateConflictError,
@@ -29,6 +41,14 @@ from deductra.reasoning.reducer import (
     UnsupportedStateEventError,
     reduce_state,
     replay_projection,
+)
+from deductra.reasoning.rules import (
+    ProposedDeduction,
+    ReasoningRule,
+    RuleApplicationCandidate,
+    RuleContractError,
+    RuleReference,
+    discover_rule_applications,
 )
 from deductra.reasoning.state import (
     PuzzleState,
@@ -45,11 +65,25 @@ __all__ = [
     "CandidatesEliminated",
     "ChainVerification",
     "ContradictionDetected",
+    "DeductionAuthority",
+    "DeductionAuthorityResult",
+    "DeductionAuthorityStatus",
     "EventEnvelope",
+    "HumanReasoningAttempt",
+    "HumanReasoningEngine",
+    "HumanSolveContext",
+    "HumanSolveStatus",
+    "HumanSolveTrace",
     "InitialStateCreated",
     "ProducerRef",
+    "ProposedDeduction",
     "PuzzleState",
     "PuzzleValidated",
+    "ReasoningPolicy",
+    "ReasoningRule",
+    "RuleApplicationCandidate",
+    "RuleContractError",
+    "RuleReference",
     "SearchDisclosureError",
     "StateConflictError",
     "StateReductionError",
@@ -60,11 +94,14 @@ __all__ = [
     "UnsupportedStateEventError",
     "ValueAssigned",
     "compute_event_hash",
+    "compute_human_trace_hash",
     "compute_state_hash",
     "create_initial_state",
+    "discover_rule_applications",
     "reduce_state",
     "replay_projection",
     "seal_event",
+    "select_rule_application",
     "validate_state",
     "verify_chain",
     "verify_event",

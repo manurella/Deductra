@@ -39,10 +39,12 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/architecture/event-protocol-and-store.md",
         "docs/architecture/state-reduction-and-replay.md",
         "docs/architecture/verification-contracts-and-backends.md",
+        "docs/architecture/human-reasoning-engine.md",
         "docs/architecture/decisions/0002-common-core-schema.md",
         "docs/architecture/decisions/0003-canonical-event-store.md",
         "docs/architecture/decisions/0004-immutable-state-reduction.md",
         "docs/architecture/decisions/0005-independent-proof-verification.md",
+        "docs/architecture/decisions/0006-verified-human-reasoning-loop.md",
         "docs/architecture/decisions/0001-single-package-foundation.md",
         "docs/architecture/decisions/README.md",
         "docs/architecture/dependency-rules.md",
@@ -58,6 +60,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "schemas/event-envelope-v1.schema.json",
         "schemas/puzzle-state-v1.schema.json",
         "schemas/verification-record-v1.schema.json",
+        "schemas/human-solve-trace-v1.schema.json",
         "scripts/check_conventions.py",
         "scripts/check_docs.py",
         "scripts/export_json_schema.py",
@@ -81,7 +84,10 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "src/deductra/reasoning/events.py",
         "src/deductra/reasoning/branches.py",
         "src/deductra/reasoning/integrity.py",
+        "src/deductra/reasoning/engine.py",
+        "src/deductra/reasoning/policy.py",
         "src/deductra/reasoning/reducer.py",
+        "src/deductra/reasoning/rules.py",
         "src/deductra/reasoning/schema.py",
         "src/deductra/reasoning/state.py",
         "src/deductra/verification/__init__.py",
@@ -90,6 +96,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "src/deductra/verification/cpsat_backend.py",
         "src/deductra/verification/encoding.py",
         "src/deductra/verification/schema.py",
+        "src/deductra/verification/rule_authority.py",
         "src/deductra/verification/z3_backend.py",
         "tests/architecture/test_import_boundaries.py",
         "tests/architecture/test_repository_contracts.py",
@@ -97,6 +104,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "tests/memory/test_sqlite_event_store.py",
         "tests/reasoning/test_event_schema.py",
         "tests/reasoning/test_events.py",
+        "tests/reasoning/test_human_engine.py",
         "tests/reasoning/test_state_reducer.py",
         "tests/verification/test_verification.py",
         "tests/test_package.py",
@@ -186,7 +194,7 @@ def test_source_tree_has_one_distribution_package() -> None:
 
 
 def test_m1_package_contains_only_approved_packet_modules() -> None:
-    """Keep M1 limited to the CR-001 through CR-004 package surfaces."""
+    """Keep M1 limited to the CR-001 through CR-005 package surfaces."""
     package_root = REPOSITORY_ROOT / "src" / "deductra"
     public_files = {
         path.relative_to(package_root).as_posix()
@@ -213,8 +221,11 @@ def test_m1_package_contains_only_approved_packet_modules() -> None:
         "reasoning/__init__.py",
         "reasoning/branches.py",
         "reasoning/events.py",
+        "reasoning/engine.py",
         "reasoning/integrity.py",
+        "reasoning/policy.py",
         "reasoning/reducer.py",
+        "reasoning/rules.py",
         "reasoning/schema.py",
         "reasoning/state.py",
         "verification/__init__.py",
@@ -223,6 +234,7 @@ def test_m1_package_contains_only_approved_packet_modules() -> None:
         "verification/cpsat_backend.py",
         "verification/encoding.py",
         "verification/schema.py",
+        "verification/rule_authority.py",
         "verification/z3_backend.py",
     }
 

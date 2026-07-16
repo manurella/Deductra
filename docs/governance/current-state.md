@@ -21,8 +21,12 @@ Deductra has completed M0 and is beginning M1, the common proof-carrying core. T
 - source-bound assignment and elimination proof obligations;
 - independent Z3 and CP-SAT encodings with sealed verification certificates;
 - fail-closed inconclusive and quarantine outcomes plus a verified reducer boundary;
-- a checked-in VerificationRecord v1 JSON Schema.
+- a checked-in VerificationRecord v1 JSON Schema;
+- family-neutral human-rule, application-candidate, and proposed-deduction interfaces;
+- deterministic teaching, shortest-trace, information-gain, and family-canonical policies;
+- a verified human solve loop with explicit stalled, inconclusive, and quarantined outcomes;
+- a checked-in HumanSolveTrace v1 JSON Schema.
 
-CR-001 through CR-004 implement data, event, persistence, state-projection, and bounded verification contracts. The verification backends establish entailment for the currently supported finite-domain constraint subset; they are not a puzzle-solving strategy or end-user solver. No generator, puzzle-family adapter, UI, report system, learning memory, agent runtime, or stable public API exists.
+CR-001 through CR-005 implement data, event, persistence, state-projection, bounded verification, and human-rule orchestration contracts. The engine contains no concrete family rules and never falls back to search. No generator, puzzle-family adapter, UI, report system, learning memory, agent runtime, or stable public API exists.
 
-The owner accepted the M0 foundation after local and hosted CI verification. Branch protection and private vulnerability reporting were explicitly deferred by the owner and are not M1 blockers; this residual repository-administration risk remains recorded. CR-004 is the active implementation packet.
+The owner accepted the M0 foundation after local and hosted CI verification. Branch protection and private vulnerability reporting were explicitly deferred by the owner and are not M1 blockers; this residual repository-administration risk remains recorded. CR-005 is the active implementation packet.

@@ -9,6 +9,7 @@ This directory contains the canonical public documentation for Deductra's engine
 - [Dependency rules](architecture/dependency-rules.md)
 - [Architecture decisions](architecture/decisions/README.md)
 - [Verification contracts and backends](architecture/verification-contracts-and-backends.md)
+- [Human reasoning engine](architecture/human-reasoning-engine.md)
 
 ## Governance
 
