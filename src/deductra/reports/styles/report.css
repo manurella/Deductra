@@ -1,0 +1,23 @@
+@page {
+  size: A4;
+  margin: 18mm 16mm 20mm;
+  @bottom-center { content: "Page " counter(page) " of " counter(pages); }
+}
+
+:root { color: #17202a; font: 10.5pt/1.5 sans-serif; }
+body { margin: 0; }
+.report-header { border-bottom: 1px solid #64748b; color: #475569; }
+h1, h2, h3 { break-after: avoid; color: #102a43; }
+h1 { font-size: 24pt; }
+h2 { border-bottom: 1px solid #cbd5e1; margin-top: 1.5rem; }
+h3 { font-size: 11pt; }
+section, article, figure { break-inside: avoid; }
+dl { display: grid; grid-template-columns: minmax(9rem, auto) 1fr; gap: .25rem 1rem; }
+dt { font-weight: 700; }
+dd { margin: 0; overflow-wrap: anywhere; }
+a { color: #075985; }
+code { font-family: monospace; font-size: 8.5pt; overflow-wrap: anywhere; }
+.evidence { font-size: 9pt; }
+figure { border: 1px solid #94a3b8; margin: 1rem 0; padding: .75rem; }
+figcaption span { display: block; margin-top: .25rem; }
+.visual-data { background: #f1f5f9; font-family: monospace; padding: .5rem; white-space: pre-wrap; }

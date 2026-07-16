@@ -10,7 +10,11 @@ FROM ${PYTHON_IMAGE} AS python-base
 COPY --from=uv /uv /uvx /bin/
 
 RUN apt-get update \
-    && apt-get install --yes --no-install-recommends libatomic1 \
+    && apt-get install --yes --no-install-recommends \
+        libatomic1 \
+        libharfbuzz-subset0 \
+        libpango-1.0-0 \
+        libpangoft2-1.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 ENV PYTHONFAULTHANDLER=1 \
@@ -82,12 +86,22 @@ FROM ${PYTHON_IMAGE} AS runtime
 ARG APP_UID=10001
 ARG APP_GID=10001
 
-RUN groupadd --gid "${APP_GID}" deductra \
-    && useradd --uid "${APP_UID}" --gid "${APP_GID}" --no-create-home --shell /usr/sbin/nologin deductra
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends \
+        libatomic1 \
+        libharfbuzz-subset0 \
+        libpango-1.0-0 \
+        libpangoft2-1.0-0 \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid "${APP_GID}" deductra \
+    && useradd --uid "${APP_UID}" --gid "${APP_GID}" --no-create-home --shell /usr/sbin/nologin deductra \
+    && mkdir -p /app/.cache \
+    && chown "${APP_UID}:${APP_GID}" /app/.cache
 
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONFAULTHANDLER=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    XDG_CACHE_HOME=/app/.cache
 
 WORKDIR /app
 

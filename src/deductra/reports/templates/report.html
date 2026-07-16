@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="{{ report.identity.language }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ report.identity.title }}</title>
+  <style>{{ stylesheet | safe }}</style>
+</head>
+<body>
+  <header class="report-header">
+    <p>Deductra evidence report</p>
+  </header>
+  <main>
+    <h1>{{ report.identity.title }}</h1>
+    <dl class="identity">
+      <dt>Report identifier</dt><dd>{{ report.report_id }}</dd>
+      <dt>Subject</dt><dd>{{ report.identity.subject_id }}</dd>
+      <dt>Created</dt><dd>{{ report.identity.created_at }}</dd>
+      <dt>Facts hash</dt><dd><code>{{ report.facts_hash }}</code></dd>
+    </dl>
+    <nav aria-label="Report contents">
+      <h2>Contents</h2>
+      <ol>
+      {% for section in report.sections %}
+        <li><a href="#{{ section.section_id }}">{{ section.title }}</a></li>
+      {% endfor %}
+      </ol>
+    </nav>
+    {% for section in report.sections %}
+    <section id="{{ section.section_id }}">
+      <h2>{{ section.title }}</h2>
+      {% if section.applicability.value == "not_applicable" %}
+      <p><em>Not applicable to this report.</em></p>
+      {% else %}
+        {% for claim_id in section.claim_ids %}
+          {% for claim in report.claims if claim.claim_id == claim_id %}
+          <article id="{{ claim.claim_id }}">
+            <h3>Claim</h3>
+            <p>{{ claim.text }}</p>
+            {% if claim.evidence_ids %}
+            <p class="evidence">Evidence:
+              {% for evidence_id in claim.evidence_ids %}
+              <a href="#evidence-{{ evidence_id }}">{{ evidence_id }}</a>{% if not loop.last %}, {% endif %}
+              {% endfor %}
+            </p>
+            {% endif %}
+          </article>
+          {% endfor %}
+        {% endfor %}
+        {% for visual_id in section.visual_ids %}
+          {% for visual in report.visuals if visual.visual_id == visual_id %}
+          <figure id="{{ visual.visual_id }}" role="{% if visual.decorative %}presentation{% else %}group{% endif %}">
+            <div class="visual-data" aria-hidden="true">{{ visual.data | canonical_json }}</div>
+            <figcaption>
+              <strong>{{ visual.title }}</strong>
+              {% if visual.alt_text %}<span>{{ visual.alt_text }}</span>{% endif %}
+              {% if visual.long_description %}<span>{{ visual.long_description }}</span>{% endif %}
+            </figcaption>
+          </figure>
+          {% endfor %}
+        {% endfor %}
+      {% endif %}
+    </section>
+    {% endfor %}
+    <section id="evidence-register">
+      <h2>Evidence register</h2>
+      {% for item in report.evidence %}
+      <article id="evidence-{{ item.evidence_id }}">
+        <h3>{{ item.evidence_id }}</h3>
+        <dl>
+          <dt>Kind</dt><dd>{{ item.evidence_kind }}</dd>
+          <dt>Verification</dt><dd>{{ item.verification_status.value }}</dd>
+          <dt>Content hash</dt><dd><code>{{ item.content_hash }}</code></dd>
+        </dl>
+      </article>
+      {% endfor %}
+    </section>
+  </main>
+</body>
+</html>

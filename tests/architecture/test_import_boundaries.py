@@ -10,8 +10,10 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 PACKAGE_ROOT = REPOSITORY_ROOT / "src" / "deductra"
 ALLOWED_IMPORT_ROOTS = frozenset(sys.stdlib_module_names) | {
     "deductra",
+    "jinja2",
     "ortools",
     "pydantic",
+    "weasyprint",
     "z3",
 }
 FORBIDDEN_INTERNAL_ROOTS = frozenset({"scripts", "tests"})
@@ -177,6 +179,26 @@ def test_generation_package_depends_only_on_evidence_contracts() -> None:
         if outward:
             violations[source.relative_to(REPOSITORY_ROOT).as_posix()] = sorted(outward)
     assert not violations, f"generation imports authoritative outer layers: {violations}"
+
+
+def test_reports_are_downstream_of_authoritative_contracts() -> None:
+    """Keep reports derived from canonical contracts and independent of adapters."""
+    violations: dict[str, list[str]] = {}
+    allowed = (
+        "deductra.domain",
+        "deductra.reasoning",
+        "deductra.verification",
+        "deductra.reports",
+    )
+    for source in sorted((PACKAGE_ROOT / "reports").glob("*.py")):
+        outward = {
+            module
+            for module in imported_modules(source)
+            if module.startswith("deductra.") and not module.startswith(allowed)
+        }
+        if outward:
+            violations[source.relative_to(REPOSITORY_ROOT).as_posix()] = sorted(outward)
+    assert not violations, f"reports import non-canonical outer layers: {violations}"
 
 
 def test_import_analysis_detects_an_undeclared_root(tmp_path: Path) -> None:

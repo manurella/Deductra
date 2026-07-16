@@ -13,6 +13,7 @@ from deductra.reasoning.schema import (
     rendered_human_solve_trace_json_schema,
     rendered_puzzle_state_json_schema,
 )
+from deductra.reports.schema import rendered_report_model_json_schema
 from deductra.verification.schema import rendered_verification_record_json_schema
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
@@ -24,6 +25,7 @@ HYPERGRAPH_SCHEMA_PATH = REPOSITORY_ROOT / "schemas" / "reasoning-hypergraph-v1.
 GENERATION_SCHEMA_PATH = REPOSITORY_ROOT / "schemas" / "generation-contract-v1.schema.json"
 MEMORY_PROJECTION_SCHEMA_PATH = REPOSITORY_ROOT / "schemas" / "memory-projections-v1.schema.json"
 VERIFICATION_SCHEMA_PATH = REPOSITORY_ROOT / "schemas" / "verification-record-v1.schema.json"
+REPORT_MODEL_SCHEMA_PATH = REPOSITORY_ROOT / "schemas" / "report-model-v1.schema.json"
 
 
 def main() -> None:
@@ -66,6 +68,11 @@ def main() -> None:
     )
     VERIFICATION_SCHEMA_PATH.write_text(
         rendered_verification_record_json_schema(),
+        encoding="utf-8",
+        newline="\n",
+    )
+    REPORT_MODEL_SCHEMA_PATH.write_text(
+        rendered_report_model_json_schema(),
         encoding="utf-8",
         newline="\n",
     )

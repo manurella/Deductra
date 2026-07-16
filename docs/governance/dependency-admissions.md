@@ -33,3 +33,19 @@ Admitted in CR-001 for strict immutable domain validation and JSON Schema genera
 ## Review controls
 
 Dependabot, locked installation, dependency review, vulnerability audit, license review, Python compatibility tests, container builds, and backend acceptance tests are the continuing controls. A missing wheel, unresolved high-severity advisory, license incompatibility, or unexplained solver disagreement blocks release.
+
+## Jinja
+
+- Admitted version range: `>=3.1.6,<4`.
+- Purpose: strict, autoescaped rendering of semantic HTML derived from `ReportModel`.
+- Why the standard library is insufficient: string assembly has no reviewed template boundary, strict undefined-value handling, or contextual HTML escaping.
+- Operational controls: templates are package-local, undefined values fail closed, and rendered HTML is structurally audited.
+- Removal strategy: preserve the `HtmlRenderer` protocol and prove equivalent semantic and injection-safety behavior with a replacement.
+
+## WeasyPrint
+
+- Admitted version: exactly `69.0`.
+- Purpose: derive paged PDF artifacts from semantic HTML behind the `PdfRenderer` protocol.
+- Why the standard library is insufficient: it provides no HTML/CSS pagination, tagged-PDF generation, or evidence-attachment support.
+- Operational controls: the adapter denies external resource fetches, container native libraries are explicit, and profile flags never count as conformance evidence.
+- Removal strategy: replace the adapter behind the protocol, then replay PDF smoke, accessibility-structure, attachment, and visual checks.

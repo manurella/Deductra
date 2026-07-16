@@ -24,6 +24,7 @@ REQUIRED_DOCUMENTS = {
     Path("docs/architecture/reasoning-hypergraph.md"),
     Path("docs/architecture/generator-foundation.md"),
     Path("docs/architecture/event-sourced-memory-projections.md"),
+    Path("docs/architecture/report-contract-and-rendering.md"),
     Path("docs/architecture/dependency-rules.md"),
     Path("docs/architecture/decisions/0001-single-package-foundation.md"),
     Path("docs/architecture/decisions/0002-common-core-schema.md"),

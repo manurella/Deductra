@@ -43,6 +43,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/architecture/reasoning-hypergraph.md",
         "docs/architecture/generator-foundation.md",
         "docs/architecture/event-sourced-memory-projections.md",
+        "docs/architecture/report-contract-and-rendering.md",
         "docs/architecture/decisions/0002-common-core-schema.md",
         "docs/architecture/decisions/0003-canonical-event-store.md",
         "docs/architecture/decisions/0004-immutable-state-reduction.md",
@@ -70,6 +71,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "schemas/reasoning-hypergraph-v1.schema.json",
         "schemas/generation-contract-v1.schema.json",
         "schemas/memory-projections-v1.schema.json",
+        "schemas/report-model-v1.schema.json",
         "scripts/check_conventions.py",
         "scripts/check_docs.py",
         "scripts/export_json_schema.py",
@@ -105,6 +107,13 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "src/deductra/memory/projections/rebuild.py",
         "src/deductra/memory/projections/schema.py",
         "src/deductra/py.typed",
+        "src/deductra/reports/__init__.py",
+        "src/deductra/reports/html.py",
+        "src/deductra/reports/model.py",
+        "src/deductra/reports/pdf.py",
+        "src/deductra/reports/schema.py",
+        "src/deductra/reports/styles/report.css",
+        "src/deductra/reports/templates/report.html",
         "src/deductra/reasoning/__init__.py",
         "src/deductra/reasoning/events.py",
         "src/deductra/reasoning/branches.py",
@@ -134,6 +143,11 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "tests/reasoning/test_events.py",
         "tests/reasoning/test_human_engine.py",
         "tests/reasoning/test_state_reducer.py",
+        "tests/reports/__init__.py",
+        "tests/reports/conftest.py",
+        "tests/reports/test_html.py",
+        "tests/reports/test_pdf.py",
+        "tests/reports/test_report_contract.py",
         "tests/verification/test_verification.py",
         "tests/test_package.py",
         "uv.lock",
@@ -222,7 +236,7 @@ def test_source_tree_has_one_distribution_package() -> None:
 
 
 def test_m1_package_contains_only_approved_packet_modules() -> None:
-    """Keep M1 limited to the CR-001 through CR-008 package surfaces."""
+    """Keep M1 limited to the CR-001 through CR-009 package surfaces."""
     package_root = REPOSITORY_ROOT / "src" / "deductra"
     public_files = {
         path.relative_to(package_root).as_posix()
@@ -262,6 +276,13 @@ def test_m1_package_contains_only_approved_packet_modules() -> None:
         "memory/projections/rebuild.py",
         "memory/projections/schema.py",
         "py.typed",
+        "reports/__init__.py",
+        "reports/html.py",
+        "reports/model.py",
+        "reports/pdf.py",
+        "reports/schema.py",
+        "reports/styles/report.css",
+        "reports/templates/report.html",
         "reasoning/__init__.py",
         "reasoning/branches.py",
         "reasoning/events.py",
@@ -293,8 +314,10 @@ def test_project_metadata_preserves_package_boundaries() -> None:
     assert project["name"] == "deductra"
     assert project["requires-python"] == ">=3.13,<3.15"
     assert project["dependencies"] == [
+        "jinja2>=3.1.6,<4",
         "ortools>=9.15,<10",
         "pydantic>=2.13,<3",
+        "weasyprint==69.0",
         "z3-solver>=4.16,<5",
     ]
     assert build_system["build-backend"] == "hatchling.build"

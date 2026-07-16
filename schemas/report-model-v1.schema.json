@@ -1,0 +1,535 @@
+{
+  "$defs": {
+    "AttachmentSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "filename": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Filename",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "relationship": {
+          "enum": [
+            "Source",
+            "Data",
+            "Supplement",
+            "Alternative"
+          ],
+          "title": "Relationship",
+          "type": "string"
+        },
+        "schema_version": {
+          "minLength": 1,
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "filename",
+        "media_type",
+        "relationship",
+        "description",
+        "content_hash",
+        "schema_version",
+        "evidence_ids"
+      ],
+      "title": "AttachmentSpec",
+      "type": "object"
+    },
+    "ClaimKind": {
+      "enum": [
+        "factual",
+        "narrative"
+      ],
+      "title": "ClaimKind",
+      "type": "string"
+    },
+    "EventId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "EvidenceId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "EvidenceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "evidence_id": {
+          "$ref": "#/$defs/EvidenceId"
+        },
+        "evidence_kind": {
+          "title": "Evidence Kind",
+          "type": "string"
+        },
+        "verification_status": {
+          "$ref": "#/$defs/VerificationStatus"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "evidence_kind",
+        "verification_status",
+        "content_hash"
+      ],
+      "title": "EvidenceReference",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ReportClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "$ref": "#/$defs/ReportClaimId"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "kind": {
+          "$ref": "#/$defs/ClaimKind"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "claim_id",
+        "kind",
+        "text"
+      ],
+      "title": "ReportClaim",
+      "type": "object"
+    },
+    "ReportClaimId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ReportDepth": {
+      "enum": [
+        "summary",
+        "standard",
+        "detailed"
+      ],
+      "title": "ReportDepth",
+      "type": "string"
+    },
+    "ReportId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ReportIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "minLength": 1,
+          "title": "Created At",
+          "type": "string"
+        },
+        "language": {
+          "pattern": "^[a-z]{2,3}(?:-[A-Z]{2})?$",
+          "title": "Language",
+          "type": "string"
+        },
+        "subject_id": {
+          "minLength": 1,
+          "title": "Subject Id",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "subject_id",
+        "language",
+        "created_at"
+      ],
+      "title": "ReportIdentity",
+      "type": "object"
+    },
+    "ReportProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "producer": {
+          "minLength": 1,
+          "title": "Producer",
+          "type": "string"
+        },
+        "producer_version": {
+          "minLength": 1,
+          "title": "Producer Version",
+          "type": "string"
+        },
+        "source_event_ids": {
+          "items": {
+            "$ref": "#/$defs/EventId"
+          },
+          "title": "Source Event Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "producer",
+        "producer_version",
+        "source_event_ids"
+      ],
+      "title": "ReportProvenance",
+      "type": "object"
+    },
+    "ReportSection": {
+      "additionalProperties": false,
+      "properties": {
+        "applicability": {
+          "$ref": "#/$defs/SectionApplicability"
+        },
+        "claim_ids": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ReportClaimId"
+          },
+          "title": "Claim Ids",
+          "type": "array"
+        },
+        "kind": {
+          "$ref": "#/$defs/SectionKind"
+        },
+        "section_id": {
+          "$ref": "#/$defs/ReportSectionId"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "visual_ids": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/VisualSpecId"
+          },
+          "title": "Visual Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "section_id",
+        "kind",
+        "title",
+        "applicability"
+      ],
+      "title": "ReportSection",
+      "type": "object"
+    },
+    "ReportSectionId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ReportTheme": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_hashes": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Sha256Digest"
+          },
+          "title": "Asset Hashes",
+          "type": "array"
+        },
+        "stylesheet_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "theme_id": {
+          "$ref": "#/$defs/ThemeId"
+        },
+        "version": {
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "theme_id",
+        "version",
+        "stylesheet_hash"
+      ],
+      "title": "ReportTheme",
+      "type": "object"
+    },
+    "ReportType": {
+      "enum": [
+        "solve",
+        "audit",
+        "learning"
+      ],
+      "title": "ReportType",
+      "type": "string"
+    },
+    "SectionApplicability": {
+      "enum": [
+        "included",
+        "not_applicable"
+      ],
+      "title": "SectionApplicability",
+      "type": "string"
+    },
+    "SectionKind": {
+      "enum": [
+        "cover",
+        "verification_snapshot",
+        "contents",
+        "overview",
+        "original_puzzle",
+        "formal_model",
+        "strategy_map",
+        "reasoning_trace",
+        "contradiction",
+        "solution",
+        "alternative_route",
+        "technique",
+        "difficulty",
+        "performance",
+        "learning",
+        "hypergraph",
+        "provenance",
+        "glossary",
+        "attachment_index"
+      ],
+      "title": "SectionKind",
+      "type": "string"
+    },
+    "Sha256Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "ThemeId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "VerificationStatus": {
+      "description": "Authority level assigned to one proof decision.",
+      "enum": [
+        "not_checked",
+        "structurally_valid",
+        "backend_verified",
+        "cross_verified",
+        "rejected",
+        "inconclusive",
+        "quarantined"
+      ],
+      "title": "VerificationStatus",
+      "type": "string"
+    },
+    "VisualKind": {
+      "enum": [
+        "grid",
+        "candidate_matrix",
+        "association_grid",
+        "ordered_strip",
+        "dependency_graph",
+        "hypergraph",
+        "timeline",
+        "metric_card"
+      ],
+      "title": "VisualKind",
+      "type": "string"
+    },
+    "VisualSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "alt_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alt Text"
+        },
+        "data": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Data",
+          "type": "object"
+        },
+        "decorative": {
+          "default": false,
+          "title": "Decorative",
+          "type": "boolean"
+        },
+        "kind": {
+          "$ref": "#/$defs/VisualKind"
+        },
+        "long_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Long Description"
+        },
+        "source_event_ids": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EventId"
+          },
+          "title": "Source Event Ids",
+          "type": "array"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "visual_id": {
+          "$ref": "#/$defs/VisualSpecId"
+        }
+      },
+      "required": [
+        "visual_id",
+        "kind",
+        "title",
+        "data"
+      ],
+      "title": "VisualSpec",
+      "type": "object"
+    },
+    "VisualSpecId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Single authoritative report representation; outputs are derived artifacts.",
+  "properties": {
+    "attachments": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/AttachmentSpec"
+      },
+      "title": "Attachments",
+      "type": "array"
+    },
+    "claims": {
+      "items": {
+        "$ref": "#/$defs/ReportClaim"
+      },
+      "title": "Claims",
+      "type": "array"
+    },
+    "depth": {
+      "$ref": "#/$defs/ReportDepth"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/EvidenceReference"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "facts_hash": {
+      "$ref": "#/$defs/Sha256Digest"
+    },
+    "identity": {
+      "$ref": "#/$defs/ReportIdentity"
+    },
+    "provenance": {
+      "$ref": "#/$defs/ReportProvenance"
+    },
+    "report_hash": {
+      "$ref": "#/$defs/Sha256Digest"
+    },
+    "report_id": {
+      "$ref": "#/$defs/ReportId"
+    },
+    "report_type": {
+      "$ref": "#/$defs/ReportType"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sections": {
+      "items": {
+        "$ref": "#/$defs/ReportSection"
+      },
+      "title": "Sections",
+      "type": "array"
+    },
+    "theme": {
+      "$ref": "#/$defs/ReportTheme"
+    },
+    "visuals": {
+      "items": {
+        "$ref": "#/$defs/VisualSpec"
+      },
+      "title": "Visuals",
+      "type": "array"
+    }
+  },
+  "required": [
+    "report_id",
+    "report_type",
+    "depth",
+    "identity",
+    "sections",
+    "claims",
+    "visuals",
+    "evidence",
+    "theme",
+    "provenance",
+    "facts_hash",
+    "report_hash"
+  ],
+  "title": "ReportModel",
+  "type": "object"
+}

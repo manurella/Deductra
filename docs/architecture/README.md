@@ -11,6 +11,7 @@ Deductra begins as one Python distribution with one import root. Architecture is
 - [Directed reasoning hypergraph](reasoning-hypergraph.md) defines CR-006 typed incidence projection, deterministic identifiers, evidence closure, and visual-neutral export.
 - [Generator foundation](generator-foundation.md) defines CR-007 requests, evidence ports, reproducible lineage, and fail-closed acceptance and quarantine contracts.
 - [Event-sourced memory projections](event-sourced-memory-projections.md) defines CR-008 attempt, learning-evidence, novelty, and artifact views with exact replay rebuilds.
+- [Report contract and rendering](report-contract-and-rendering.md) defines CR-009 evidence closure, theme isolation, semantic HTML, and protocol-isolated PDF derivation.
 - [Dependency rules](dependency-rules.md) defines the dependency direction that implementation and enforcement must preserve.
 - [Architecture decisions](decisions/README.md) records significant decisions and their consequences.
 
