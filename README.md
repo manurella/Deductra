@@ -1,6 +1,6 @@
 # Deductra
 
-Deductra is an early-stage Python project for structured, proof-carrying deductive reasoning. Its M0 engineering foundation and M1 common core are complete. M2 is validating that core with a typed Logic Equations specification, human-rule catalogue, and independent arithmetic proof encodings. The project does not yet provide parsing, final-solution and uniqueness checks, search, a concrete puzzle generator, a user interface, or a stable public API.
+Deductra is an early-stage Python project for structured, proof-carrying deductive reasoning. Its M0 engineering foundation, M1 common core, and first M2 Logic Equations kernel are complete. The project does not yet provide user-authored puzzle syntax, search, a concrete puzzle generator, an interactive interface, or a stable public API.
 
 ## Current status
 
@@ -22,6 +22,19 @@ The current repository provides:
 - a validated finite-domain, all-different Logic Equations specification.
 - deterministic Logic Equations human-rule discovery without hidden search.
 - independently encoded Z3 and CP-SAT verification for Logic Equations deductions.
+- a fixed Golden Easy puzzle with an independent final-solution checker.
+- a basic verified CLI solve with deterministic HumanSolveTrace export.
+
+## Reference solve
+
+Run the fixed Logic Equations Golden Easy puzzle:
+
+```shell
+uv run deductra solve four-sigils
+uv run deductra solve four-sigils --trace four-sigils-trace.json
+```
+
+Trace export creates a new file and refuses to overwrite an existing path.
 
 The admitted runtime dependencies and their rationale are recorded in the [dependency admissions](docs/governance/dependency-admissions.md).
 

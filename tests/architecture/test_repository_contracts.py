@@ -48,6 +48,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/architecture/logic-equations-specification.md",
         "docs/architecture/logic-equations-human-rules.md",
         "docs/architecture/logic-equations-backend-encodings.md",
+        "docs/architecture/logic-equations-cli-and-trace.md",
         "docs/architecture/decisions/0002-common-core-schema.md",
         "docs/architecture/decisions/0003-canonical-event-store.md",
         "docs/architecture/decisions/0004-immutable-state-reduction.md",
@@ -85,6 +86,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "scripts/check_docs.py",
         "scripts/export_json_schema.py",
         "src/deductra/__init__.py",
+        "src/deductra/__main__.py",
         "src/deductra/agents/__init__.py",
         "src/deductra/agents/contracts.py",
         "src/deductra/agents/guardrails.py",
@@ -101,6 +103,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "src/deductra/domain/schema.py",
         "src/deductra/domain/serialization.py",
         "src/deductra/domain/values.py",
+        "src/deductra/cli.py",
         "src/deductra/families/__init__.py",
         "src/deductra/families/logic_equations/__init__.py",
         "src/deductra/families/logic_equations/checker.py",
@@ -166,6 +169,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "tests/agent_runtime/test_runtime.py",
         "tests/agent_runtime/test_schema.py",
         "tests/domain/test_core_schema.py",
+        "tests/cli/test_cli.py",
         "tests/families/logic_equations/test_specification.py",
         "tests/families/logic_equations/test_rules.py",
         "tests/families/logic_equations/test_backend_encodings.py",
@@ -280,12 +284,14 @@ def test_package_contains_only_approved_packet_modules() -> None:
     }
     assert public_files == {
         "__init__.py",
+        "__main__.py",
         "agents/__init__.py",
         "agents/contracts.py",
         "agents/guardrails.py",
         "agents/openai_runtime.py",
         "agents/runtime.py",
         "agents/schema.py",
+        "cli.py",
         "domain/__init__.py",
         "domain/atoms.py",
         "domain/base.py",
@@ -372,6 +378,7 @@ def test_project_metadata_preserves_package_boundaries() -> None:
         "weasyprint==69.0",
         "z3-solver>=4.16,<5",
     ]
+    assert project["scripts"] == {"deductra": "deductra.cli:main"}
     assert build_system["build-backend"] == "hatchling.build"
     assert hatch["build"]["targets"]["wheel"]["packages"] == ["src/deductra"]
 

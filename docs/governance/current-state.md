@@ -2,7 +2,7 @@
 
 Last reviewed: 2026-07-16
 
-Deductra has completed M0 and M1 and is beginning M2 with the Logic Equations reference kernel. The repository currently has:
+Deductra has completed M0, M1, and the first M2 Logic Equations reference kernel. The repository currently has:
 
 - a clean public scaffold and repository-hygiene policy;
 - one typed `src/deductra` package with reviewed, locked runtime dependencies;
@@ -52,7 +52,12 @@ Deductra has completed M0 and M1 and is beginning M2 with the Logic Equations re
 - independent symbolic Z3 and bounded CP-SAT encodings for Logic Equations expressions;
 - explicit translation from internal domain codes to declared numeric values;
 - cross-verified Logic Equations human-rule reduction through the common authority boundary.
+- the fixed four-variable Logic Equations Golden Easy puzzle;
+- an independent final-solution checker plus dual-backend uniqueness evidence;
+- deterministic ordering-bound propagation without combination search;
+- a basic verified Golden solve through the `deductra` CLI;
+- deterministic, write-once HumanSolveTrace JSON export.
 
-CR-001 through CR-010 implement data, event, persistence, state projection, bounded verification, human-rule orchestration, deterministic hypergraph projection, generator-foundation contracts, rebuildable memory views, evidence-closed report derivation, and an optional non-authoritative agent boundary. FAM-LE-001 adds the first concrete family specification, FAM-LE-002 adds non-authoritative human-rule discovery, and FAM-LE-003 adds independent arithmetic proof encodings. Family rules never fall back to search and can change state only after accepted backend evidence. The hypergraph and memory indexes are read-only projections without authority over canonical history. Learning views contain descriptive evidence counts only. The generation boundary constructs no puzzles and contains no family logic, solver coordinator, difficulty algorithm, similarity algorithm, persistence, or playable queue. No parser, final-solution checker, solution enumerator, concrete generator, CLI, UI, report composer, named agent behavior, learning analyst, Golden puzzle, or stable public API exists. Report renderers, unverified family-rule proposals, and agent proposals do not decide canonical facts.
+CR-001 through CR-010 implement data, event, persistence, state projection, bounded verification, human-rule orchestration, deterministic hypergraph projection, generator-foundation contracts, rebuildable memory views, evidence-closed report derivation, and an optional non-authoritative agent boundary. FAM-LE-001 through FAM-LE-005 provide the first complete deterministic family kernel: specification parsing and validation, disclosed human rules, independent proof encodings, one fixed Golden Easy puzzle, a final-solution checker, a verified CLI solve, and canonical trace export. Family rules never fall back to search and can change state only after accepted backend evidence. The hypergraph and memory indexes are read-only projections without authority over canonical history. Learning views contain descriptive evidence counts only. The generation boundary constructs no puzzles and contains no family logic, solver coordinator, difficulty algorithm, similarity algorithm, persistence, or playable queue. No user-authored puzzle syntax, solution enumerator, concrete generator, interactive UI, report composer, named agent behavior, learning analyst, or stable public API exists. Report renderers, unverified family-rule proposals, and agent proposals do not decide canonical facts.
 
-The owner accepted the M0 foundation after local and hosted CI verification. Branch protection and private vulnerability reporting were explicitly deferred by the owner and are not M1 or M2 blockers; this residual repository-administration risk remains recorded. FAM-LE-003 is the active implementation packet.
+The owner accepted the M0 foundation after local and hosted CI verification. Branch protection and private vulnerability reporting were explicitly deferred by the owner and are not M1 or M2 blockers; this residual repository-administration risk remains recorded. FAM-LE-005 completes the planned Logic Equations reference-kernel sequence.

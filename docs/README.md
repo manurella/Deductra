@@ -13,6 +13,7 @@ This directory contains the canonical public documentation for Deductra's engine
 - [Directed reasoning hypergraph](architecture/reasoning-hypergraph.md)
 - [Generator foundation](architecture/generator-foundation.md)
 - [Event-sourced memory projections](architecture/event-sourced-memory-projections.md)
+- [Logic Equations CLI and trace delivery](architecture/logic-equations-cli-and-trace.md)
 
 ## Governance
 

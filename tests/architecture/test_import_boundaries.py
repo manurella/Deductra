@@ -233,6 +233,27 @@ def test_family_rules_depend_only_on_domain_and_reasoning_contracts() -> None:
     assert not violations, f"family rules import authoritative outer layers: {violations}"
 
 
+def test_cli_is_an_outer_delivery_adapter() -> None:
+    """Allow CLI composition without permitting delivery dependencies to point inward."""
+    allowed = (
+        "deductra.cli",
+        "deductra.domain",
+        "deductra.families",
+        "deductra.reasoning",
+        "deductra.verification",
+    )
+    violations: dict[str, list[str]] = {}
+    for source in (PACKAGE_ROOT / "__main__.py", PACKAGE_ROOT / "cli.py"):
+        outward = {
+            module
+            for module in imported_modules(source)
+            if module.startswith("deductra.") and not module.startswith(allowed)
+        }
+        if outward:
+            violations[source.relative_to(REPOSITORY_ROOT).as_posix()] = sorted(outward)
+    assert not violations, f"CLI imports unapproved capabilities: {violations}"
+
+
 def test_reports_are_downstream_of_authoritative_contracts() -> None:
     """Keep reports derived from canonical contracts and independent of adapters."""
     violations: dict[str, list[str]] = {}
