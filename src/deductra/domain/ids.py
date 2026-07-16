@@ -38,3 +38,6 @@ type GenerationRequestId = Identifier
 type CandidateId = Identifier
 type RecipeId = Identifier
 type GenerationEventId = Identifier
+type UserId = Identifier
+type ArtifactId = Identifier
+type ProjectionStreamId = Identifier

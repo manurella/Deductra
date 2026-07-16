@@ -12,6 +12,8 @@ Every event records its event, trace, puzzle revision, branch, sequence, schema 
 
 The v1 payload union contains trace lifecycle events established in CR-002. CR-003 extends the same versioned envelope with candidate elimination, value assignment, branch opening and closing, and contradiction detection. Verification, interaction, generation, reporting, and agent payloads are added only by the packets that own those semantics.
 
+CR-008 does not widen this reasoning envelope. Its attempt, novelty, and artifact facts use bounded projection-source streams documented in [Event-sourced memory projections](event-sourced-memory-projections.md). Those streams preserve their own sequence and hash authority and are not accepted by the reasoning `EventStore` adapter.
+
 ## Integrity
 
 An event hash is the SHA-256 digest of the canonical envelope excluding only `event_hash` itself. Verification checks:

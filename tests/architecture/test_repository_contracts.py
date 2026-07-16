@@ -42,6 +42,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/architecture/human-reasoning-engine.md",
         "docs/architecture/reasoning-hypergraph.md",
         "docs/architecture/generator-foundation.md",
+        "docs/architecture/event-sourced-memory-projections.md",
         "docs/architecture/decisions/0002-common-core-schema.md",
         "docs/architecture/decisions/0003-canonical-event-store.md",
         "docs/architecture/decisions/0004-immutable-state-reduction.md",
@@ -49,6 +50,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/architecture/decisions/0006-verified-human-reasoning-loop.md",
         "docs/architecture/decisions/0007-project-reasoning-as-hypergraph.md",
         "docs/architecture/decisions/0008-gate-generation-on-deterministic-evidence.md",
+        "docs/architecture/decisions/0009-derive-memory-views-from-events.md",
         "docs/architecture/decisions/0001-single-package-foundation.md",
         "docs/architecture/decisions/README.md",
         "docs/architecture/dependency-rules.md",
@@ -67,6 +69,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "schemas/human-solve-trace-v1.schema.json",
         "schemas/reasoning-hypergraph-v1.schema.json",
         "schemas/generation-contract-v1.schema.json",
+        "schemas/memory-projections-v1.schema.json",
         "scripts/check_conventions.py",
         "scripts/check_docs.py",
         "scripts/export_json_schema.py",
@@ -96,6 +99,11 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "src/deductra/memory/event_store.py",
         "src/deductra/memory/sqlite_store.py",
         "src/deductra/memory/snapshots.py",
+        "src/deductra/memory/projections/__init__.py",
+        "src/deductra/memory/projections/events.py",
+        "src/deductra/memory/projections/model.py",
+        "src/deductra/memory/projections/rebuild.py",
+        "src/deductra/memory/projections/schema.py",
         "src/deductra/py.typed",
         "src/deductra/reasoning/__init__.py",
         "src/deductra/reasoning/events.py",
@@ -121,6 +129,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "tests/graph/test_hypergraph_projection.py",
         "tests/generation/test_generation_contracts.py",
         "tests/memory/test_sqlite_event_store.py",
+        "tests/memory/test_projections.py",
         "tests/reasoning/test_event_schema.py",
         "tests/reasoning/test_events.py",
         "tests/reasoning/test_human_engine.py",
@@ -213,7 +222,7 @@ def test_source_tree_has_one_distribution_package() -> None:
 
 
 def test_m1_package_contains_only_approved_packet_modules() -> None:
-    """Keep M1 limited to the CR-001 through CR-007 package surfaces."""
+    """Keep M1 limited to the CR-001 through CR-008 package surfaces."""
     package_root = REPOSITORY_ROOT / "src" / "deductra"
     public_files = {
         path.relative_to(package_root).as_posix()
@@ -247,6 +256,11 @@ def test_m1_package_contains_only_approved_packet_modules() -> None:
         "memory/event_store.py",
         "memory/sqlite_store.py",
         "memory/snapshots.py",
+        "memory/projections/__init__.py",
+        "memory/projections/events.py",
+        "memory/projections/model.py",
+        "memory/projections/rebuild.py",
+        "memory/projections/schema.py",
         "py.typed",
         "reasoning/__init__.py",
         "reasoning/branches.py",

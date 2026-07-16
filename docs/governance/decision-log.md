@@ -22,5 +22,6 @@ This log summarizes accepted project-level decisions. Architecturally significan
 | D-014 | Keep human rules non-authoritative and run them through deterministic selection plus a verification-owned authority adapter. | Accepted | [@manurella](https://github.com/manurella) | [ADR-0006](../architecture/decisions/0006-verified-human-reasoning-loop.md) |
 | D-015 | Project immutable puzzle and reasoning sources into a deterministic evidence-closed directed hypergraph. | Accepted | [@manurella](https://github.com/manurella) | [ADR-0007](../architecture/decisions/0007-project-reasoning-as-hypergraph.md) |
 | D-016 | Gate generated candidates on deterministic evidence with reproducible lineage and fail-closed quarantine. | Accepted | [@manurella](https://github.com/manurella) | [ADR-0008](../architecture/decisions/0008-gate-generation-on-deterministic-evidence.md) |
+| D-017 | Treat attempt, learning, novelty, and artifact indexes as disposable event-derived projections. | Accepted | [@manurella](https://github.com/manurella) | [ADR-0009](../architecture/decisions/0009-derive-memory-views-from-events.md) |
 
 New decisions receive the next sequential identifier. A superseding decision retains the old entry and links both records rather than erasing the earlier ruling.

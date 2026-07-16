@@ -33,7 +33,11 @@ Deductra has completed M0 and is beginning M1, the common proof-carrying core. T
 - typed uniqueness, difficulty, fingerprint, and novelty evaluator ports;
 - a hard-gate decision that rejects proven failures and quarantines uncertainty;
 - a checked-in GenerationContract v1 JSON Schema.
+- hash-chained source events for disposable attempt, novelty, and artifact views;
+- deterministic attempt and descriptive learning-evidence projections;
+- rebuildable novelty-fingerprint and artifact-metadata indexes;
+- a checked-in MemoryProjections v1 JSON Schema with clean-replay equivalence.
 
-CR-001 through CR-007 implement data, event, persistence, state-projection, bounded verification, human-rule orchestration, deterministic hypergraph projection, and generator-foundation contracts. The engine contains no concrete family rules and never falls back to search. The hypergraph is read-only and contains no layout or presentation authority. The generation boundary constructs no puzzles and contains no family logic, solver coordinator, difficulty algorithm, novelty index, persistence, or playable queue. No concrete generator, puzzle-family adapter, UI, report system, learning memory, agent runtime, or stable public API exists.
+CR-001 through CR-008 implement data, event, persistence, state projection, bounded verification, human-rule orchestration, deterministic hypergraph projection, generator-foundation contracts, and rebuildable memory views. The engine contains no concrete family rules and never falls back to search. The hypergraph and memory indexes are read-only projections without authority over canonical history. Learning views contain descriptive evidence counts only. The generation boundary constructs no puzzles and contains no family logic, solver coordinator, difficulty algorithm, similarity algorithm, persistence, or playable queue. No concrete generator, puzzle-family adapter, UI, report system, learning analyst, agent runtime, or stable public API exists.
 
-The owner accepted the M0 foundation after local and hosted CI verification. Branch protection and private vulnerability reporting were explicitly deferred by the owner and are not M1 blockers; this residual repository-administration risk remains recorded. CR-007 is the active implementation packet.
+The owner accepted the M0 foundation after local and hosted CI verification. Branch protection and private vulnerability reporting were explicitly deferred by the owner and are not M1 blockers; this residual repository-administration risk remains recorded. CR-008 is the active implementation packet.

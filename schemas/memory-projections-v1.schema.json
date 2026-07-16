@@ -1,0 +1,1216 @@
+{
+  "$defs": {
+    "ArtifactId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ArtifactIndex": {
+      "additionalProperties": false,
+      "description": "Artifact metadata and provenance, never raw artifact content.",
+      "properties": {
+        "entries": {
+          "items": {
+            "$ref": "#/$defs/ArtifactIndexEntry"
+          },
+          "title": "Entries",
+          "type": "array"
+        },
+        "projection_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "source_head_hash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256Digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_stream_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProjectionStreamId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "entries",
+        "source_stream_id",
+        "source_head_hash",
+        "projection_hash"
+      ],
+      "title": "ArtifactIndex",
+      "type": "object"
+    },
+    "ArtifactIndexEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "artifact_kind": {
+          "title": "Artifact Kind",
+          "type": "string"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "media_type": {
+          "title": "Media Type",
+          "type": "string"
+        },
+        "provenance_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Provenance Ids",
+          "type": "array"
+        },
+        "puzzle_revision_id": {
+          "$ref": "#/$defs/PuzzleRevisionId"
+        },
+        "source_event_id": {
+          "$ref": "#/$defs/EventId"
+        },
+        "superseded_by": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ArtifactId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "artifact_id",
+        "puzzle_revision_id",
+        "artifact_kind",
+        "media_type",
+        "content_hash",
+        "evidence_ids",
+        "provenance_ids",
+        "source_event_id"
+      ],
+      "title": "ArtifactIndexEntry",
+      "type": "object"
+    },
+    "ArtifactRecorded": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "artifact_kind": {
+          "enum": [
+            "report",
+            "image",
+            "export",
+            "trace",
+            "hypergraph",
+            "other"
+          ],
+          "title": "Artifact Kind",
+          "type": "string"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "kind": {
+          "const": "artifact_recorded",
+          "default": "artifact_recorded",
+          "title": "Kind",
+          "type": "string"
+        },
+        "media_type": {
+          "title": "Media Type",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "provenance_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Provenance Ids",
+          "type": "array"
+        },
+        "puzzle_revision_id": {
+          "$ref": "#/$defs/PuzzleRevisionId"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "puzzle_revision_id",
+        "artifact_kind",
+        "media_type",
+        "content_hash"
+      ],
+      "title": "ArtifactRecorded",
+      "type": "object"
+    },
+    "ArtifactRemoved": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "kind": {
+          "const": "artifact_removed",
+          "default": "artifact_removed",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "reason"
+      ],
+      "title": "ArtifactRemoved",
+      "type": "object"
+    },
+    "ArtifactSuperseded": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "kind": {
+          "const": "artifact_superseded",
+          "default": "artifact_superseded",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "replacement_artifact_id": {
+          "$ref": "#/$defs/ArtifactId"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "replacement_artifact_id"
+      ],
+      "title": "ArtifactSuperseded",
+      "type": "object"
+    },
+    "AttemptAbandoned": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "$ref": "#/$defs/AttemptId"
+        },
+        "kind": {
+          "const": "attempt_abandoned",
+          "default": "attempt_abandoned",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "attempt_id"
+      ],
+      "title": "AttemptAbandoned",
+      "type": "object"
+    },
+    "AttemptCompleted": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "$ref": "#/$defs/AttemptId"
+        },
+        "kind": {
+          "const": "attempt_completed",
+          "default": "attempt_completed",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "attempt_id"
+      ],
+      "title": "AttemptCompleted",
+      "type": "object"
+    },
+    "AttemptId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "AttemptProjection": {
+      "additionalProperties": false,
+      "description": "One attempt view derived entirely from its validated event stream.",
+      "properties": {
+        "accepted_moves": {
+          "minimum": 0,
+          "title": "Accepted Moves",
+          "type": "integer"
+        },
+        "attempt_id": {
+          "$ref": "#/$defs/AttemptId"
+        },
+        "explanations_viewed": {
+          "minimum": 0,
+          "title": "Explanations Viewed",
+          "type": "integer"
+        },
+        "hints_revealed": {
+          "minimum": 0,
+          "title": "Hints Revealed",
+          "type": "integer"
+        },
+        "projection_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "puzzle_revision_id": {
+          "$ref": "#/$defs/PuzzleRevisionId"
+        },
+        "rejected_moves": {
+          "minimum": 0,
+          "title": "Rejected Moves",
+          "type": "integer"
+        },
+        "replays_viewed": {
+          "minimum": 0,
+          "title": "Replays Viewed",
+          "type": "integer"
+        },
+        "rule_evidence": {
+          "items": {
+            "$ref": "#/$defs/RuleAttemptEvidence"
+          },
+          "title": "Rule Evidence",
+          "type": "array"
+        },
+        "self_assessment": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Self Assessment"
+        },
+        "source_event_ids": {
+          "items": {
+            "$ref": "#/$defs/EventId"
+          },
+          "title": "Source Event Ids",
+          "type": "array"
+        },
+        "source_head_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "status": {
+          "$ref": "#/$defs/AttemptStatus"
+        },
+        "stream_id": {
+          "$ref": "#/$defs/ProjectionStreamId"
+        },
+        "total_moves": {
+          "minimum": 0,
+          "title": "Total Moves",
+          "type": "integer"
+        },
+        "user_id": {
+          "$ref": "#/$defs/UserId"
+        }
+      },
+      "required": [
+        "attempt_id",
+        "user_id",
+        "puzzle_revision_id",
+        "stream_id",
+        "status",
+        "total_moves",
+        "accepted_moves",
+        "rejected_moves",
+        "hints_revealed",
+        "explanations_viewed",
+        "replays_viewed",
+        "rule_evidence",
+        "source_event_ids",
+        "source_head_hash",
+        "projection_hash"
+      ],
+      "title": "AttemptProjection",
+      "type": "object"
+    },
+    "AttemptStarted": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "$ref": "#/$defs/AttemptId"
+        },
+        "kind": {
+          "const": "attempt_started",
+          "default": "attempt_started",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "puzzle_revision_id": {
+          "$ref": "#/$defs/PuzzleRevisionId"
+        },
+        "user_id": {
+          "$ref": "#/$defs/UserId"
+        }
+      },
+      "required": [
+        "attempt_id",
+        "user_id",
+        "puzzle_revision_id"
+      ],
+      "title": "AttemptStarted",
+      "type": "object"
+    },
+    "AttemptStatus": {
+      "enum": [
+        "active",
+        "completed",
+        "abandoned"
+      ],
+      "title": "AttemptStatus",
+      "type": "string"
+    },
+    "CandidateId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "EventId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "EventSchemaVersion": {
+      "pattern": "^[1-9][0-9]*\\.[0-9]+\\.[0-9]+$",
+      "type": "string"
+    },
+    "HintRevealed": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "$ref": "#/$defs/AttemptId"
+        },
+        "kind": {
+          "const": "hint_revealed",
+          "default": "hint_revealed",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "rule_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RuleId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "attempt_id"
+      ],
+      "title": "HintRevealed",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "LearningProjection": {
+      "additionalProperties": false,
+      "description": "Per-user descriptive aggregates rebuilt from attempt projections.",
+      "properties": {
+        "abandoned_attempts": {
+          "minimum": 0,
+          "title": "Abandoned Attempts",
+          "type": "integer"
+        },
+        "active_attempts": {
+          "minimum": 0,
+          "title": "Active Attempts",
+          "type": "integer"
+        },
+        "attempts_observed": {
+          "minimum": 0,
+          "title": "Attempts Observed",
+          "type": "integer"
+        },
+        "completed_attempts": {
+          "minimum": 0,
+          "title": "Completed Attempts",
+          "type": "integer"
+        },
+        "projection_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "rule_evidence": {
+          "items": {
+            "$ref": "#/$defs/RuleLearningEvidence"
+          },
+          "title": "Rule Evidence",
+          "type": "array"
+        },
+        "source_head_hashes": {
+          "items": {
+            "$ref": "#/$defs/Sha256Digest"
+          },
+          "title": "Source Head Hashes",
+          "type": "array"
+        },
+        "source_stream_ids": {
+          "items": {
+            "$ref": "#/$defs/ProjectionStreamId"
+          },
+          "title": "Source Stream Ids",
+          "type": "array"
+        },
+        "user_id": {
+          "$ref": "#/$defs/UserId"
+        }
+      },
+      "required": [
+        "user_id",
+        "attempts_observed",
+        "completed_attempts",
+        "abandoned_attempts",
+        "active_attempts",
+        "rule_evidence",
+        "source_stream_ids",
+        "source_head_hashes",
+        "projection_hash"
+      ],
+      "title": "LearningProjection",
+      "type": "object"
+    },
+    "MemoryProjectionBundle": {
+      "additionalProperties": false,
+      "description": "Complete disposable memory view rebuilt by one command.",
+      "properties": {
+        "artifacts": {
+          "$ref": "#/$defs/ArtifactIndex"
+        },
+        "attempts": {
+          "items": {
+            "$ref": "#/$defs/AttemptProjection"
+          },
+          "title": "Attempts",
+          "type": "array"
+        },
+        "learning": {
+          "items": {
+            "$ref": "#/$defs/LearningProjection"
+          },
+          "title": "Learning",
+          "type": "array"
+        },
+        "novelty": {
+          "$ref": "#/$defs/NoveltyIndex"
+        },
+        "projection_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "projection_version": {
+          "title": "Projection Version",
+          "type": "string"
+        },
+        "source_event_count": {
+          "minimum": 0,
+          "title": "Source Event Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "projection_version",
+        "attempts",
+        "learning",
+        "novelty",
+        "artifacts",
+        "source_event_count",
+        "projection_hash"
+      ],
+      "title": "MemoryProjectionBundle",
+      "type": "object"
+    },
+    "MoveEvaluated": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "$ref": "#/$defs/AttemptId"
+        },
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "kind": {
+          "const": "move_evaluated",
+          "default": "move_evaluated",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "outcome": {
+          "enum": [
+            "accepted",
+            "rejected"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "rule_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RuleId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "attempt_id",
+        "outcome",
+        "duration_ms"
+      ],
+      "title": "MoveEvaluated",
+      "type": "object"
+    },
+    "NoveltyEntryRecorded": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "$ref": "#/$defs/CandidateId"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "fingerprints": {
+          "$ref": "#/$defs/PuzzleFingerprints"
+        },
+        "kind": {
+          "const": "novelty_entry_recorded",
+          "default": "novelty_entry_recorded",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "puzzle_id": {
+          "$ref": "#/$defs/PuzzleId"
+        },
+        "puzzle_revision_id": {
+          "$ref": "#/$defs/PuzzleRevisionId"
+        }
+      },
+      "required": [
+        "puzzle_id",
+        "puzzle_revision_id",
+        "candidate_id",
+        "fingerprints",
+        "evidence_ids"
+      ],
+      "title": "NoveltyEntryRecorded",
+      "type": "object"
+    },
+    "NoveltyEntryRemoved": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "novelty_entry_removed",
+          "default": "novelty_entry_removed",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "puzzle_revision_id": {
+          "$ref": "#/$defs/PuzzleRevisionId"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "puzzle_revision_id",
+        "reason"
+      ],
+      "title": "NoveltyEntryRemoved",
+      "type": "object"
+    },
+    "NoveltyIndex": {
+      "additionalProperties": false,
+      "description": "Accepted fingerprint entries; similarity algorithms remain out of scope.",
+      "properties": {
+        "entries": {
+          "items": {
+            "$ref": "#/$defs/NoveltyIndexEntry"
+          },
+          "title": "Entries",
+          "type": "array"
+        },
+        "projection_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "source_head_hash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256Digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_stream_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProjectionStreamId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "entries",
+        "source_stream_id",
+        "source_head_hash",
+        "projection_hash"
+      ],
+      "title": "NoveltyIndex",
+      "type": "object"
+    },
+    "NoveltyIndexEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "$ref": "#/$defs/CandidateId"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "fingerprints": {
+          "$ref": "#/$defs/PuzzleFingerprints"
+        },
+        "puzzle_id": {
+          "$ref": "#/$defs/PuzzleId"
+        },
+        "puzzle_revision_id": {
+          "$ref": "#/$defs/PuzzleRevisionId"
+        },
+        "source_event_id": {
+          "$ref": "#/$defs/EventId"
+        }
+      },
+      "required": [
+        "puzzle_id",
+        "puzzle_revision_id",
+        "candidate_id",
+        "fingerprints",
+        "evidence_ids",
+        "source_event_id"
+      ],
+      "title": "NoveltyIndexEntry",
+      "type": "object"
+    },
+    "ProjectionEvent": {
+      "additionalProperties": false,
+      "description": "Canonical event envelope used solely to rebuild disposable indexes.",
+      "properties": {
+        "event_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "event_id": {
+          "$ref": "#/$defs/EventId"
+        },
+        "occurred_at": {
+          "format": "date-time",
+          "title": "Occurred At",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/ProjectionEventPayload"
+        },
+        "previous_event_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/EventSchemaVersion"
+        },
+        "sequence_no": {
+          "minimum": 0,
+          "title": "Sequence No",
+          "type": "integer"
+        },
+        "stream_id": {
+          "$ref": "#/$defs/ProjectionStreamId"
+        },
+        "stream_kind": {
+          "$ref": "#/$defs/ProjectionStreamKind"
+        }
+      },
+      "required": [
+        "event_id",
+        "stream_id",
+        "stream_kind",
+        "sequence_no",
+        "schema_version",
+        "occurred_at",
+        "previous_event_hash",
+        "event_hash",
+        "payload"
+      ],
+      "title": "ProjectionEvent",
+      "type": "object"
+    },
+    "ProjectionEventPayload": {
+      "discriminator": {
+        "mapping": {
+          "artifact_recorded": "#/$defs/ArtifactRecorded",
+          "artifact_removed": "#/$defs/ArtifactRemoved",
+          "artifact_superseded": "#/$defs/ArtifactSuperseded",
+          "attempt_abandoned": "#/$defs/AttemptAbandoned",
+          "attempt_completed": "#/$defs/AttemptCompleted",
+          "attempt_started": "#/$defs/AttemptStarted",
+          "hint_revealed": "#/$defs/HintRevealed",
+          "move_evaluated": "#/$defs/MoveEvaluated",
+          "novelty_entry_recorded": "#/$defs/NoveltyEntryRecorded",
+          "novelty_entry_removed": "#/$defs/NoveltyEntryRemoved",
+          "replay_viewed": "#/$defs/ReplayViewed",
+          "self_assessment_recorded": "#/$defs/SelfAssessmentRecorded",
+          "step_explained": "#/$defs/StepExplained"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AttemptStarted"
+        },
+        {
+          "$ref": "#/$defs/MoveEvaluated"
+        },
+        {
+          "$ref": "#/$defs/HintRevealed"
+        },
+        {
+          "$ref": "#/$defs/StepExplained"
+        },
+        {
+          "$ref": "#/$defs/AttemptCompleted"
+        },
+        {
+          "$ref": "#/$defs/AttemptAbandoned"
+        },
+        {
+          "$ref": "#/$defs/SelfAssessmentRecorded"
+        },
+        {
+          "$ref": "#/$defs/ReplayViewed"
+        },
+        {
+          "$ref": "#/$defs/NoveltyEntryRecorded"
+        },
+        {
+          "$ref": "#/$defs/NoveltyEntryRemoved"
+        },
+        {
+          "$ref": "#/$defs/ArtifactRecorded"
+        },
+        {
+          "$ref": "#/$defs/ArtifactSuperseded"
+        },
+        {
+          "$ref": "#/$defs/ArtifactRemoved"
+        }
+      ]
+    },
+    "ProjectionStreamId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ProjectionStreamKind": {
+      "description": "Separate stream authorities whose events feed derived projections.",
+      "enum": [
+        "attempt",
+        "novelty",
+        "artifact"
+      ],
+      "title": "ProjectionStreamKind",
+      "type": "string"
+    },
+    "PuzzleFingerprints": {
+      "additionalProperties": false,
+      "description": "Stable exact, equivalence, solution, structure, trace, and visual digests.",
+      "properties": {
+        "canonical_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "solution_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "structure_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "trace_signature": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "visual_structure_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        }
+      },
+      "required": [
+        "content_hash",
+        "canonical_hash",
+        "solution_hash",
+        "structure_hash",
+        "trace_signature",
+        "visual_structure_hash"
+      ],
+      "title": "PuzzleFingerprints",
+      "type": "object"
+    },
+    "PuzzleId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "PuzzleRevisionId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ReplayViewed": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "$ref": "#/$defs/AttemptId"
+        },
+        "kind": {
+          "const": "replay_viewed",
+          "default": "replay_viewed",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "attempt_id"
+      ],
+      "title": "ReplayViewed",
+      "type": "object"
+    },
+    "RuleAttemptEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "accepted_moves": {
+          "minimum": 0,
+          "title": "Accepted Moves",
+          "type": "integer"
+        },
+        "evidence_event_ids": {
+          "items": {
+            "$ref": "#/$defs/EventId"
+          },
+          "title": "Evidence Event Ids",
+          "type": "array"
+        },
+        "explanations_viewed": {
+          "minimum": 0,
+          "title": "Explanations Viewed",
+          "type": "integer"
+        },
+        "hints_revealed": {
+          "minimum": 0,
+          "title": "Hints Revealed",
+          "type": "integer"
+        },
+        "rejected_moves": {
+          "minimum": 0,
+          "title": "Rejected Moves",
+          "type": "integer"
+        },
+        "rule_id": {
+          "$ref": "#/$defs/RuleId"
+        }
+      },
+      "required": [
+        "rule_id",
+        "accepted_moves",
+        "rejected_moves",
+        "hints_revealed",
+        "explanations_viewed",
+        "evidence_event_ids"
+      ],
+      "title": "RuleAttemptEvidence",
+      "type": "object"
+    },
+    "RuleId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "RuleLearningEvidence": {
+      "additionalProperties": false,
+      "description": "Descriptive evidence only; it is not a mastery score or diagnosis.",
+      "properties": {
+        "accepted_moves": {
+          "minimum": 0,
+          "title": "Accepted Moves",
+          "type": "integer"
+        },
+        "attempts_observed": {
+          "minimum": 0,
+          "title": "Attempts Observed",
+          "type": "integer"
+        },
+        "evidence_event_ids": {
+          "items": {
+            "$ref": "#/$defs/EventId"
+          },
+          "title": "Evidence Event Ids",
+          "type": "array"
+        },
+        "explanations_viewed": {
+          "minimum": 0,
+          "title": "Explanations Viewed",
+          "type": "integer"
+        },
+        "hints_revealed": {
+          "minimum": 0,
+          "title": "Hints Revealed",
+          "type": "integer"
+        },
+        "rejected_moves": {
+          "minimum": 0,
+          "title": "Rejected Moves",
+          "type": "integer"
+        },
+        "rule_id": {
+          "$ref": "#/$defs/RuleId"
+        }
+      },
+      "required": [
+        "rule_id",
+        "attempts_observed",
+        "accepted_moves",
+        "rejected_moves",
+        "hints_revealed",
+        "explanations_viewed",
+        "evidence_event_ids"
+      ],
+      "title": "RuleLearningEvidence",
+      "type": "object"
+    },
+    "SelfAssessmentRecorded": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "$ref": "#/$defs/AttemptId"
+        },
+        "kind": {
+          "const": "self_assessment_recorded",
+          "default": "self_assessment_recorded",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "rating": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Rating",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "attempt_id",
+        "rating"
+      ],
+      "title": "SelfAssessmentRecorded",
+      "type": "object"
+    },
+    "Sha256Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "StepExplained": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "$ref": "#/$defs/AttemptId"
+        },
+        "kind": {
+          "const": "step_explained",
+          "default": "step_explained",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "rule_id": {
+          "$ref": "#/$defs/RuleId"
+        }
+      },
+      "required": [
+        "attempt_id",
+        "rule_id"
+      ],
+      "title": "StepExplained",
+      "type": "object"
+    },
+    "UserId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "$id": "urn:deductra:schema:memory-projections:1",
+  "additionalProperties": false,
+  "description": "Versioned schema root for a rebuilt projection bundle.",
+  "properties": {
+    "bundle": {
+      "$ref": "#/$defs/MemoryProjectionBundle"
+    },
+    "source_events": {
+      "items": {
+        "$ref": "#/$defs/ProjectionEvent"
+      },
+      "title": "Source Events",
+      "type": "array"
+    }
+  },
+  "required": [
+    "source_events",
+    "bundle"
+  ],
+  "title": "Deductra Memory Projections v1",
+  "type": "object"
+}

@@ -12,6 +12,7 @@ This directory contains the canonical public documentation for Deductra's engine
 - [Human reasoning engine](architecture/human-reasoning-engine.md)
 - [Directed reasoning hypergraph](architecture/reasoning-hypergraph.md)
 - [Generator foundation](architecture/generator-foundation.md)
+- [Event-sourced memory projections](architecture/event-sourced-memory-projections.md)
 
 ## Governance
 

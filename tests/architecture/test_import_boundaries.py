@@ -114,6 +114,26 @@ def test_memory_package_depends_only_on_inward_contracts() -> None:
     assert not violations, f"memory imports outer layers: {violations}"
 
 
+def test_memory_projection_package_depends_only_on_approved_sources() -> None:
+    """Allow derived views to consume generation contracts without solver authority."""
+    violations: dict[str, list[str]] = {}
+    allowed = (
+        "deductra.domain",
+        "deductra.reasoning",
+        "deductra.generation",
+        "deductra.memory",
+    )
+    for source in sorted((PACKAGE_ROOT / "memory" / "projections").glob("*.py")):
+        outward = {
+            module
+            for module in imported_modules(source)
+            if module.startswith("deductra.") and not module.startswith(allowed)
+        }
+        if outward:
+            violations[source.relative_to(REPOSITORY_ROOT).as_posix()] = sorted(outward)
+    assert not violations, f"memory projections import authoritative outer layers: {violations}"
+
+
 def test_verification_package_depends_only_on_inward_contracts() -> None:
     """Keep proof backends dependent on domain and reasoning contracts only."""
     violations: dict[str, list[str]] = {}
