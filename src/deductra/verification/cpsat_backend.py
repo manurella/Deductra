@@ -11,7 +11,11 @@ import ortools
 from ortools.sat.python import cp_model
 
 from deductra.domain.atoms import AssignmentAtom, Atom, ExclusionAtom
-from deductra.domain.constraints import AllDifferentConstraint, DomainConstraint
+from deductra.domain.constraints import (
+    AllDifferentConstraint,
+    ArithmeticConstraint,
+    DomainConstraint,
+)
 from deductra.domain.puzzle import PuzzleSpec
 from deductra.domain.serialization import canonical_sha256
 from deductra.reasoning.state import PuzzleState
@@ -21,6 +25,9 @@ from deductra.verification.contracts import (
     build_certificate,
 )
 from deductra.verification.encoding import EncodingError, FiniteDomainProblem, prepare_problem
+from deductra.verification.logic_equations_cpsat import (
+    add_cpsat_arithmetic_constraint,
+)
 
 
 class CpSatProofBackend:
@@ -28,7 +35,7 @@ class CpSatProofBackend:
 
     backend_id = "cp-sat"
     backend_version = ortools.__version__
-    encoding_version = "finite-domain-v1"
+    encoding_version = "finite-domain-arithmetic-v1"
 
     @staticmethod
     def _add_atom(
@@ -85,16 +92,43 @@ class CpSatProofBackend:
                         model.add(variables[item.variable_id] != item.code_for(value_id))
                 elif isinstance(constraint, AllDifferentConstraint):
                     model.add_all_different(variables[item] for item in constraint.variable_ids)
+                elif isinstance(constraint, ArithmeticConstraint):
+                    add_cpsat_arithmetic_constraint(
+                        model,
+                        constraint,
+                        problem,
+                        variables,
+                    )
+                else:
+                    raise EncodingError(f"unsupported active constraint kind: {constraint.kind}")
 
             for atom in (*problem.asserted_atoms, *problem.assumptions):
                 self._add_atom(model, atom, problem, variables)
-            self._add_atom(model, problem.counter_assumption, problem, variables)
 
-            raw_artifact_hash = canonical_sha256({"cp_model": str(model.proto)})
             solver = cp_model.CpSolver()
             solver.parameters.max_time_in_seconds = timeout_ms / 1000
             solver.parameters.num_search_workers = 1
             solver.parameters.random_seed = 0
+            base_status = solver.solve(model)
+            if base_status == cp_model.INFEASIBLE:
+                return self._invalid(
+                    obligation,
+                    started,
+                    "source puzzle and state are already unsatisfiable",
+                )
+            if base_status == cp_model.UNKNOWN:
+                return build_certificate(
+                    backend_id=self.backend_id,
+                    backend_version=self.backend_version,
+                    encoding_version=self.encoding_version,
+                    obligation_id=obligation.obligation_id,
+                    result="unknown",
+                    duration_ms=(perf_counter_ns() - started) // 1_000_000,
+                    raw_artifact_hash=canonical_sha256({"cp_model": str(model.proto)}),
+                )
+
+            self._add_atom(model, problem.counter_assumption, problem, variables)
+            raw_artifact_hash = canonical_sha256({"cp_model": str(model.proto)})
             status = solver.solve(model)
             duration_ms = (perf_counter_ns() - started) // 1_000_000
             if status == cp_model.INFEASIBLE:

@@ -10,7 +10,11 @@ from typing import Any
 import z3
 
 from deductra.domain.atoms import AssignmentAtom, Atom, ExclusionAtom
-from deductra.domain.constraints import AllDifferentConstraint, DomainConstraint
+from deductra.domain.constraints import (
+    AllDifferentConstraint,
+    ArithmeticConstraint,
+    DomainConstraint,
+)
 from deductra.domain.puzzle import PuzzleSpec
 from deductra.domain.serialization import canonical_sha256
 from deductra.reasoning.state import PuzzleState
@@ -20,6 +24,7 @@ from deductra.verification.contracts import (
     build_certificate,
 )
 from deductra.verification.encoding import EncodingError, FiniteDomainProblem, prepare_problem
+from deductra.verification.logic_equations_z3 import encode_z3_boolean_expression
 
 
 class Z3ProofBackend:
@@ -27,7 +32,7 @@ class Z3ProofBackend:
 
     backend_id = "z3"
     backend_version = z3.get_version_string()
-    encoding_version = "finite-domain-v1"
+    encoding_version = "finite-domain-arithmetic-v1"
 
     @staticmethod
     def _atom_formula(
@@ -93,11 +98,39 @@ class Z3ProofBackend:
                         z3.Distinct(*(variables[item] for item in constraint.variable_ids)),
                         f"constraint:{constraint.constraint_id}",
                     )
+                elif isinstance(constraint, ArithmeticConstraint):
+                    track(
+                        encode_z3_boolean_expression(
+                            constraint.expression,
+                            problem,
+                            variables,
+                        ),
+                        f"constraint:{constraint.constraint_id}",
+                    )
+                else:
+                    raise EncodingError(f"unsupported active constraint kind: {constraint.kind}")
 
             for index, atom in enumerate(problem.asserted_atoms):
                 track(self._atom_formula(atom, problem, variables), f"state:atom:{index}")
             for index, atom in enumerate(problem.assumptions):
                 track(self._atom_formula(atom, problem, variables), f"assumption:{index}")
+            base_status = solver.check()
+            if base_status == z3.unsat:
+                return self._invalid(
+                    obligation,
+                    started,
+                    "source puzzle and state are already unsatisfiable",
+                )
+            if base_status == z3.unknown:
+                return build_certificate(
+                    backend_id=self.backend_id,
+                    backend_version=self.backend_version,
+                    encoding_version=self.encoding_version,
+                    obligation_id=obligation.obligation_id,
+                    result="unknown",
+                    duration_ms=(perf_counter_ns() - started) // 1_000_000,
+                    raw_artifact_hash=canonical_sha256({"smt2": solver.sexpr()}),
+                )
             track(
                 self._atom_formula(problem.counter_assumption, problem, variables),
                 "negated_claim",

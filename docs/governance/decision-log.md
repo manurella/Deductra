@@ -26,5 +26,6 @@ This log summarizes accepted project-level decisions. Architecturally significan
 | D-018 | Keep agents optional, typed, evidence-guarded, and without canonical authority. | Accepted | Repository owner | [ADR-0010](../architecture/decisions/0010-keep-agents-optional-and-non-authoritative.md) |
 | D-019 | Specialize concrete families through validated common puzzle specifications. | Accepted | Repository owner | [ADR-0011](../architecture/decisions/0011-specialize-families-through-common-specifications.md) |
 | D-020 | Keep Logic Equations human rules local, explainable, single-variable, and non-authoritative until independent family encodings exist. | Accepted | Repository owner | [Logic Equations human rules](../architecture/logic-equations-human-rules.md) |
+| D-021 | Encode Logic Equations independently with symbolic Z3 formulas and bounded CP-SAT tables over declared numeric values. | Accepted | Repository owner | [ADR-0012](../architecture/decisions/0012-encode-logic-equations-independently.md) |
 
 New decisions receive the next sequential identifier. A superseding decision retains the old entry and links both records rather than erasing the earlier ruling.

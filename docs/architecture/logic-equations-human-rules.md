@@ -39,11 +39,9 @@ the common engine's existing stalled behavior remains authoritative.
 
 ## Verification boundary
 
-Human-rule output is not proof. FAM-LE-002 does not connect these rules to the verified solve
-loop because the independent backends do not yet encode Logic Equations arithmetic
-constraints. FAM-LE-003 must add independent encodings and cross-verification before a family
-proposal may change canonical state.
+Human-rule output is not proof. FAM-LE-003 connects these rules to the existing verified solve
+loop through independent Logic Equations encodings. A proposal may change canonical state
+only after the common authority boundary receives accepted backend evidence.
 
 This packet adds no parser, search coordinator, solution enumerator, family checker, Golden
 puzzle, generator, CLI, interface, or trace exporter.
-

@@ -24,7 +24,11 @@ The canonical serialized form is [Verification Record v1](../../schemas/verifica
 
 `Z3ProofBackend` creates tracked logical assertions and retains unsatisfiable-core references. `CpSatProofBackend` creates a separate integer finite-domain model and retains a satisfying assignment when one exists. They share validated identifiers and finite-domain mappings, but never share solver expressions or a translated backend model.
 
-CR-004 intentionally supports only assignment and exclusion atoms plus active domain and all-different constraints. Any other atom or constraint fails closed as an invalid encoding. Supporting another constraint kind requires tests proving equivalent semantics in both encoders.
+CR-004 initially supported assignment and exclusion atoms plus active domain and all-different constraints. FAM-LE-003 adds independently implemented arithmetic and propositional expression encodings with explicit domain-code-to-numeric-value translation. The Z3 backend uses symbolic formulas; CP-SAT uses an independently evaluated, bounded allowed-assignment table. Both advertise `finite-domain-arithmetic-v1`.
+
+Any other atom or constraint still fails closed as an invalid encoding. CP-SAT also fails closed when an arithmetic relation would require more than 1,000,000 candidate combinations. Supporting another constraint kind or removing that bound requires tests proving equivalent semantics in both encoders.
+
+Each backend checks source satisfiability before adding the negated claim. An already unsatisfiable puzzle, state, or assumption set is rejected as an invalid proof context; it cannot authorize arbitrary state changes through logical explosion.
 
 Each invocation has an explicit positive timeout. CP-SAT uses one worker and a fixed random seed for reproducible verification behavior. Native solver compatibility is exercised in the Python 3.13 and 3.14 CI matrix and container build.
 

@@ -5,7 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from deductra.domain.atoms import AssignmentAtom, Atom, ExclusionAtom
-from deductra.domain.constraints import AllDifferentConstraint, Constraint, DomainConstraint
+from deductra.domain.constraints import (
+    AllDifferentConstraint,
+    ArithmeticConstraint,
+    Constraint,
+    DomainConstraint,
+)
 from deductra.domain.ids import ValueId, VariableId
 from deductra.domain.puzzle import PuzzleSpec
 from deductra.reasoning.state import PuzzleState, validate_state
@@ -25,6 +30,7 @@ class VariableEncoding:
 
     variable_id: VariableId
     value_ids: tuple[ValueId, ...]
+    numeric_values: tuple[int | None, ...]
     candidate_ids: frozenset[ValueId]
 
     def code_for(self, value_id: ValueId) -> int:
@@ -42,6 +48,12 @@ class VariableEncoding:
             raise EncodingError(
                 f"backend returned invalid code {code} for {self.variable_id!r}"
             ) from error
+
+    def require_numeric_values(self) -> tuple[int, ...]:
+        """Return integer semantics for arithmetic encoders or fail closed."""
+        if any(value is None for value in self.numeric_values):
+            raise EncodingError(f"variable {self.variable_id!r} has non-integer domain values")
+        return tuple(value for value in self.numeric_values if value is not None)
 
 
 @dataclass(frozen=True, slots=True)
@@ -95,6 +107,13 @@ def prepare_problem(
         VariableEncoding(
             variable_id=variable.variable_id,
             value_ids=tuple(value.value_id for value in domains[variable.domain_id].values),
+            numeric_values=tuple(
+                value.numeric_value
+                if isinstance(value.numeric_value, int)
+                and not isinstance(value.numeric_value, bool)
+                else None
+                for value in domains[variable.domain_id].values
+            ),
             candidate_ids=state.candidate_domains[variable.variable_id],
         )
         for variable in puzzle.variables
@@ -124,7 +143,10 @@ def prepare_problem(
     unsupported = tuple(
         item.kind
         for item in constraints
-        if not isinstance(item, (DomainConstraint, AllDifferentConstraint))
+        if not isinstance(
+            item,
+            (DomainConstraint, AllDifferentConstraint, ArithmeticConstraint),
+        )
     )
     if unsupported:
         raise EncodingError(f"unsupported active constraint kinds: {sorted(set(unsupported))}")
