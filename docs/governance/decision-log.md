@@ -25,5 +25,6 @@ This log summarizes accepted project-level decisions. Architecturally significan
 | D-017 | Treat attempt, learning, novelty, and artifact indexes as disposable event-derived projections. | Accepted | [@manurella](https://github.com/manurella) | [ADR-0009](../architecture/decisions/0009-derive-memory-views-from-events.md) |
 | D-018 | Keep agents optional, typed, evidence-guarded, and without canonical authority. | Accepted | Repository owner | [ADR-0010](../architecture/decisions/0010-keep-agents-optional-and-non-authoritative.md) |
 | D-019 | Specialize concrete families through validated common puzzle specifications. | Accepted | Repository owner | [ADR-0011](../architecture/decisions/0011-specialize-families-through-common-specifications.md) |
+| D-020 | Keep Logic Equations human rules local, explainable, single-variable, and non-authoritative until independent family encodings exist. | Accepted | Repository owner | [Logic Equations human rules](../architecture/logic-equations-human-rules.md) |
 
 New decisions receive the next sequential identifier. A superseding decision retains the old entry and links both records rather than erasing the earlier ruling.

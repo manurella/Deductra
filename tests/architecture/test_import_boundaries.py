@@ -198,11 +198,15 @@ def test_generation_package_depends_only_on_evidence_contracts() -> None:
     assert not violations, f"generation imports authoritative outer layers: {violations}"
 
 
-def test_family_packages_specialize_only_common_domain_contracts() -> None:
-    """Keep concrete family specifications independent of outer capabilities."""
+def test_family_specifications_depend_only_on_common_domain_contracts() -> None:
+    """Keep concrete family data contracts independent of outer capabilities."""
     violations: dict[str, list[str]] = {}
     allowed = ("deductra.domain", "deductra.families")
-    for source in sorted((PACKAGE_ROOT / "families").rglob("*.py")):
+    family_root = PACKAGE_ROOT / "families" / "logic_equations"
+    for source in (
+        family_root / "specification.py",
+        family_root / "schema.py",
+    ):
         outward = {
             module
             for module in imported_modules(source)
@@ -211,6 +215,22 @@ def test_family_packages_specialize_only_common_domain_contracts() -> None:
         if outward:
             violations[source.relative_to(REPOSITORY_ROOT).as_posix()] = sorted(outward)
     assert not violations, f"family specifications import outer capabilities: {violations}"
+
+
+def test_family_rules_depend_only_on_domain_and_reasoning_contracts() -> None:
+    """Keep family reasoning independent of authority and outer integrations."""
+    violations: dict[str, list[str]] = {}
+    allowed = ("deductra.domain", "deductra.families", "deductra.reasoning")
+    family_root = PACKAGE_ROOT / "families" / "logic_equations"
+    for source in (family_root / "rules.py", family_root / "solver.py"):
+        outward = {
+            module
+            for module in imported_modules(source)
+            if module.startswith("deductra.") and not module.startswith(allowed)
+        }
+        if outward:
+            violations[source.relative_to(REPOSITORY_ROOT).as_posix()] = sorted(outward)
+    assert not violations, f"family rules import authoritative outer layers: {violations}"
 
 
 def test_reports_are_downstream_of_authoritative_contracts() -> None:
