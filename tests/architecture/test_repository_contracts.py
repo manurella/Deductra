@@ -103,6 +103,8 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "src/deductra/domain/values.py",
         "src/deductra/families/__init__.py",
         "src/deductra/families/logic_equations/__init__.py",
+        "src/deductra/families/logic_equations/checker.py",
+        "src/deductra/families/logic_equations/golden.py",
         "src/deductra/families/logic_equations/schema.py",
         "src/deductra/families/logic_equations/rules.py",
         "src/deductra/families/logic_equations/solver.py",
@@ -167,6 +169,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "tests/families/logic_equations/test_specification.py",
         "tests/families/logic_equations/test_rules.py",
         "tests/families/logic_equations/test_backend_encodings.py",
+        "tests/families/logic_equations/test_golden_easy.py",
         "tests/graph/test_hypergraph_projection.py",
         "tests/generation/test_generation_contracts.py",
         "tests/memory/test_sqlite_event_store.py",
@@ -268,7 +271,7 @@ def test_source_tree_has_one_distribution_package() -> None:
 
 
 def test_package_contains_only_approved_packet_modules() -> None:
-    """Keep the package limited to approved M1 and FAM-LE-001 surfaces."""
+    """Keep the package limited to approved M1 and Logic Equations surfaces."""
     package_root = REPOSITORY_ROOT / "src" / "deductra"
     public_files = {
         path.relative_to(package_root).as_posix()
@@ -295,6 +298,8 @@ def test_package_contains_only_approved_packet_modules() -> None:
         "domain/values.py",
         "families/__init__.py",
         "families/logic_equations/__init__.py",
+        "families/logic_equations/checker.py",
+        "families/logic_equations/golden.py",
         "families/logic_equations/schema.py",
         "families/logic_equations/rules.py",
         "families/logic_equations/solver.py",

@@ -23,6 +23,7 @@ from deductra.domain.puzzle import (
     ProvenanceBundle,
     PuzzleIdentity,
 )
+from deductra.domain.serialization import canonical_json
 from deductra.domain.values import Domain, DomainValue, Variable
 from deductra.families.logic_equations import (
     FAMILY_ID,
@@ -261,3 +262,25 @@ def test_multi_variable_enumeration_is_not_hidden_inside_a_human_rule() -> None:
         "Arithmetic relation",
     )
     assert rule.find_applications(specification, source) == ()
+
+
+def test_two_variable_ordering_uses_only_disclosed_domain_bounds() -> None:
+    specification = puzzle(
+        GreaterThan(
+            left=variable(B),
+            right=variable(A),
+        )
+    )
+    source = state(specification)
+    rule = ConstraintPropagationRule(
+        LogicEquationsTechnique.DIRECT_RELATION,
+        "Direct relation",
+    )
+    conclusions = {
+        canonical_json(rule.apply(candidate, source).conclusions[0])
+        for candidate in rule.find_applications(specification, source)
+    }
+    assert conclusions == {
+        canonical_json(ExclusionAtom(variable_id=A, value_id=V3)),
+        canonical_json(ExclusionAtom(variable_id=B, value_id=V1)),
+    }

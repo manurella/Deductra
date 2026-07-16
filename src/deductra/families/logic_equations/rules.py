@@ -332,8 +332,79 @@ def _numeric_value_map(puzzle: LogicEquationsSpec) -> dict[ValueId, int]:
     return result
 
 
+def _ordering_bound_exclusions(
+    expression: BooleanExpression,
+    state: PuzzleState,
+    numeric_values: Mapping[ValueId, int],
+) -> tuple[ExclusionAtom, ...]:
+    """Apply disclosed min/max bounds to a relation between two variables."""
+    if (
+        not isinstance(
+            expression,
+            (LessThan, LessThanOrEqual, GreaterThan, GreaterThanOrEqual),
+        )
+        or not isinstance(expression.left, VariableReference)
+        or not isinstance(expression.right, VariableReference)
+    ):
+        return ()
+
+    left_id = expression.left.variable_id
+    right_id = expression.right.variable_id
+    if left_id == right_id:
+        return ()
+    left_domain = state.candidate_domains[left_id]
+    right_domain = state.candidate_domains[right_id]
+    if len(left_domain) <= 1 or len(right_domain) <= 1:
+        return ()
+
+    left_values = {value_id: numeric_values[value_id] for value_id in left_domain}
+    right_values = {value_id: numeric_values[value_id] for value_id in right_domain}
+    minimum_left = min(left_values.values())
+    maximum_left = max(left_values.values())
+    minimum_right = min(right_values.values())
+    maximum_right = max(right_values.values())
+
+    if isinstance(expression, LessThan):
+        invalid_left = {
+            value_id for value_id, value in left_values.items() if value >= maximum_right
+        }
+        invalid_right = {
+            value_id for value_id, value in right_values.items() if value <= minimum_left
+        }
+    elif isinstance(expression, LessThanOrEqual):
+        invalid_left = {
+            value_id for value_id, value in left_values.items() if value > maximum_right
+        }
+        invalid_right = {
+            value_id for value_id, value in right_values.items() if value < minimum_left
+        }
+    elif isinstance(expression, GreaterThan):
+        invalid_left = {
+            value_id for value_id, value in left_values.items() if value <= minimum_right
+        }
+        invalid_right = {
+            value_id for value_id, value in right_values.items() if value >= maximum_left
+        }
+    else:
+        invalid_left = {
+            value_id for value_id, value in left_values.items() if value < minimum_right
+        }
+        invalid_right = {
+            value_id for value_id, value in right_values.items() if value > maximum_left
+        }
+
+    return tuple(
+        ExclusionAtom(variable_id=variable_id, value_id=value_id)
+        for variable_id, invalid in (
+            (left_id, invalid_left),
+            (right_id, invalid_right),
+        )
+        for value_id in sorted(invalid)
+    )
+
+
 class ConstraintPropagationRule:
-    """Resolve one variable from one fully grounded arithmetic constraint."""
+    """Propagate one grounded variable or disclosed two-variable order bounds."""
 
     def __init__(self, technique: LogicEquationsTechnique, title: str) -> None:
         if technique is LogicEquationsTechnique.ALL_DIFFERENT:
@@ -363,6 +434,23 @@ class ConstraintPropagationRule:
                 for variable_id in sorted(variables)
                 if len(state.candidate_domains[variable_id]) > 1
             )
+            if len(unresolved) == 2 and self.technique is LogicEquationsTechnique.DIRECT_RELATION:
+                for conclusion in _ordering_bound_exclusions(
+                    constraint.expression,
+                    state,
+                    numeric_values,
+                ):
+                    candidates.append(
+                        _candidate(
+                            reference=self.reference,
+                            state=state,
+                            conclusion=conclusion,
+                            premises=(),
+                            supporting_constraint=constraint.constraint_id,
+                            information_gain=1,
+                        )
+                    )
+                continue
             if len(unresolved) != 1:
                 continue
             variable_id = unresolved[0]
