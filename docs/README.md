@@ -11,6 +11,7 @@ This directory contains the canonical public documentation for Deductra's engine
 - [Verification contracts and backends](architecture/verification-contracts-and-backends.md)
 - [Human reasoning engine](architecture/human-reasoning-engine.md)
 - [Directed reasoning hypergraph](architecture/reasoning-hypergraph.md)
+- [Generator foundation](architecture/generator-foundation.md)
 
 ## Governance
 

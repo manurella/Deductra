@@ -144,6 +144,21 @@ def test_graph_package_depends_only_on_canonical_inward_contracts() -> None:
     assert not violations, f"graph imports non-canonical outer layers: {violations}"
 
 
+def test_generation_package_depends_only_on_evidence_contracts() -> None:
+    """Keep generator contracts independent of persistence, solvers, UI, and reports."""
+    violations: dict[str, list[str]] = {}
+    allowed = ("deductra.domain", "deductra.reasoning", "deductra.generation")
+    for source in sorted((PACKAGE_ROOT / "generation").glob("*.py")):
+        outward = {
+            module
+            for module in imported_modules(source)
+            if module.startswith("deductra.") and not module.startswith(allowed)
+        }
+        if outward:
+            violations[source.relative_to(REPOSITORY_ROOT).as_posix()] = sorted(outward)
+    assert not violations, f"generation imports authoritative outer layers: {violations}"
+
+
 def test_import_analysis_detects_an_undeclared_root(tmp_path: Path) -> None:
     """Prove that the import classifier sees an unapproved external root."""
     source = tmp_path / "module.py"

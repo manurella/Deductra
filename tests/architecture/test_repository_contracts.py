@@ -41,12 +41,14 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/architecture/verification-contracts-and-backends.md",
         "docs/architecture/human-reasoning-engine.md",
         "docs/architecture/reasoning-hypergraph.md",
+        "docs/architecture/generator-foundation.md",
         "docs/architecture/decisions/0002-common-core-schema.md",
         "docs/architecture/decisions/0003-canonical-event-store.md",
         "docs/architecture/decisions/0004-immutable-state-reduction.md",
         "docs/architecture/decisions/0005-independent-proof-verification.md",
         "docs/architecture/decisions/0006-verified-human-reasoning-loop.md",
         "docs/architecture/decisions/0007-project-reasoning-as-hypergraph.md",
+        "docs/architecture/decisions/0008-gate-generation-on-deterministic-evidence.md",
         "docs/architecture/decisions/0001-single-package-foundation.md",
         "docs/architecture/decisions/README.md",
         "docs/architecture/dependency-rules.md",
@@ -64,6 +66,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "schemas/verification-record-v1.schema.json",
         "schemas/human-solve-trace-v1.schema.json",
         "schemas/reasoning-hypergraph-v1.schema.json",
+        "schemas/generation-contract-v1.schema.json",
         "scripts/check_conventions.py",
         "scripts/check_docs.py",
         "scripts/export_json_schema.py",
@@ -83,6 +86,12 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "src/deductra/graph/model.py",
         "src/deductra/graph/projector.py",
         "src/deductra/graph/schema.py",
+        "src/deductra/generation/__init__.py",
+        "src/deductra/generation/contracts.py",
+        "src/deductra/generation/events.py",
+        "src/deductra/generation/interfaces.py",
+        "src/deductra/generation/lineage.py",
+        "src/deductra/generation/schema.py",
         "src/deductra/memory/__init__.py",
         "src/deductra/memory/event_store.py",
         "src/deductra/memory/sqlite_store.py",
@@ -110,6 +119,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "tests/architecture/test_repository_contracts.py",
         "tests/domain/test_core_schema.py",
         "tests/graph/test_hypergraph_projection.py",
+        "tests/generation/test_generation_contracts.py",
         "tests/memory/test_sqlite_event_store.py",
         "tests/reasoning/test_event_schema.py",
         "tests/reasoning/test_events.py",
@@ -203,7 +213,7 @@ def test_source_tree_has_one_distribution_package() -> None:
 
 
 def test_m1_package_contains_only_approved_packet_modules() -> None:
-    """Keep M1 limited to the CR-001 through CR-006 package surfaces."""
+    """Keep M1 limited to the CR-001 through CR-007 package surfaces."""
     package_root = REPOSITORY_ROOT / "src" / "deductra"
     public_files = {
         path.relative_to(package_root).as_posix()
@@ -227,6 +237,12 @@ def test_m1_package_contains_only_approved_packet_modules() -> None:
         "graph/model.py",
         "graph/projector.py",
         "graph/schema.py",
+        "generation/__init__.py",
+        "generation/contracts.py",
+        "generation/events.py",
+        "generation/interfaces.py",
+        "generation/lineage.py",
+        "generation/schema.py",
         "memory/__init__.py",
         "memory/event_store.py",
         "memory/sqlite_store.py",

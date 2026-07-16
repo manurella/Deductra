@@ -11,6 +11,7 @@ Architecture decision records preserve why a significant technical choice was ma
 - [ADR-0005: Verify deductions through independent solver encodings](0005-independent-proof-verification.md)
 - [ADR-0006: Separate human rule proposals from verification authority](0006-verified-human-reasoning-loop.md)
 - [ADR-0007: Project canonical reasoning as a directed hypergraph](0007-project-reasoning-as-hypergraph.md)
+- [ADR-0008: Gate generation on deterministic evidence](0008-gate-generation-on-deterministic-evidence.md)
 
 ## Lifecycle
 

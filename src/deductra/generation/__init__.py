@@ -1,0 +1,68 @@
+"""Generator-foundation contracts with fail-closed evidence gates."""
+
+from deductra.generation.contracts import (
+    DifficultyEvidence,
+    DifficultyLabel,
+    GenerationContractDocument,
+    GenerationMode,
+    GenerationRequest,
+    GenerationResult,
+    GenerationStatus,
+    GenerationVerification,
+    HumanSolveStatus,
+    NoveltyEvidence,
+    NoveltyStatus,
+    PuzzleFingerprints,
+    QuarantineReason,
+    QuarantineRecord,
+    RejectionReason,
+    UniquenessEvidence,
+    UniquenessStatus,
+    decide_generation_result,
+)
+from deductra.generation.events import (
+    GENESIS_EVENT_HASH,
+    GenerationEventType,
+    GenerationLineageEvent,
+    generation_event_chain_failures,
+    seal_generation_event,
+)
+from deductra.generation.interfaces import (
+    DifficultyEvaluator,
+    FingerprintEvaluator,
+    NoveltyEvaluator,
+    UniquenessEvaluator,
+)
+from deductra.generation.lineage import CandidateLineage, GenerationLineage
+
+__all__ = [
+    "GENESIS_EVENT_HASH",
+    "CandidateLineage",
+    "DifficultyEvaluator",
+    "DifficultyEvidence",
+    "DifficultyLabel",
+    "FingerprintEvaluator",
+    "GenerationContractDocument",
+    "GenerationEventType",
+    "GenerationLineage",
+    "GenerationLineageEvent",
+    "GenerationMode",
+    "GenerationRequest",
+    "GenerationResult",
+    "GenerationStatus",
+    "GenerationVerification",
+    "HumanSolveStatus",
+    "NoveltyEvaluator",
+    "NoveltyEvidence",
+    "NoveltyStatus",
+    "PuzzleFingerprints",
+    "QuarantineReason",
+    "QuarantineRecord",
+    "RejectionReason",
+    "UniquenessEvaluator",
+    "UniquenessEvidence",
+    "UniquenessStatus",
+    "decide_generation_result",
+    "generation_event_chain_failures",
+    "seal_generation_event",
+]

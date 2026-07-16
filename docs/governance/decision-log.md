@@ -21,5 +21,6 @@ This log summarizes accepted project-level decisions. Architecturally significan
 | D-013 | Authorize supported deductions only through source-bound obligations and fail-closed independent proof verification. | Accepted | [@manurella](https://github.com/manurella) | [ADR-0005](../architecture/decisions/0005-independent-proof-verification.md) |
 | D-014 | Keep human rules non-authoritative and run them through deterministic selection plus a verification-owned authority adapter. | Accepted | [@manurella](https://github.com/manurella) | [ADR-0006](../architecture/decisions/0006-verified-human-reasoning-loop.md) |
 | D-015 | Project immutable puzzle and reasoning sources into a deterministic evidence-closed directed hypergraph. | Accepted | [@manurella](https://github.com/manurella) | [ADR-0007](../architecture/decisions/0007-project-reasoning-as-hypergraph.md) |
+| D-016 | Gate generated candidates on deterministic evidence with reproducible lineage and fail-closed quarantine. | Accepted | [@manurella](https://github.com/manurella) | [ADR-0008](../architecture/decisions/0008-gate-generation-on-deterministic-evidence.md) |
 
 New decisions receive the next sequential identifier. A superseding decision retains the old entry and links both records rather than erasing the earlier ruling.

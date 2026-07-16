@@ -34,3 +34,7 @@ type RuleId = Identifier
 type RuleCandidateId = Identifier
 type GraphVertexId = Identifier
 type HyperedgeId = Identifier
+type GenerationRequestId = Identifier
+type CandidateId = Identifier
+type RecipeId = Identifier
+type GenerationEventId = Identifier
