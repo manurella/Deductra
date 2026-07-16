@@ -43,6 +43,23 @@ def imported_modules(path: Path) -> set[str]:
     return modules
 
 
+def dynamically_imported_modules(path: Path) -> set[str]:
+    """Return literal module names passed to import_module."""
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    modules: set[str] = set()
+    for node in ast.walk(tree):
+        if (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id == "import_module"
+            and node.args
+            and isinstance(node.args[0], ast.Constant)
+            and isinstance(node.args[0].value, str)
+        ):
+            modules.add(node.args[0].value)
+    return modules
+
+
 def production_sources() -> list[Path]:
     """Return production sources without generated caches."""
     return sorted(
@@ -199,6 +216,40 @@ def test_reports_are_downstream_of_authoritative_contracts() -> None:
         if outward:
             violations[source.relative_to(REPOSITORY_ROOT).as_posix()] = sorted(outward)
     assert not violations, f"reports import non-canonical outer layers: {violations}"
+
+
+def test_agents_are_an_optional_outer_integration_boundary() -> None:
+    """Allow agents to read deterministic contracts without inward authority."""
+    violations: dict[str, list[str]] = {}
+    allowed = (
+        "deductra.domain",
+        "deductra.reasoning",
+        "deductra.verification",
+        "deductra.agents",
+    )
+    for source in sorted((PACKAGE_ROOT / "agents").glob("*.py")):
+        outward = {
+            module
+            for module in imported_modules(source)
+            if module.startswith("deductra.") and not module.startswith(allowed)
+        }
+        if outward:
+            violations[source.relative_to(REPOSITORY_ROOT).as_posix()] = sorted(outward)
+    assert not violations, f"agents import non-canonical outer layers: {violations}"
+
+
+def test_provider_sdk_imports_are_confined_to_agent_adapter() -> None:
+    """Prevent provider SDK coupling outside the reviewed integration module."""
+    allowed_path = PACKAGE_ROOT / "agents" / "openai_runtime.py"
+    violations: dict[str, list[str]] = {}
+    for source in production_sources():
+        provider_imports = (
+            imported_roots(source)
+            | {module.partition(".")[0] for module in dynamically_imported_modules(source)}
+        ) & {"agents", "openai"}
+        if provider_imports and source != allowed_path:
+            violations[source.relative_to(REPOSITORY_ROOT).as_posix()] = sorted(provider_imports)
+    assert not violations, f"provider SDK imports outside agent adapter: {violations}"
 
 
 def test_import_analysis_detects_an_undeclared_root(tmp_path: Path) -> None:

@@ -1,0 +1,627 @@
+{
+  "$defs": {
+    "AgentClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "$ref": "#/$defs/AgentClaimId"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "kind": {
+          "$ref": "#/$defs/AgentClaimKind"
+        },
+        "method": {
+          "$ref": "#/$defs/AgentClaimMethod"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "claim_id",
+        "kind",
+        "method",
+        "text"
+      ],
+      "title": "AgentClaim",
+      "type": "object"
+    },
+    "AgentClaimId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "AgentClaimKind": {
+      "enum": [
+        "factual",
+        "hypothesis",
+        "solution",
+        "report_fact"
+      ],
+      "title": "AgentClaimKind",
+      "type": "string"
+    },
+    "AgentClaimMethod": {
+      "enum": [
+        "deterministic_evidence",
+        "hypothesis",
+        "agent_synthesis",
+        "hidden_search"
+      ],
+      "title": "AgentClaimMethod",
+      "type": "string"
+    },
+    "AgentCommandKind": {
+      "enum": [
+        "suggest_hint",
+        "request_verification",
+        "present_verified_solution",
+        "recommend_practice",
+        "apply_domain_event",
+        "commit_solution",
+        "change_difficulty",
+        "write_report_fact"
+      ],
+      "title": "AgentCommandKind",
+      "type": "string"
+    },
+    "AgentCommandProposal": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "kind": {
+          "$ref": "#/$defs/AgentCommandKind"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "rationale"
+      ],
+      "title": "AgentCommandProposal",
+      "type": "object"
+    },
+    "AgentContextView": {
+      "additionalProperties": false,
+      "description": "Minimal deterministic context exposed to an optional agent runtime.",
+      "properties": {
+        "allowed_tool_names": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Allowed Tool Names",
+          "type": "array"
+        },
+        "deterministic_result_hash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256Digest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "deterministic_status": {
+          "$ref": "#/$defs/VerificationStatus",
+          "default": "not_checked"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/AgentEvidenceView"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "puzzle_revision_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PuzzleRevisionId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "trace_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TraceId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "verified_solution_evidence_ids": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceId"
+          },
+          "title": "Verified Solution Evidence Ids",
+          "type": "array"
+        }
+      },
+      "title": "AgentContextView",
+      "type": "object"
+    },
+    "AgentEvidenceView": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "evidence_id": {
+          "$ref": "#/$defs/EvidenceId"
+        },
+        "evidence_kind": {
+          "minLength": 1,
+          "title": "Evidence Kind",
+          "type": "string"
+        },
+        "verification_status": {
+          "$ref": "#/$defs/VerificationStatus"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "evidence_kind",
+        "verification_status",
+        "content_hash"
+      ],
+      "title": "AgentEvidenceView",
+      "type": "object"
+    },
+    "AgentId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "AgentOutput": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/AgentClaim"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "commands": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/AgentCommandProposal"
+          },
+          "title": "Commands",
+          "type": "array"
+        },
+        "refusal_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refusal Reason"
+        },
+        "uncertainty": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uncertainty"
+        }
+      },
+      "title": "AgentOutput",
+      "type": "object"
+    },
+    "AgentPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "agent_id": {
+          "$ref": "#/$defs/AgentId"
+        },
+        "allowed_tasks": {
+          "items": {
+            "$ref": "#/$defs/AgentTaskKind"
+          },
+          "title": "Allowed Tasks",
+          "type": "array"
+        },
+        "allowed_tool_names": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Allowed Tool Names",
+          "type": "array"
+        }
+      },
+      "required": [
+        "agent_id",
+        "allowed_tasks"
+      ],
+      "title": "AgentPolicy",
+      "type": "object"
+    },
+    "AgentRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "correlation_id": {
+          "$ref": "#/$defs/CorrelationId"
+        },
+        "input_text": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Input Text",
+          "type": "string"
+        },
+        "requested_tools": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Requested Tools",
+          "type": "array"
+        },
+        "run_id": {
+          "$ref": "#/$defs/AgentRunId"
+        },
+        "task": {
+          "$ref": "#/$defs/AgentTaskKind"
+        }
+      },
+      "required": [
+        "run_id",
+        "correlation_id",
+        "task",
+        "input_text"
+      ],
+      "title": "AgentRequest",
+      "type": "object"
+    },
+    "AgentRunAudit": {
+      "additionalProperties": false,
+      "properties": {
+        "agent_id": {
+          "$ref": "#/$defs/AgentId"
+        },
+        "effort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Effort"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Model"
+        },
+        "output_hash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256Digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "prompt_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Prompt Version"
+        },
+        "request_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "requested_tools": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Requested Tools",
+          "type": "array"
+        },
+        "runtime": {
+          "minLength": 1,
+          "title": "Runtime",
+          "type": "string"
+        },
+        "runtime_version": {
+          "minLength": 1,
+          "title": "Runtime Version",
+          "type": "string"
+        },
+        "tracing_enabled": {
+          "title": "Tracing Enabled",
+          "type": "boolean"
+        },
+        "used_tools": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Used Tools",
+          "type": "array"
+        }
+      },
+      "required": [
+        "runtime",
+        "runtime_version",
+        "agent_id",
+        "model",
+        "effort",
+        "prompt_version",
+        "requested_tools",
+        "used_tools",
+        "tracing_enabled",
+        "request_hash",
+        "output_hash"
+      ],
+      "title": "AgentRunAudit",
+      "type": "object"
+    },
+    "AgentRunId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "AgentRunResult_AgentOutput_": {
+      "additionalProperties": false,
+      "properties": {
+        "audit": {
+          "$ref": "#/$defs/AgentRunAudit"
+        },
+        "failure_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Failure Reason"
+        },
+        "guardrails": {
+          "$ref": "#/$defs/GuardrailReport"
+        },
+        "output": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AgentOutput"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "run_id": {
+          "$ref": "#/$defs/AgentRunId"
+        },
+        "status": {
+          "$ref": "#/$defs/AgentRunStatus"
+        }
+      },
+      "required": [
+        "run_id",
+        "status",
+        "output",
+        "guardrails",
+        "audit"
+      ],
+      "title": "AgentRunResult[AgentOutput]",
+      "type": "object"
+    },
+    "AgentRunStatus": {
+      "enum": [
+        "accepted",
+        "rejected",
+        "disabled",
+        "failed"
+      ],
+      "title": "AgentRunStatus",
+      "type": "string"
+    },
+    "AgentTaskKind": {
+      "enum": [
+        "modelling",
+        "pedagogy",
+        "audit",
+        "learning_analysis",
+        "navigation"
+      ],
+      "title": "AgentTaskKind",
+      "type": "string"
+    },
+    "CorrelationId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "EvidenceId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "GuardrailCode": {
+      "enum": [
+        "task_not_allowed",
+        "tool_not_allowed",
+        "tool_use_not_declared",
+        "unknown_evidence",
+        "unaccepted_evidence",
+        "uncited_fact",
+        "attempted_state_mutation",
+        "unverified_solution",
+        "deterministic_conflict",
+        "hidden_search"
+      ],
+      "title": "GuardrailCode",
+      "type": "string"
+    },
+    "GuardrailFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/GuardrailCode"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "subject_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject Id"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "GuardrailFinding",
+      "type": "object"
+    },
+    "GuardrailOutcome": {
+      "enum": [
+        "passed",
+        "rejected",
+        "not_run"
+      ],
+      "title": "GuardrailOutcome",
+      "type": "string"
+    },
+    "GuardrailReport": {
+      "additionalProperties": false,
+      "properties": {
+        "findings": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/GuardrailFinding"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "outcome": {
+          "$ref": "#/$defs/GuardrailOutcome"
+        }
+      },
+      "required": [
+        "outcome"
+      ],
+      "title": "GuardrailReport",
+      "type": "object"
+    },
+    "PuzzleRevisionId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "Sha256Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "TraceId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "VerificationStatus": {
+      "description": "Authority level assigned to one proof decision.",
+      "enum": [
+        "not_checked",
+        "structurally_valid",
+        "backend_verified",
+        "cross_verified",
+        "rejected",
+        "inconclusive",
+        "quarantined"
+      ],
+      "title": "VerificationStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "context": {
+      "$ref": "#/$defs/AgentContextView"
+    },
+    "policy": {
+      "$ref": "#/$defs/AgentPolicy"
+    },
+    "request": {
+      "$ref": "#/$defs/AgentRequest"
+    },
+    "result": {
+      "$ref": "#/$defs/AgentRunResult_AgentOutput_"
+    }
+  },
+  "required": [
+    "request",
+    "context",
+    "policy",
+    "result"
+  ],
+  "title": "AgentBoundaryContractDocument",
+  "type": "object"
+}

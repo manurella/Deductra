@@ -44,6 +44,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/architecture/generator-foundation.md",
         "docs/architecture/event-sourced-memory-projections.md",
         "docs/architecture/report-contract-and-rendering.md",
+        "docs/architecture/agent-runtime-boundary.md",
         "docs/architecture/decisions/0002-common-core-schema.md",
         "docs/architecture/decisions/0003-canonical-event-store.md",
         "docs/architecture/decisions/0004-immutable-state-reduction.md",
@@ -52,6 +53,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/architecture/decisions/0007-project-reasoning-as-hypergraph.md",
         "docs/architecture/decisions/0008-gate-generation-on-deterministic-evidence.md",
         "docs/architecture/decisions/0009-derive-memory-views-from-events.md",
+        "docs/architecture/decisions/0010-keep-agents-optional-and-non-authoritative.md",
         "docs/architecture/decisions/0001-single-package-foundation.md",
         "docs/architecture/decisions/README.md",
         "docs/architecture/dependency-rules.md",
@@ -72,10 +74,17 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "schemas/generation-contract-v1.schema.json",
         "schemas/memory-projections-v1.schema.json",
         "schemas/report-model-v1.schema.json",
+        "schemas/agent-boundary-v1.schema.json",
         "scripts/check_conventions.py",
         "scripts/check_docs.py",
         "scripts/export_json_schema.py",
         "src/deductra/__init__.py",
+        "src/deductra/agents/__init__.py",
+        "src/deductra/agents/contracts.py",
+        "src/deductra/agents/guardrails.py",
+        "src/deductra/agents/openai_runtime.py",
+        "src/deductra/agents/runtime.py",
+        "src/deductra/agents/schema.py",
         "src/deductra/domain/__init__.py",
         "src/deductra/domain/atoms.py",
         "src/deductra/domain/base.py",
@@ -134,6 +143,12 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "src/deductra/verification/z3_backend.py",
         "tests/architecture/test_import_boundaries.py",
         "tests/architecture/test_repository_contracts.py",
+        "tests/agent_runtime/__init__.py",
+        "tests/agent_runtime/conftest.py",
+        "tests/agent_runtime/test_evals.py",
+        "tests/agent_runtime/test_guardrails.py",
+        "tests/agent_runtime/test_runtime.py",
+        "tests/agent_runtime/test_schema.py",
         "tests/domain/test_core_schema.py",
         "tests/graph/test_hypergraph_projection.py",
         "tests/generation/test_generation_contracts.py",
@@ -236,7 +251,7 @@ def test_source_tree_has_one_distribution_package() -> None:
 
 
 def test_m1_package_contains_only_approved_packet_modules() -> None:
-    """Keep M1 limited to the CR-001 through CR-009 package surfaces."""
+    """Keep M1 limited to the CR-001 through CR-010 package surfaces."""
     package_root = REPOSITORY_ROOT / "src" / "deductra"
     public_files = {
         path.relative_to(package_root).as_posix()
@@ -245,6 +260,12 @@ def test_m1_package_contains_only_approved_packet_modules() -> None:
     }
     assert public_files == {
         "__init__.py",
+        "agents/__init__.py",
+        "agents/contracts.py",
+        "agents/guardrails.py",
+        "agents/openai_runtime.py",
+        "agents/runtime.py",
+        "agents/schema.py",
         "domain/__init__.py",
         "domain/atoms.py",
         "domain/base.py",
@@ -315,6 +336,7 @@ def test_project_metadata_preserves_package_boundaries() -> None:
     assert project["requires-python"] == ">=3.13,<3.15"
     assert project["dependencies"] == [
         "jinja2>=3.1.6,<4",
+        "openai-agents==0.18.2",
         "ortools>=9.15,<10",
         "pydantic>=2.13,<3",
         "weasyprint==69.0",

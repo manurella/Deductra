@@ -49,3 +49,13 @@ Dependabot, locked installation, dependency review, vulnerability audit, license
 - Why the standard library is insufficient: it provides no HTML/CSS pagination, tagged-PDF generation, or evidence-attachment support.
 - Operational controls: the adapter denies external resource fetches, container native libraries are explicit, and profile flags never count as conformance evidence.
 - Removal strategy: replace the adapter behind the protocol, then replay PDF smoke, accessibility-structure, attachment, and visual checks.
+
+## OpenAI Agents SDK
+
+- Admitted version: exactly `0.18.2`.
+- Purpose: initial remote implementation of the Deductra-owned typed `AgentRuntime` port.
+- Why the standard library is insufficient: it provides no structured model runner, tool lifecycle, model configuration, or agent execution tracing controls.
+- Boundary: only `deductra.agents.openai_runtime` may load provider SDK types; deterministic packages depend solely on Deductra contracts.
+- Operational controls: no embedded credentials, tracing off by default, sensitive trace payloads disabled, strict tool registration, preflight allowlists, post-output evidence guardrails, exact lock, and fixed offline evaluations.
+- Operational cost: the SDK adds HTTP, schema, server, cryptography, and protocol transitives; security and license automation must audit the complete locked graph.
+- Removal strategy: preserve `AgentRuntime`, switch registrations to the disabled runtime or a reviewed adapter, and replay all guardrail and evaluation cases.

@@ -47,3 +47,6 @@ type ReportSectionId = Identifier
 type VisualSpecId = Identifier
 type EvidenceId = Identifier
 type ThemeId = Identifier
+type AgentId = Identifier
+type AgentRunId = Identifier
+type AgentClaimId = Identifier

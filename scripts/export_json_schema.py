@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from deductra.agents.schema import rendered_agent_boundary_json_schema
 from deductra.domain.schema import rendered_puzzle_spec_json_schema
 from deductra.generation.schema import rendered_generation_contract_json_schema
 from deductra.graph.schema import rendered_reasoning_hypergraph_json_schema
@@ -26,6 +27,7 @@ GENERATION_SCHEMA_PATH = REPOSITORY_ROOT / "schemas" / "generation-contract-v1.s
 MEMORY_PROJECTION_SCHEMA_PATH = REPOSITORY_ROOT / "schemas" / "memory-projections-v1.schema.json"
 VERIFICATION_SCHEMA_PATH = REPOSITORY_ROOT / "schemas" / "verification-record-v1.schema.json"
 REPORT_MODEL_SCHEMA_PATH = REPOSITORY_ROOT / "schemas" / "report-model-v1.schema.json"
+AGENT_BOUNDARY_SCHEMA_PATH = REPOSITORY_ROOT / "schemas" / "agent-boundary-v1.schema.json"
 
 
 def main() -> None:
@@ -73,6 +75,11 @@ def main() -> None:
     )
     REPORT_MODEL_SCHEMA_PATH.write_text(
         rendered_report_model_json_schema(),
+        encoding="utf-8",
+        newline="\n",
+    )
+    AGENT_BOUNDARY_SCHEMA_PATH.write_text(
+        rendered_agent_boundary_json_schema(),
         encoding="utf-8",
         newline="\n",
     )

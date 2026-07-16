@@ -13,6 +13,7 @@ Architecture decision records preserve why a significant technical choice was ma
 - [ADR-0007: Project canonical reasoning as a directed hypergraph](0007-project-reasoning-as-hypergraph.md)
 - [ADR-0008: Gate generation on deterministic evidence](0008-gate-generation-on-deterministic-evidence.md)
 - [ADR-0009: Derive memory views from immutable events](0009-derive-memory-views-from-events.md)
+- [ADR-0010: Keep agents optional and non-authoritative](0010-keep-agents-optional-and-non-authoritative.md)
 
 ## Lifecycle
 
