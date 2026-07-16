@@ -8,6 +8,7 @@ This directory contains the canonical public documentation for Deductra's engine
 - [Foundation overview](architecture/overview.md)
 - [Dependency rules](architecture/dependency-rules.md)
 - [Architecture decisions](architecture/decisions/README.md)
+- [Verification contracts and backends](architecture/verification-contracts-and-backends.md)
 
 ## Governance
 
@@ -16,5 +17,6 @@ This directory contains the canonical public documentation for Deductra's engine
 - [Current state](governance/current-state.md)
 - [Decision log](governance/decision-log.md)
 - [Risk register](governance/risk-register.md)
+- [Runtime dependency admissions](governance/dependency-admissions.md)
 
 The [README](../README.md) is a project introduction, not a policy source. When a summary conflicts with a canonical document, the canonical document governs.

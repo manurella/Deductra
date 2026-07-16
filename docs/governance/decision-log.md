@@ -18,5 +18,6 @@ This log summarizes accepted project-level decisions. Architecturally significan
 | D-010 | Establish the immutable family-neutral domain schema and admit Pydantic as M1's first runtime dependency. | Accepted | [@manurella](https://github.com/manurella) | [ADR-0002](../architecture/decisions/0002-common-core-schema.md) |
 | D-011 | Store canonical lifecycle events in zero-based tamper-evident streams through a repository port and transactional SQLite adapter. | Accepted | [@manurella](https://github.com/manurella) | [ADR-0003](../architecture/decisions/0003-canonical-event-store.md) |
 | D-012 | Derive canonically hashed immutable state through pure reduction, retained branches, and non-authoritative snapshots. | Accepted | [@manurella](https://github.com/manurella) | [ADR-0004](../architecture/decisions/0004-immutable-state-reduction.md) |
+| D-013 | Authorize supported deductions only through source-bound obligations and fail-closed independent proof verification. | Accepted | [@manurella](https://github.com/manurella) | [ADR-0005](../architecture/decisions/0005-independent-proof-verification.md) |
 
 New decisions receive the next sequential identifier. A superseding decision retains the old entry and links both records rather than erasing the earlier ruling.

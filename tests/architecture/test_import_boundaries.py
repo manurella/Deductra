@@ -8,7 +8,12 @@ from pathlib import Path
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 PACKAGE_ROOT = REPOSITORY_ROOT / "src" / "deductra"
-ALLOWED_IMPORT_ROOTS = frozenset(sys.stdlib_module_names) | {"deductra", "pydantic"}
+ALLOWED_IMPORT_ROOTS = frozenset(sys.stdlib_module_names) | {
+    "deductra",
+    "ortools",
+    "pydantic",
+    "z3",
+}
 FORBIDDEN_INTERNAL_ROOTS = frozenset({"scripts", "tests"})
 
 
@@ -107,6 +112,21 @@ def test_memory_package_depends_only_on_inward_contracts() -> None:
         if outward:
             violations[source.relative_to(REPOSITORY_ROOT).as_posix()] = sorted(outward)
     assert not violations, f"memory imports outer layers: {violations}"
+
+
+def test_verification_package_depends_only_on_inward_contracts() -> None:
+    """Keep proof backends dependent on domain and reasoning contracts only."""
+    violations: dict[str, list[str]] = {}
+    allowed = ("deductra.domain", "deductra.reasoning", "deductra.verification")
+    for source in sorted((PACKAGE_ROOT / "verification").glob("*.py")):
+        outward = {
+            module
+            for module in imported_modules(source)
+            if module.startswith("deductra.") and not module.startswith(allowed)
+        }
+        if outward:
+            violations[source.relative_to(REPOSITORY_ROOT).as_posix()] = sorted(outward)
+    assert not violations, f"verification imports outer layers: {violations}"
 
 
 def test_import_analysis_detects_an_undeclared_root(tmp_path: Path) -> None:

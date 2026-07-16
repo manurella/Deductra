@@ -28,3 +28,5 @@ type CausationId = Identifier
 type StateId = Identifier
 type SnapshotId = Identifier
 type ContradictionId = Identifier
+type ObligationId = Identifier
+type CertificateId = Identifier

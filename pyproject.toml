@@ -18,7 +18,9 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
+  "ortools>=9.15,<10",
   "pydantic>=2.13,<3",
+  "z3-solver>=4.16,<5",
 ]
 
 [dependency-groups]

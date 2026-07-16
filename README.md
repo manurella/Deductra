@@ -1,6 +1,6 @@
 # Deductra
 
-Deductra is an early-stage Python project for structured, proof-carrying deductive reasoning. Its M0 engineering foundation is complete, and M1 currently provides family-neutral immutable puzzle, event, and state-projection contracts. It does not yet provide a proof verifier, solver, generator, user interface, or stable public API.
+Deductra is an early-stage Python project for structured, proof-carrying deductive reasoning. Its M0 engineering foundation is complete, and M1 currently provides family-neutral immutable puzzle, event, state-projection, and bounded proof-verification contracts. It does not yet provide a puzzle solver, generator, user interface, or stable public API.
 
 ## Current status
 
@@ -14,8 +14,9 @@ The current repository provides:
 - strict, immutable domain models and a versioned JSON Schema for puzzle specifications.
 - canonical lifecycle events with tamper-evident hash chains and transactional SQLite storage.
 - deterministic immutable state reduction, replayable branches, and integrity-protected snapshots.
+- source-bound proof obligations with independent Z3 and CP-SAT verification.
 
-Pydantic is the sole runtime dependency for M1's validated domain boundary.
+The admitted runtime dependencies and their rationale are recorded in the [dependency admissions](docs/governance/dependency-admissions.md).
 
 ## Documentation
 
