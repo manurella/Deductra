@@ -17,6 +17,7 @@ This directory contains Deductra's canonical public engineering documentation. I
 - [Logic Grid specification](architecture/logic-grid-specification.md)
 - [Logic Grid human rules](architecture/logic-grid-human-rules.md)
 - [Logic Grid backend encodings](architecture/logic-grid-backend-encodings.md)
+- [Logic Grid reference triad](architecture/logic-grid-reference-triad.md)
 
 ## Governance
 

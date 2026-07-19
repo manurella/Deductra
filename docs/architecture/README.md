@@ -20,6 +20,7 @@ Deductra begins as one Python distribution with one import root. Architecture is
 - [Logic Grid specification](logic-grid-specification.md) defines FAM-LG-001's anchor-aligned category bijections and validation boundary.
 - [Logic Grid human rules](logic-grid-human-rules.md) defines FAM-LG-002's deterministic association, bijection, ordered, numeric, and compound clue techniques.
 - [Logic Grid backend encodings](logic-grid-backend-encodings.md) defines FAM-LG-003's independent row, ordinal, exact-numeric, and compound-clue proof semantics.
+- [Logic Grid reference triad](logic-grid-reference-triad.md) defines FAM-LG-004's independent final checker and fixed 3x3, 4x4, and 5x5 calibration fixtures.
 - [Dependency rules](dependency-rules.md) defines the dependency direction that implementation and enforcement must preserve.
 - [Architecture decisions](decisions/README.md) records significant decisions and their consequences.
 

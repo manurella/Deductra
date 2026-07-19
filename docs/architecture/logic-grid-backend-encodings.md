@@ -50,5 +50,6 @@ Differential tests cover direct association, exclusion, ordering without numeric
 rational differences, every accepted compound operator, counterexamples, inconsistent sources,
 the CP-SAT resource limit, and verified human-rule reduction.
 
-This packet adds no final-solution checker, uniqueness enumeration, Golden puzzle, parser, search
-coordinator, generator, interface, report composition, or product content.
+FAM-LG-003 deliberately added no final-solution checker, reference puzzle, parser, search
+coordinator, generator, interface, report composition, or product content. The separately bounded
+[reference triad](logic-grid-reference-triad.md) now builds on this proof contract.

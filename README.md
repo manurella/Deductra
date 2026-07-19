@@ -27,6 +27,7 @@ The current repository provides:
 - an immutable anchor-aligned Logic Grid specification with strict category, bijection, expression, and clue-provenance validation.
 - deterministic Logic Grid association, bijection, ordering, numeric, and compound-clue proposals without hidden search.
 - independent Z3 and CP-SAT verification for Logic Grid proposals, including exact rational and compound-clue semantics.
+- an original 3x3 Easy, 4x4 Medium, and 5x5 Hard Logic Grid reference triad with an independent final checker and dual-backend uniqueness evidence.
 
 ## Reference solve
 
