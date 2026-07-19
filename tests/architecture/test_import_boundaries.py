@@ -203,10 +203,13 @@ def test_family_specifications_depend_only_on_common_domain_contracts() -> None:
     """Keep concrete family data contracts independent of outer capabilities."""
     violations: dict[str, list[str]] = {}
     allowed = ("deductra.domain", "deductra.families")
-    family_root = PACKAGE_ROOT / "families" / "logic_equations"
+    family_roots = tuple(
+        PACKAGE_ROOT / "families" / family_name for family_name in ("logic_equations", "logic_grid")
+    )
     for source in (
-        family_root / "specification.py",
-        family_root / "schema.py",
+        family_root / filename
+        for family_root in family_roots
+        for filename in ("specification.py", "schema.py")
     ):
         outward = {
             module

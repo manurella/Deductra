@@ -24,6 +24,7 @@ The current repository provides:
 - independently encoded Z3 and CP-SAT verification for Logic Equations deductions.
 - a fixed Golden Easy puzzle with an independent final-solution checker.
 - a basic verified CLI solve with deterministic HumanSolveTrace export.
+- an immutable anchor-aligned Logic Grid specification with strict category, bijection, expression, and clue-provenance validation.
 
 ## Reference solve
 

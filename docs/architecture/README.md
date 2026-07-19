@@ -17,6 +17,7 @@ Deductra begins as one Python distribution with one import root. Architecture is
 - [Logic Equations human rules](logic-equations-human-rules.md) defines FAM-LE-002's deterministic technique catalogue, local propagation, and verification boundary.
 - [Logic Equations backend encodings](logic-equations-backend-encodings.md) defines FAM-LE-003's numeric semantics, independent Z3 and CP-SAT translations, and fail-closed limits.
 - [Logic Equations CLI and trace delivery](logic-equations-cli-and-trace.md) defines FAM-LE-005's verified Golden solve and deterministic trace-export boundary.
+- [Logic Grid specification](logic-grid-specification.md) defines FAM-LG-001's anchor-aligned category bijections and validation boundary.
 - [Dependency rules](dependency-rules.md) defines the dependency direction that implementation and enforcement must preserve.
 - [Architecture decisions](decisions/README.md) records significant decisions and their consequences.
 

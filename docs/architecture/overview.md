@@ -4,7 +4,7 @@ Last reviewed: 2026-07-19
 
 ## Current system boundary
 
-Deductra is one repository, one Python distribution, and one `deductra` import package. The current pre-1.0 system includes immutable puzzle contracts, event-sourced state, independently verified deductions, deterministic human reasoning, derived memory and graph projections, report renderers, an optional guarded agent boundary, and the first Logic Equations family kernel. It does not yet expose a stable public API.
+Deductra is one repository, one Python distribution, and one `deductra` import package. The current pre-1.0 system includes immutable puzzle contracts, event-sourced state, independently verified deductions, deterministic human reasoning, derived memory and graph projections, report renderers, an optional guarded agent boundary, the complete Logic Equations reference kernel, and the validated Logic Grid specification boundary. It does not yet expose a stable public API.
 
 ```text
 repository

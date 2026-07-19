@@ -14,6 +14,7 @@ This directory contains Deductra's canonical public engineering documentation. I
 - [Generator foundation](architecture/generator-foundation.md)
 - [Event-sourced memory projections](architecture/event-sourced-memory-projections.md)
 - [Logic Equations CLI and trace delivery](architecture/logic-equations-cli-and-trace.md)
+- [Logic Grid specification](architecture/logic-grid-specification.md)
 
 ## Governance
 

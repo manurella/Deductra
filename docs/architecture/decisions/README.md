@@ -16,6 +16,7 @@ Architecture decision records preserve why a significant technical choice was ma
 - [ADR-0010: Keep agents optional and non-authoritative](0010-keep-agents-optional-and-non-authoritative.md)
 - [ADR-0011: Specialize families through the common puzzle specification](0011-specialize-families-through-common-specifications.md)
 - [ADR-0012: Encode Logic Equations independently in Z3 and CP-SAT](0012-encode-logic-equations-independently.md)
+- [ADR-0013: Model Logic Grid as anchor-aligned bijections](0013-model-logic-grid-as-anchor-aligned-bijections.md)
 
 ## Lifecycle
 

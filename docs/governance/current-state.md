@@ -40,13 +40,22 @@ The repository remains one Python distribution and one `deductra` import package
 - A verified CLI solve and write-once canonical HumanSolveTrace export.
 - Cross-process and cross-platform trace identities that are independent of Python hash randomization and host set iteration.
 
+### Logic Grid specification foundation
+
+- An immutable category contract for unordered one-to-one associations.
+- One stable item variable per visible item, aligned to a declared canonical anchor category.
+- Exact category-size, variable-partition, item-label, anchor-mapping, and bijection invariants.
+- Safe expression-tree support for direct, alternative, ordered, numeric-difference, cardinality, and compound clue semantics.
+- Complete clue-constraint coverage and primary provenance validation.
+- A checked-in Logic Grid Specification v1 JSON Schema with stable public identity.
+
 ## Latest verification evidence
 
 The 2026-07-19 verification pass completed successfully:
 
 - local quality, formatting, typing, documentation, lockfile, and architecture checks passed;
-- the local suite completed with 172 passing tests and three platform-specific PDF skips;
-- the Docker test and CI-report paths completed with 174 passing tests and one expected isolated-Git-index skip;
+- the local suite completed with 185 passing tests and three platform-specific PDF skips;
+- the Docker test stage completed with 187 passing tests and one expected isolated-Git-index skip;
 - the non-root runtime image ran the installed CLI without development tooling;
 - Windows and Linux produced the same canonical Logic Equations trace identity.
 
@@ -56,11 +65,11 @@ Hosted workflow results are authoritative for pull requests and tagged publicati
 
 M3 will deliver a complete Logic Grid vertical slice: formal family contracts, independent verification, deterministic human reasoning, three calibrated reference puzzles, guided and structured input, play and solve workflows, replay, local evidence, verified generation, difficulty and novelty evaluation, terminal interaction, and validated reports.
 
-Implementation remains packet-based. The first M3 packet establishes the Logic Grid specification and validation boundary; later M3 behavior must not be introduced through that packet.
+Implementation remains packet-based. FAM-LG-001 establishes the Logic Grid specification and validation boundary. Later M3 behavior must consume that boundary and cannot be introduced through or bypass it.
 
 ## Explicitly unavailable
 
-The current repository does not yet provide user-authored puzzle input, a disclosed general search path, a concrete generator, a playable queue, an interactive interface, composed solve reports, a stable public Python API, complete learning behavior, named agent experiences, additional puzzle families, or release installers.
+The current repository does not yet provide user-authored puzzle input, a disclosed general search path, a concrete generator, a playable queue, an interactive interface, composed solve reports, a stable public Python API, complete learning behavior, named agent experiences, additional playable puzzle families, or release installers.
 
 ## Accepted administrative risk
 
