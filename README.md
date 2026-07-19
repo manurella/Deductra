@@ -25,6 +25,7 @@ The current repository provides:
 - a fixed Golden Easy puzzle with an independent final-solution checker.
 - a basic verified CLI solve with deterministic HumanSolveTrace export.
 - an immutable anchor-aligned Logic Grid specification with strict category, bijection, expression, and clue-provenance validation.
+- deterministic Logic Grid association, bijection, ordering, numeric, and compound-clue proposals without hidden search.
 
 ## Reference solve
 

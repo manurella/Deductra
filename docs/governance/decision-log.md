@@ -29,5 +29,6 @@ This log summarizes accepted project-level decisions. Architecturally significan
 | D-021 | Encode Logic Equations independently with symbolic Z3 formulas and bounded CP-SAT tables over declared numeric values. | Accepted | Repository owner | [ADR-0012](../architecture/decisions/0012-encode-logic-equations-independently.md) |
 | D-022 | Reserve `1.0.0` for the complete product; intermediate milestones remain explicitly pre-1.0. | Accepted | Repository owner | [Product roadmap](product-roadmap.md) |
 | D-023 | Represent Logic Grid categories as anchor-aligned item bijections over the common puzzle contract. | Accepted | Repository owner | [ADR-0013](../architecture/decisions/0013-model-logic-grid-as-anchor-aligned-bijections.md) |
+| D-024 | Keep Logic Grid human rules deterministic, locally explainable, free of hidden multi-variable search, and non-authoritative until independent family verification exists. | Accepted | Repository owner | [Logic Grid human rules](../architecture/logic-grid-human-rules.md) |
 
 New decisions receive the next sequential identifier. A superseding decision retains the old entry and links both records rather than erasing the earlier ruling.

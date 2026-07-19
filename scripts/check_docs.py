@@ -29,6 +29,7 @@ REQUIRED_DOCUMENTS = {
     Path("docs/architecture/dependency-rules.md"),
     Path("docs/architecture/logic-equations-cli-and-trace.md"),
     Path("docs/architecture/logic-grid-specification.md"),
+    Path("docs/architecture/logic-grid-human-rules.md"),
     Path("docs/architecture/decisions/0001-single-package-foundation.md"),
     Path("docs/architecture/decisions/0002-common-core-schema.md"),
     Path("docs/architecture/decisions/0003-canonical-event-store.md"),

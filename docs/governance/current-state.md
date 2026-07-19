@@ -48,14 +48,16 @@ The repository remains one Python distribution and one `deductra` import package
 - Safe expression-tree support for direct, alternative, ordered, numeric-difference, cardinality, and compound clue semantics.
 - Complete clue-constraint coverage and primary provenance validation.
 - A checked-in Logic Grid Specification v1 JSON Schema with stable public identity.
+- Five deterministic human-rule technique groups for association, category bijection, ordering, numeric relations, and compound clues.
+- Explainable single-atom proposals with stable identities, exact source-state binding, and no hidden multi-variable search.
 
 ## Latest verification evidence
 
 The 2026-07-19 verification pass completed successfully:
 
 - local quality, formatting, typing, documentation, lockfile, and architecture checks passed;
-- the local suite completed with 185 passing tests and three platform-specific PDF skips;
-- the Docker test stage completed with 187 passing tests and one expected isolated-Git-index skip;
+- the local suite completed with 194 passing tests and three platform-specific PDF skips;
+- the Docker test stage completed with 196 passing tests and one expected isolated-Git-index skip;
 - the non-root runtime image ran the installed CLI without development tooling;
 - Windows and Linux produced the same canonical Logic Equations trace identity.
 
@@ -65,7 +67,7 @@ Hosted workflow results are authoritative for pull requests and tagged publicati
 
 M3 will deliver a complete Logic Grid vertical slice: formal family contracts, independent verification, deterministic human reasoning, three calibrated reference puzzles, guided and structured input, play and solve workflows, replay, local evidence, verified generation, difficulty and novelty evaluation, terminal interaction, and validated reports.
 
-Implementation remains packet-based. FAM-LG-001 establishes the Logic Grid specification and validation boundary. Later M3 behavior must consume that boundary and cannot be introduced through or bypass it.
+Implementation remains packet-based. FAM-LG-001 establishes the Logic Grid specification and validation boundary, and FAM-LG-002 adds non-authoritative human-rule semantics. Later M3 behavior must consume those boundaries and cannot bypass independent verification authority.
 
 ## Explicitly unavailable
 

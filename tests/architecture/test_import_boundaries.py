@@ -225,8 +225,14 @@ def test_family_rules_depend_only_on_domain_and_reasoning_contracts() -> None:
     """Keep family reasoning independent of authority and outer integrations."""
     violations: dict[str, list[str]] = {}
     allowed = ("deductra.domain", "deductra.families", "deductra.reasoning")
-    family_root = PACKAGE_ROOT / "families" / "logic_equations"
-    for source in (family_root / "rules.py", family_root / "solver.py"):
+    family_roots = tuple(
+        PACKAGE_ROOT / "families" / family_name for family_name in ("logic_equations", "logic_grid")
+    )
+    for source in (
+        family_root / filename
+        for family_root in family_roots
+        for filename in ("rules.py", "solver.py")
+    ):
         outward = {
             module
             for module in imported_modules(source)
