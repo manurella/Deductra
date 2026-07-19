@@ -1,6 +1,6 @@
 # Runtime Dependency Admissions
 
-Last reviewed: 2026-07-16
+Last reviewed: 2026-07-19
 
 Runtime dependencies require an explicit purpose, compatibility evidence, supply-chain review, and removal strategy. The uv lockfile is the reproducible dependency record; security automation audits the resolved graph.
 
@@ -29,6 +29,14 @@ Admitted in CR-001 for strict immutable domain validation and JSON Schema genera
 - Operational cost: native binaries plus numerical and data-library transitives significantly expand the resolved runtime graph.
 - Alternatives considered: a second Z3 encoding would not provide the same implementation diversity; custom enumeration would be slower and harder to audit.
 - Removal strategy: preserve certificate and backend protocols, introduce another independently encoded finite-domain verifier, and require corpus equivalence before removal.
+
+## Protocol Buffers
+
+- Admitted version range: `>=6.33,<7`.
+- Purpose: normalize OR-Tools' native CP-SAT model wrapper into deterministic protobuf bytes before computing the raw-artifact digest.
+- Why the standard library is insufficient: it cannot parse or deterministically serialize the protobuf schema exposed by OR-Tools.
+- Operational cost: none beyond the existing resolved runtime graph because OR-Tools already requires protobuf; direct admission makes Deductra's import explicit and independently governed.
+- Removal strategy: remove the direct dependency if OR-Tools exposes a stable deterministic byte representation through its own public Python API.
 
 ## Review controls
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -75,3 +76,28 @@ def test_module_entry_point_executes_the_same_solve() -> None:
 
 def test_canonical_solve_is_stable_across_calls() -> None:
     assert solve_four_sigils() == solve_four_sigils()
+
+
+def test_trace_hash_is_independent_of_python_hash_randomization() -> None:
+    command = [
+        sys.executable,
+        "-c",
+        "from deductra.cli import solve_four_sigils; print(solve_four_sigils().trace_hash)",
+    ]
+    hashes: list[str] = []
+    for seed in ("1", "8675309"):
+        environment = os.environ.copy()
+        environment["PYTHONHASHSEED"] = seed
+        result = subprocess.run(
+            command,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            env=environment,
+        )
+        hashes.append(result.stdout.strip())
+    assert hashes == [
+        "fa3a6c499b3babf7dca5caf934b68ebc67915b3cd308cee9614e36039d972082",
+        "fa3a6c499b3babf7dca5caf934b68ebc67915b3cd308cee9614e36039d972082",
+    ]

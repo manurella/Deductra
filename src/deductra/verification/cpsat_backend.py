@@ -4,10 +4,13 @@
 
 from __future__ import annotations
 
+import hashlib
 from time import perf_counter_ns
 from typing import Any
 
 import ortools
+from google.protobuf import text_format
+from ortools.sat import cp_model_pb2
 from ortools.sat.python import cp_model
 
 from deductra.domain.atoms import AssignmentAtom, Atom, ExclusionAtom
@@ -81,14 +84,14 @@ class CpSatProofBackend:
             }
             for item in problem.variables:
                 variable = variables[item.variable_id]
-                for value_id in set(item.value_ids) - set(item.candidate_ids):
+                for value_id in sorted(set(item.value_ids) - set(item.candidate_ids)):
                     model.add(variable != item.code_for(value_id))
 
             for constraint in problem.constraints:
                 if isinstance(constraint, DomainConstraint):
                     item = problem.variable(constraint.variable_id)
                     disallowed = set(item.value_ids) - set(constraint.allowed_value_ids)
-                    for value_id in disallowed:
+                    for value_id in sorted(disallowed):
                         model.add(variables[item.variable_id] != item.code_for(value_id))
                 elif isinstance(constraint, AllDifferentConstraint):
                     model.add_all_different(variables[item] for item in constraint.variable_ids)
@@ -124,11 +127,11 @@ class CpSatProofBackend:
                     obligation_id=obligation.obligation_id,
                     result="unknown",
                     duration_ms=(perf_counter_ns() - started) // 1_000_000,
-                    raw_artifact_hash=canonical_sha256({"cp_model": str(model.proto)}),
+                    raw_artifact_hash=_model_artifact_hash(model),
                 )
 
             self._add_atom(model, problem.counter_assumption, problem, variables)
-            raw_artifact_hash = canonical_sha256({"cp_model": str(model.proto)})
+            raw_artifact_hash = _model_artifact_hash(model)
             status = solver.solve(model)
             duration_ms = (perf_counter_ns() - started) // 1_000_000
             if status == cp_model.INFEASIBLE:
@@ -179,3 +182,11 @@ class CpSatProofBackend:
 def cast_model_snapshot(value: dict[str, Any] | None) -> dict[str, Any] | None:
     """Keep external solver scalar types outside the certificate boundary."""
     return value
+
+
+def _model_artifact_hash(model: cp_model.CpModel) -> str:
+    """Hash the deterministic protobuf encoding of one native CP-SAT model."""
+    normalized = cp_model_pb2.CpModelProto()
+    text_format.Parse(str(model.proto), normalized)
+    payload = normalized.SerializeToString(deterministic=True)
+    return hashlib.sha256(payload).hexdigest()

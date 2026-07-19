@@ -32,6 +32,10 @@ Each backend checks source satisfiability before adding the negated claim. An al
 
 Each invocation has an explicit positive timeout. CP-SAT uses one worker and a fixed random seed for reproducible verification behavior. Native solver compatibility is exercised in the Python 3.13 and 3.14 CI matrix and container build.
 
+Backend model construction also canonicalizes state atoms and value-domain differences before
+creating native assertions. Raw-artifact digests and their certificate identifiers therefore do
+not depend on Python hash randomization or host-specific set iteration order.
+
 ## Failure handling
 
 Certificates are evidence, not permission by themselves. Invalid hashes, stale obligations, duplicate backend identities, mismatched obligation identities, unsupported events, inconclusive results, and quarantined disagreements are rejected before reduction. Quarantined evidence must be retained and diagnosed; it must never be resolved by selecting the preferred result.

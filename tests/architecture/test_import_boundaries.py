@@ -10,6 +10,7 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 PACKAGE_ROOT = REPOSITORY_ROOT / "src" / "deductra"
 ALLOWED_IMPORT_ROOTS = frozenset(sys.stdlib_module_names) | {
     "deductra",
+    "google",
     "jinja2",
     "ortools",
     "pydantic",

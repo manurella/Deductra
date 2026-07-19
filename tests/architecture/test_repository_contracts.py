@@ -375,6 +375,7 @@ def test_project_metadata_preserves_package_boundaries() -> None:
         "openai-agents==0.18.2",
         "ortools>=9.15,<10",
         "pydantic>=2.13,<3",
+        "protobuf>=6.33,<7",
         "weasyprint==69.0",
         "z3-solver>=4.16,<5",
     ]

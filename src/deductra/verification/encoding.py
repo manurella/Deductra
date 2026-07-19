@@ -13,6 +13,7 @@ from deductra.domain.constraints import (
 )
 from deductra.domain.ids import ValueId, VariableId
 from deductra.domain.puzzle import PuzzleSpec
+from deductra.domain.serialization import canonical_json
 from deductra.reasoning.state import PuzzleState, validate_state
 from deductra.verification.contracts import (
     AssignmentNegation,
@@ -119,7 +120,12 @@ def prepare_problem(
         for variable in puzzle.variables
     )
     variable_ids = {item.variable_id for item in variables}
-    atoms = tuple(_require_supported_atom(atom, variable_ids) for atom in state.asserted_atoms)
+    atoms = tuple(
+        sorted(
+            (_require_supported_atom(atom, variable_ids) for atom in state.asserted_atoms),
+            key=canonical_json,
+        )
+    )
     assumptions = tuple(
         _require_supported_atom(atom, variable_ids) for atom in obligation.assumptions
     )

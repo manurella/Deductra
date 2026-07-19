@@ -78,7 +78,10 @@ class Z3ProofBackend:
                 variable = variables[item.variable_id]
                 track(
                     z3.Or(
-                        *(variable == item.code_for(value_id) for value_id in item.candidate_ids)
+                        *(
+                            variable == item.code_for(value_id)
+                            for value_id in sorted(item.candidate_ids)
+                        )
                     ),
                     f"state:candidates:{item.variable_id}",
                 )
