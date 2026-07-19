@@ -1,15 +1,16 @@
-# Foundation Architecture Overview
+# Architecture Overview
 
-Last reviewed: 2026-07-15
+Last reviewed: 2026-07-19
 
 ## Current system boundary
 
-Deductra is one repository, one Python distribution, and one `deductra` import package. The M0 code surface contains package metadata only; no product behavior or stable public API exists.
+Deductra is one repository, one Python distribution, and one `deductra` import package. The current pre-1.0 system includes immutable puzzle contracts, event-sourced state, independently verified deductions, deterministic human reasoning, derived memory and graph projections, report renderers, an optional guarded agent boundary, and the first Logic Equations family kernel. It does not yet expose a stable public API.
 
 ```text
 repository
-├── src/deductra/     Python distribution
-├── tests/            installed-package tests
+├── src/deductra/     single Python distribution
+├── schemas/          versioned external contracts
+├── tests/            behavior and architecture verification
 ├── docs/             canonical public documentation
 ├── scripts/          repository validation
 └── .github/          review, security, and release automation
@@ -21,7 +22,13 @@ The single-package decision keeps changes atomic and avoids release, dependency,
 
 The package supports Python `>=3.13,<3.15`. Python 3.14 is the default development and container runtime; CI also tests Python 3.13.
 
-uv manages and locks development dependencies. Hatchling builds the wheel and source distribution. M0 has no runtime dependencies, which keeps the foundation's installation and container boundary explicit.
+uv manages and locks all dependency profiles. Hatchling builds the wheel and source distribution. Direct runtime dependencies are admitted individually with a documented purpose, compatibility evidence, operational cost, and removal strategy. The canonical record is [Runtime Dependency Admissions](../governance/dependency-admissions.md).
+
+## Runtime architecture
+
+Dependency direction is inward toward immutable domain contracts. Reasoning proposes and reduces state transitions; verification alone authorizes supported deductions. Graphs, memory views, reports, and agent-facing results are downstream projections and cannot mutate canonical truth. Family packages specialize the shared contracts without bypassing verification authority.
+
+The current CLI exercises this architecture through one fixed Logic Equations puzzle. Planned product surfaces remain pre-1.0 roadmap work until their contracts, implementation, and acceptance evidence are committed.
 
 ## Container architecture
 
@@ -48,4 +55,4 @@ Version tags build a wheel and source distribution, verify the wheel on Python 3
 
 ## Evolution rule
 
-New internal modules must represent an approved capability and follow [dependency rules](dependency-rules.md). A module is not created merely to reserve a name or anticipate possible scale. Expensive-to-reverse changes to topology, public contracts, persistence, security, or distribution require a new architecture decision record.
+New internal modules must represent an approved capability and follow [dependency rules](dependency-rules.md). A module is not created merely to reserve a name or anticipate possible scale. Shared abstractions are extracted only after at least two concrete implementations establish stable semantics. Expensive-to-reverse changes to topology, public contracts, persistence, security, or distribution require a new architecture decision record.

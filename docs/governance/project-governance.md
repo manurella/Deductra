@@ -1,6 +1,6 @@
 # Project Governance
 
-Last reviewed: 2026-07-15
+Last reviewed: 2026-07-19
 
 ## Purpose and scope
 
@@ -72,7 +72,9 @@ Automation follows least privilege. Third-party workflow actions are pinned to i
 
 Releases use semantic version tags and originate from a commit reachable from `main`. A release must pass required quality, compatibility, security, packaging, and container checks.
 
-M0 publishes wheel and source-distribution artifacts to GitHub Releases and a non-root runtime image to GHCR. PyPI publication is not part of M0. Release artifacts and container images receive provenance attestations through the repository workflow.
+Tagged pre-1.0 releases may publish wheel and source-distribution artifacts to GitHub Releases and a non-root runtime image to GHCR. PyPI publication is not currently enabled. Release artifacts and container images receive provenance attestations through the repository workflow.
+
+The project version remains pre-1.0 while required product capabilities or release audits are incomplete. Version `1.0.0` is reserved for the complete product and requires every completion gate in the [product roadmap](product-roadmap.md).
 
 ## Recovery and reversal
 

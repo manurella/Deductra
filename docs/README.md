@@ -1,6 +1,6 @@
 # Deductra Documentation
 
-This directory contains the canonical public documentation for Deductra's engineering foundation. Product behavior will be documented only when the corresponding implementation is approved and exists.
+This directory contains Deductra's canonical public engineering documentation. It records implemented behavior, accepted architecture and governance, and the approved path to a complete product. Planned capabilities are identified as roadmap work and are never described as present behavior.
 
 ## Architecture
 
@@ -20,6 +20,7 @@ This directory contains the canonical public documentation for Deductra's engine
 - [Governance index](governance/README.md)
 - [Project governance](governance/project-governance.md)
 - [Current state](governance/current-state.md)
+- [Product roadmap](governance/product-roadmap.md)
 - [Decision log](governance/decision-log.md)
 - [Risk register](governance/risk-register.md)
 - [Runtime dependency admissions](governance/dependency-admissions.md)

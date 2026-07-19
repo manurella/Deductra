@@ -1,6 +1,6 @@
 # Decision Log
 
-Last reviewed: 2026-07-16
+Last reviewed: 2026-07-19
 
 This log summarizes accepted project-level decisions. Architecturally significant decisions link to a detailed record containing context and consequences.
 
@@ -27,5 +27,6 @@ This log summarizes accepted project-level decisions. Architecturally significan
 | D-019 | Specialize concrete families through validated common puzzle specifications. | Accepted | Repository owner | [ADR-0011](../architecture/decisions/0011-specialize-families-through-common-specifications.md) |
 | D-020 | Keep Logic Equations human rules local, explainable, single-variable, and non-authoritative until independent family encodings exist. | Accepted | Repository owner | [Logic Equations human rules](../architecture/logic-equations-human-rules.md) |
 | D-021 | Encode Logic Equations independently with symbolic Z3 formulas and bounded CP-SAT tables over declared numeric values. | Accepted | Repository owner | [ADR-0012](../architecture/decisions/0012-encode-logic-equations-independently.md) |
+| D-022 | Reserve `1.0.0` for the complete product; intermediate milestones remain explicitly pre-1.0. | Accepted | Repository owner | [Product roadmap](product-roadmap.md) |
 
 New decisions receive the next sequential identifier. A superseding decision retains the old entry and links both records rather than erasing the earlier ruling.

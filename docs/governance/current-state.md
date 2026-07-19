@@ -1,63 +1,67 @@
 # Current State
 
-Last reviewed: 2026-07-16
+Last reviewed: 2026-07-19
 
-Deductra has completed M0, M1, and the first M2 Logic Equations reference kernel. The repository currently has:
+## Summary
 
-- a clean public scaffold and repository-hygiene policy;
-- one typed `src/deductra` package with reviewed, locked runtime dependencies;
-- Python 3.13 and 3.14 compatibility;
-- a uv lockfile and Hatchling build configuration;
-- development, test, CI-artifact, builder, and non-root runtime container stages;
-- contributor, commit, pull-request, conduct, and security contracts;
-- pull-request CI, scheduled security checks, tag-driven GitHub Releases, and GHCR publication;
-- canonical public governance and architecture documentation;
-- automated repository, package, import, dependency, and Docker architecture contracts;
-- strict immutable puzzle-domain models, canonical serialization, and a checked-in PuzzleSpec v1 JSON Schema;
-- immutable lifecycle-event envelopes, deterministic hash-chain verification, and a checked-in EventEnvelope v1 JSON Schema;
-- an append-only event-store port and transactional SQLite adapter;
-- immutable PuzzleState projections, pure deterministic reduction, retained contradiction branches, replay, and integrity-protected snapshots;
-- a checked-in PuzzleState v1 JSON Schema;
-- source-bound assignment and elimination proof obligations;
-- independent Z3 and CP-SAT encodings with sealed verification certificates;
-- fail-closed inconclusive and quarantine outcomes plus a verified reducer boundary;
-- a checked-in VerificationRecord v1 JSON Schema;
-- family-neutral human-rule, application-candidate, and proposed-deduction interfaces;
-- deterministic teaching, shortest-trace, information-gain, and family-canonical policies;
-- a verified human solve loop with explicit stalled, inconclusive, and quarantined outcomes;
-- a checked-in HumanSolveTrace v1 JSON Schema;
-- a typed directed incidence hypergraph projected from immutable puzzle and trace sources;
-- stable graph identifiers, evidence-closure enforcement, and visual-neutral canonical JSON;
-- a checked-in ReasoningHypergraph v1 JSON Schema.
-- immutable generator requests and candidate lineage with tamper-evident lifecycle events;
-- typed uniqueness, difficulty, fingerprint, and novelty evaluator ports;
-- a hard-gate decision that rejects proven failures and quarantines uncertainty;
-- a checked-in GenerationContract v1 JSON Schema.
-- hash-chained source events for disposable attempt, novelty, and artifact views;
-- deterministic attempt and descriptive learning-evidence projections;
-- rebuildable novelty-fingerprint and artifact-metadata indexes;
-- a checked-in MemoryProjections v1 JSON Schema with clean-replay equivalence.
-- an evidence-closed, renderer-neutral ReportModel with theme-isolated fact identity;
-- semantic local-only HTML and protocol-isolated standard, accessible-target, and archival PDF derivation;
-- hash-verified evidence attachments and a checked-in ReportModel v1 JSON Schema.
-- a typed optional AgentRuntime port, deterministic disabled mode, and isolated SDK adapter;
-- fail-closed task, tool, evidence, hidden-search, solution-authority, and state-mutation guardrails;
-- a fixed seven-case agent safety evaluation suite and checked-in AgentBoundary v1 JSON Schema.
-- a typed Logic Equations specialization of the common immutable puzzle contract;
-- validated `1..n` permutation-domain, all-different, expression, clue, and reference invariants;
-- a checked-in Logic Equations Specification v1 JSON Schema.
-- a deterministic six-technique Logic Equations human-rule catalogue;
-- explainable single-variable constraint propagation and all-different proposals;
-- canonical family-rule discovery without multi-variable enumeration or hidden search.
-- independent symbolic Z3 and bounded CP-SAT encodings for Logic Equations expressions;
-- explicit translation from internal domain codes to declared numeric values;
-- cross-verified Logic Equations human-rule reduction through the common authority boundary.
-- the fixed four-variable Logic Equations Golden Easy puzzle;
-- an independent final-solution checker plus dual-backend uniqueness evidence;
-- deterministic ordering-bound propagation without combination search;
-- a basic verified Golden solve through the `deductra` CLI;
-- deterministic, write-once HumanSolveTrace JSON export.
+Deductra is a pre-1.0 project. M0 established the professional engineering foundation, M1 established the family-neutral proof-carrying core, and M2 delivered the first deterministic Logic Equations reference kernel. M3, the complete Logic Grid product slice, is active.
 
-CR-001 through CR-010 implement data, event, persistence, state projection, bounded verification, human-rule orchestration, deterministic hypergraph projection, generator-foundation contracts, rebuildable memory views, evidence-closed report derivation, and an optional non-authoritative agent boundary. FAM-LE-001 through FAM-LE-005 provide the first complete deterministic family kernel: specification parsing and validation, disclosed human rules, independent proof encodings, one fixed Golden Easy puzzle, a final-solution checker, a verified CLI solve, and canonical trace export. Family rules never fall back to search and can change state only after accepted backend evidence. The hypergraph and memory indexes are read-only projections without authority over canonical history. Learning views contain descriptive evidence counts only. The generation boundary constructs no puzzles and contains no family logic, solver coordinator, difficulty algorithm, similarity algorithm, persistence, or playable queue. No user-authored puzzle syntax, solution enumerator, concrete generator, interactive UI, report composer, named agent behavior, learning analyst, or stable public API exists. Report renderers, unverified family-rule proposals, and agent proposals do not decide canonical facts.
+The repository remains one Python distribution and one `deductra` import package. Version `1.0.0` is reserved for the fully completed and audited product defined in the [Product Roadmap](product-roadmap.md).
 
-The owner accepted the M0 foundation after local and hosted CI verification. Branch protection and private vulnerability reporting were explicitly deferred by the owner and are not M1 or M2 blockers; this residual repository-administration risk remains recorded. FAM-LE-005 completes the planned Logic Equations reference-kernel sequence.
+## Implemented capabilities
+
+### Engineering foundation
+
+- Python `>=3.13,<3.15`, uv-locked environments, and Hatchling packaging.
+- Multi-stage development, test, CI-artifact, builder, and non-root runtime containers.
+- Pull-request quality, typing, architecture, compatibility, documentation, Docker, and security automation.
+- Tag-driven wheel, source-distribution, GitHub Release, and GHCR publication workflows.
+- Contributor, security, governance, dependency-admission, and architecture contracts.
+- An explicit public-path allowlist and enforced package/import boundaries.
+
+### Proof-carrying common core
+
+- Strict immutable puzzle specifications with canonical JSON and versioned schemas.
+- Append-only lifecycle events, tamper-evident hash chains, transactional SQLite storage, and deterministic replay.
+- Immutable puzzle-state reduction, retained contradiction branches, and non-authoritative snapshots.
+- Source-bound proof obligations independently encoded for Z3 and CP-SAT.
+- Fail-closed handling for invalid, unknown, or conflicting verification outcomes.
+- Deterministic human-rule selection and verified reduction without hidden search.
+- Evidence-closed reasoning hypergraphs, rebuildable memory projections, and renderer-neutral report models.
+- Semantic local HTML plus standard, accessibility-targeted, and archival PDF derivation.
+- An optional guarded agent runtime that cannot mutate canonical state or establish report facts.
+
+### Logic Equations reference kernel
+
+- A validated finite-domain permutation specification with family-specific JSON Schema.
+- Six deterministic human-rule techniques with explainable, single-variable deductions.
+- Independent symbolic Z3 and bounded CP-SAT encodings over declared numeric values.
+- A fixed Golden Easy puzzle with dual-backend uniqueness evidence and an independent final checker.
+- A verified CLI solve and write-once canonical HumanSolveTrace export.
+- Cross-process and cross-platform trace identities that are independent of Python hash randomization and host set iteration.
+
+## Latest verification evidence
+
+The 2026-07-19 verification pass completed successfully:
+
+- local quality, formatting, typing, documentation, lockfile, and architecture checks passed;
+- the local suite completed with 172 passing tests and three platform-specific PDF skips;
+- the Docker test and CI-report paths completed with 174 passing tests and one expected isolated-Git-index skip;
+- the non-root runtime image ran the installed CLI without development tooling;
+- Windows and Linux produced the same canonical Logic Equations trace identity.
+
+Hosted workflow results are authoritative for pull requests and tagged publication. Local and container evidence does not replace those repository gates.
+
+## Active milestone
+
+M3 will deliver a complete Logic Grid vertical slice: formal family contracts, independent verification, deterministic human reasoning, three calibrated reference puzzles, guided and structured input, play and solve workflows, replay, local evidence, verified generation, difficulty and novelty evaluation, terminal interaction, and validated reports.
+
+Implementation remains packet-based. The first M3 packet establishes the Logic Grid specification and validation boundary; later M3 behavior must not be introduced through that packet.
+
+## Explicitly unavailable
+
+The current repository does not yet provide user-authored puzzle input, a disclosed general search path, a concrete generator, a playable queue, an interactive interface, composed solve reports, a stable public Python API, complete learning behavior, named agent experiences, additional puzzle families, or release installers.
+
+## Accepted administrative risk
+
+Branch protection and private vulnerability reporting remain deferred by the repository owner. Until those controls are enabled, disciplined pull-request use and the published security contact are the active mitigations recorded in the [Risk Register](risk-register.md).

@@ -45,6 +45,7 @@ REQUIRED_DOCUMENTS = {
     Path("docs/governance/dependency-admissions.md"),
     Path("docs/governance/decision-log.md"),
     Path("docs/governance/project-governance.md"),
+    Path("docs/governance/product-roadmap.md"),
     Path("docs/governance/risk-register.md"),
 }
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\((?P<target>[^)]+)\)")

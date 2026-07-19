@@ -1,6 +1,6 @@
 # Deductra
 
-Deductra is an early-stage Python project for structured, proof-carrying deductive reasoning. Its M0 engineering foundation, M1 common core, and first M2 Logic Equations kernel are complete. The project does not yet provide user-authored puzzle syntax, search, a concrete puzzle generator, an interactive interface, or a stable public API.
+Deductra is a pre-1.0 Python project for structured, proof-carrying deductive reasoning. Its engineering foundation, common reasoning core, and first deterministic Logic Equations kernel are complete. Development is now moving toward a complete Logic Grid product slice; the `1.0.0` version is reserved for the finished product described in the [public roadmap](docs/governance/product-roadmap.md).
 
 ## Current status
 
@@ -46,6 +46,7 @@ The admitted runtime dependencies and their rationale are recorded in the [depen
 - [Project documentation](docs/README.md)
 - [Architecture](docs/architecture/README.md)
 - [Governance](docs/governance/README.md)
+- [Product roadmap](docs/governance/product-roadmap.md)
 
 ## Development
 

@@ -69,6 +69,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/governance/dependency-admissions.md",
         "docs/governance/decision-log.md",
         "docs/governance/project-governance.md",
+        "docs/governance/product-roadmap.md",
         "docs/governance/risk-register.md",
         "pyproject.toml",
         "schemas/puzzle-spec-v1.schema.json",
