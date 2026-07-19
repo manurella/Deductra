@@ -25,6 +25,10 @@ from deductra.verification.contracts import (
 )
 from deductra.verification.encoding import EncodingError, FiniteDomainProblem, prepare_problem
 from deductra.verification.logic_equations_z3 import encode_z3_boolean_expression
+from deductra.verification.logic_grid_z3 import encode_logic_grid_z3_expression
+
+LOGIC_GRID_FAMILY_ID = "logic-grid"
+LOGIC_GRID_ENCODING_VERSION = "finite-domain-logic-grid-v1"
 
 
 class Z3ProofBackend:
@@ -60,8 +64,15 @@ class Z3ProofBackend:
     ) -> VerificationCertificate:
         """Encode independently, check satisfiability, and seal the result."""
         started = perf_counter_ns()
+        encoding_version = (
+            LOGIC_GRID_ENCODING_VERSION
+            if puzzle.identity.family_id == LOGIC_GRID_FAMILY_ID
+            else self.encoding_version
+        )
         if timeout_ms <= 0:
-            return self._invalid(obligation, started, "timeout_ms must be positive")
+            return self._invalid(
+                obligation, started, "timeout_ms must be positive", encoding_version
+            )
         try:
             problem = prepare_problem(puzzle, state, obligation)
             solver = z3.Solver()
@@ -102,12 +113,21 @@ class Z3ProofBackend:
                         f"constraint:{constraint.constraint_id}",
                     )
                 elif isinstance(constraint, ArithmeticConstraint):
-                    track(
-                        encode_z3_boolean_expression(
+                    encoded = (
+                        encode_logic_grid_z3_expression(
                             constraint.expression,
                             problem,
                             variables,
-                        ),
+                        )
+                        if problem.family_id == LOGIC_GRID_FAMILY_ID
+                        else encode_z3_boolean_expression(
+                            constraint.expression,
+                            problem,
+                            variables,
+                        )
+                    )
+                    track(
+                        encoded,
                         f"constraint:{constraint.constraint_id}",
                     )
                 else:
@@ -123,12 +143,13 @@ class Z3ProofBackend:
                     obligation,
                     started,
                     "source puzzle and state are already unsatisfiable",
+                    encoding_version,
                 )
             if base_status == z3.unknown:
                 return build_certificate(
                     backend_id=self.backend_id,
                     backend_version=self.backend_version,
-                    encoding_version=self.encoding_version,
+                    encoding_version=encoding_version,
                     obligation_id=obligation.obligation_id,
                     result="unknown",
                     duration_ms=(perf_counter_ns() - started) // 1_000_000,
@@ -146,7 +167,7 @@ class Z3ProofBackend:
                 return build_certificate(
                     backend_id=self.backend_id,
                     backend_version=self.backend_version,
-                    encoding_version=self.encoding_version,
+                    encoding_version=encoding_version,
                     obligation_id=obligation.obligation_id,
                     result="unsat",
                     duration_ms=duration_ms,
@@ -162,7 +183,7 @@ class Z3ProofBackend:
                 return build_certificate(
                     backend_id=self.backend_id,
                     backend_version=self.backend_version,
-                    encoding_version=self.encoding_version,
+                    encoding_version=encoding_version,
                     obligation_id=obligation.obligation_id,
                     result="sat",
                     duration_ms=duration_ms,
@@ -172,25 +193,26 @@ class Z3ProofBackend:
             return build_certificate(
                 backend_id=self.backend_id,
                 backend_version=self.backend_version,
-                encoding_version=self.encoding_version,
+                encoding_version=encoding_version,
                 obligation_id=obligation.obligation_id,
                 result="unknown",
                 duration_ms=duration_ms,
                 raw_artifact_hash=raw_artifact_hash,
             )
         except EncodingError as error:
-            return self._invalid(obligation, started, str(error))
+            return self._invalid(obligation, started, str(error), encoding_version)
 
     def _invalid(
         self,
         obligation: ProofObligation,
         started: int,
         reason: str,
+        encoding_version: str,
     ) -> VerificationCertificate:
         return build_certificate(
             backend_id=self.backend_id,
             backend_version=self.backend_version,
-            encoding_version=self.encoding_version,
+            encoding_version=encoding_version,
             obligation_id=obligation.obligation_id,
             result="invalid",
             duration_ms=(perf_counter_ns() - started) // 1_000_000,

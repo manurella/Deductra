@@ -226,32 +226,40 @@ def _technique_for(expression: BooleanExpression) -> LogicGridTechnique:
 type _Metric = int | Fraction
 
 
-def _anchor_metrics(puzzle: LogicGridSpec) -> dict[ValueId, _Metric]:
+def _anchor_semantics(
+    puzzle: LogicGridSpec,
+) -> tuple[dict[ValueId, int], dict[ValueId, _Metric]]:
     category = next(
         item for item in puzzle.categories if item.category_id == puzzle.anchor_category_id
     )
     domain = next(item for item in puzzle.domains if item.domain_id == category.domain_id)
-    metrics: dict[ValueId, _Metric] = {}
+    ordinals: dict[ValueId, int] = {}
+    numeric_values: dict[ValueId, _Metric] = {}
     for index, value in enumerate(domain.values, start=1):
-        metric = value.numeric_value if value.numeric_value is not None else value.ordinal
-        metrics[value.value_id] = metric if metric is not None else index
-    return metrics
+        ordinals[value.value_id] = value.ordinal if value.ordinal is not None else index
+        if value.numeric_value is not None:
+            numeric_values[value.value_id] = value.numeric_value
+    return ordinals, numeric_values
 
 
 def _evaluate_numeric(
     expression: NumericExpression,
     assignments: Mapping[VariableId, ValueId],
-    metrics: Mapping[ValueId, _Metric],
+    numeric_values: Mapping[ValueId, _Metric],
 ) -> _Metric:
     if isinstance(expression, Constant):
-        if isinstance(expression.value, bool) or not isinstance(expression.value, int):
-            raise RuleContractError("Logic Grid numeric constants must be integers")
+        if isinstance(expression.value, bool):
+            raise RuleContractError("Logic Grid constants must be exact numeric values")
         return expression.value
     if isinstance(expression, VariableReference):
-        return metrics[assignments[expression.variable_id]]
+        value_id = assignments[expression.variable_id]
+        try:
+            return numeric_values[value_id]
+        except KeyError as error:
+            raise RuleContractError("Logic Grid numeric expression lacks anchor values") from error
     if isinstance(expression, Subtract):
-        return _evaluate_numeric(expression.left, assignments, metrics) - _evaluate_numeric(
-            expression.right, assignments, metrics
+        return _evaluate_numeric(expression.left, assignments, numeric_values) - _evaluate_numeric(
+            expression.right, assignments, numeric_values
         )
     raise RuleContractError(f"unsupported Logic Grid numeric expression: {expression.kind}")
 
@@ -259,27 +267,31 @@ def _evaluate_numeric(
 def _evaluate_boolean(
     expression: BooleanExpression,
     assignments: Mapping[VariableId, ValueId],
-    metrics: Mapping[ValueId, _Metric],
+    ordinals: Mapping[ValueId, int],
+    numeric_values: Mapping[ValueId, _Metric],
 ) -> bool:
-    if isinstance(expression, (Equal, NotEqual)):
+    if isinstance(
+        expression,
+        (Equal, NotEqual, LessThan, LessThanOrEqual, GreaterThan, GreaterThanOrEqual),
+    ):
         if isinstance(expression.left, VariableReference) and isinstance(
             expression.right, VariableReference
         ):
-            result = (
-                assignments[expression.left.variable_id]
-                == assignments[expression.right.variable_id]
-            )
+            left_value_id = assignments[expression.left.variable_id]
+            right_value_id = assignments[expression.right.variable_id]
+            if isinstance(expression, Equal):
+                return left_value_id == right_value_id
+            if isinstance(expression, NotEqual):
+                return left_value_id != right_value_id
+            left: _Metric = ordinals[left_value_id]
+            right: _Metric = ordinals[right_value_id]
         else:
-            result = _evaluate_numeric(expression.left, assignments, metrics) == _evaluate_numeric(
-                expression.right, assignments, metrics
-            )
-        return result if isinstance(expression, Equal) else not result
-    if isinstance(
-        expression,
-        (LessThan, LessThanOrEqual, GreaterThan, GreaterThanOrEqual),
-    ):
-        left = _evaluate_numeric(expression.left, assignments, metrics)
-        right = _evaluate_numeric(expression.right, assignments, metrics)
+            left = _evaluate_numeric(expression.left, assignments, numeric_values)
+            right = _evaluate_numeric(expression.right, assignments, numeric_values)
+        if isinstance(expression, Equal):
+            return left == right
+        if isinstance(expression, NotEqual):
+            return left != right
         if isinstance(expression, LessThan):
             return left < right
         if isinstance(expression, LessThanOrEqual):
@@ -288,26 +300,33 @@ def _evaluate_boolean(
             return left > right
         return left >= right
     if isinstance(expression, And):
-        return all(_evaluate_boolean(item, assignments, metrics) for item in expression.operands)
+        return all(
+            _evaluate_boolean(item, assignments, ordinals, numeric_values)
+            for item in expression.operands
+        )
     if isinstance(expression, Or):
-        return any(_evaluate_boolean(item, assignments, metrics) for item in expression.operands)
+        return any(
+            _evaluate_boolean(item, assignments, ordinals, numeric_values)
+            for item in expression.operands
+        )
     if isinstance(expression, Not):
-        return not _evaluate_boolean(expression.operand, assignments, metrics)
+        return not _evaluate_boolean(expression.operand, assignments, ordinals, numeric_values)
     if isinstance(expression, Xor):
-        return _evaluate_boolean(expression.left, assignments, metrics) != _evaluate_boolean(
-            expression.right, assignments, metrics
-        )
+        return _evaluate_boolean(
+            expression.left, assignments, ordinals, numeric_values
+        ) != _evaluate_boolean(expression.right, assignments, ordinals, numeric_values)
     if isinstance(expression, Equivalent):
-        return _evaluate_boolean(expression.left, assignments, metrics) == _evaluate_boolean(
-            expression.right, assignments, metrics
-        )
+        return _evaluate_boolean(
+            expression.left, assignments, ordinals, numeric_values
+        ) == _evaluate_boolean(expression.right, assignments, ordinals, numeric_values)
     if isinstance(expression, Implies):
-        return not _evaluate_boolean(expression.premise, assignments, metrics) or _evaluate_boolean(
-            expression.conclusion, assignments, metrics
-        )
+        return not _evaluate_boolean(
+            expression.premise, assignments, ordinals, numeric_values
+        ) or _evaluate_boolean(expression.conclusion, assignments, ordinals, numeric_values)
     if isinstance(expression, Cardinality):
         true_count = sum(
-            _evaluate_boolean(item, assignments, metrics) for item in expression.operands
+            _evaluate_boolean(item, assignments, ordinals, numeric_values)
+            for item in expression.operands
         )
         return expression.minimum <= true_count <= expression.maximum
     raise RuleContractError(f"unsupported Logic Grid Boolean expression: {expression.kind}")
@@ -555,7 +574,7 @@ class ClueCompletionRule:
     ) -> Sequence[RuleApplicationCandidate]:
         if not isinstance(puzzle, LogicGridSpec):
             return ()
-        metrics = _anchor_metrics(puzzle)
+        ordinals, numeric_values = _anchor_semantics(puzzle)
         candidates: list[RuleApplicationCandidate] = []
         for constraint in puzzle.constraints:
             if (
@@ -569,7 +588,9 @@ class ClueCompletionRule:
                 item for item in sorted(variables) if len(state.candidate_domains[item]) > 1
             )
             if len(unresolved) == 2 and self.technique is LogicGridTechnique.ORDERING:
-                for conclusion in _ordering_bound_exclusions(constraint.expression, state, metrics):
+                for conclusion in _ordering_bound_exclusions(
+                    constraint.expression, state, ordinals
+                ):
                     candidates.append(
                         _candidate(
                             reference=self.reference,
@@ -591,7 +612,14 @@ class ClueCompletionRule:
             for value_id in sorted(state.candidate_domains[variable_id]):
                 trial = {**assignments, variable_id: value_id}
                 destination = (
-                    valid if _evaluate_boolean(constraint.expression, trial, metrics) else invalid
+                    valid
+                    if _evaluate_boolean(
+                        constraint.expression,
+                        trial,
+                        ordinals,
+                        numeric_values,
+                    )
+                    else invalid
                 )
                 destination.append(value_id)
             if not valid:

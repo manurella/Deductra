@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from fractions import Fraction
 
 from deductra.domain.atoms import AssignmentAtom, Atom, ExclusionAtom
 from deductra.domain.constraints import (
@@ -31,7 +32,7 @@ class VariableEncoding:
 
     variable_id: VariableId
     value_ids: tuple[ValueId, ...]
-    numeric_values: tuple[int | None, ...]
+    numeric_values: tuple[int | Fraction | None, ...]
     candidate_ids: frozenset[ValueId]
 
     def code_for(self, value_id: ValueId) -> int:
@@ -52,8 +53,16 @@ class VariableEncoding:
 
     def require_numeric_values(self) -> tuple[int, ...]:
         """Return integer semantics for arithmetic encoders or fail closed."""
-        if any(value is None for value in self.numeric_values):
+        if any(
+            not isinstance(value, int) or isinstance(value, bool) for value in self.numeric_values
+        ):
             raise EncodingError(f"variable {self.variable_id!r} has non-integer domain values")
+        return tuple(value for value in self.numeric_values if isinstance(value, int))
+
+    def require_rational_values(self) -> tuple[int | Fraction, ...]:
+        """Return exact rational semantics or fail closed."""
+        if any(value is None or isinstance(value, bool) for value in self.numeric_values):
+            raise EncodingError(f"variable {self.variable_id!r} has non-numeric domain values")
         return tuple(value for value in self.numeric_values if value is not None)
 
 
@@ -61,6 +70,7 @@ class VariableEncoding:
 class FiniteDomainProblem:
     """Validated inputs shared as data, never as backend formulas."""
 
+    family_id: str
     variables: tuple[VariableEncoding, ...]
     constraints: tuple[Constraint, ...]
     asserted_atoms: tuple[AssignmentAtom | ExclusionAtom, ...]
@@ -110,7 +120,7 @@ def prepare_problem(
             value_ids=tuple(value.value_id for value in domains[variable.domain_id].values),
             numeric_values=tuple(
                 value.numeric_value
-                if isinstance(value.numeric_value, int)
+                if isinstance(value.numeric_value, (int, Fraction))
                 and not isinstance(value.numeric_value, bool)
                 else None
                 for value in domains[variable.domain_id].values
@@ -158,6 +168,7 @@ def prepare_problem(
         raise EncodingError(f"unsupported active constraint kinds: {sorted(set(unsupported))}")
 
     problem = FiniteDomainProblem(
+        family_id=puzzle.identity.family_id,
         variables=variables,
         constraints=constraints,
         asserted_atoms=atoms,

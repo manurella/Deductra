@@ -26,6 +26,7 @@ The current repository provides:
 - a basic verified CLI solve with deterministic HumanSolveTrace export.
 - an immutable anchor-aligned Logic Grid specification with strict category, bijection, expression, and clue-provenance validation.
 - deterministic Logic Grid association, bijection, ordering, numeric, and compound-clue proposals without hidden search.
+- independent Z3 and CP-SAT verification for Logic Grid proposals, including exact rational and compound-clue semantics.
 
 ## Reference solve
 

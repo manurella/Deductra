@@ -31,6 +31,10 @@ from deductra.verification.encoding import EncodingError, FiniteDomainProblem, p
 from deductra.verification.logic_equations_cpsat import (
     add_cpsat_arithmetic_constraint,
 )
+from deductra.verification.logic_grid_cpsat import add_logic_grid_cpsat_constraint
+
+LOGIC_GRID_FAMILY_ID = "logic-grid"
+LOGIC_GRID_ENCODING_VERSION = "finite-domain-logic-grid-v1"
 
 
 class CpSatProofBackend:
@@ -69,8 +73,15 @@ class CpSatProofBackend:
     ) -> VerificationCertificate:
         """Encode independently, solve deterministically, and seal the result."""
         started = perf_counter_ns()
+        encoding_version = (
+            LOGIC_GRID_ENCODING_VERSION
+            if puzzle.identity.family_id == LOGIC_GRID_FAMILY_ID
+            else self.encoding_version
+        )
         if timeout_ms <= 0:
-            return self._invalid(obligation, started, "timeout_ms must be positive")
+            return self._invalid(
+                obligation, started, "timeout_ms must be positive", encoding_version
+            )
         try:
             problem = prepare_problem(puzzle, state, obligation)
             model = cp_model.CpModel()
@@ -96,12 +107,20 @@ class CpSatProofBackend:
                 elif isinstance(constraint, AllDifferentConstraint):
                     model.add_all_different(variables[item] for item in constraint.variable_ids)
                 elif isinstance(constraint, ArithmeticConstraint):
-                    add_cpsat_arithmetic_constraint(
-                        model,
-                        constraint,
-                        problem,
-                        variables,
-                    )
+                    if problem.family_id == LOGIC_GRID_FAMILY_ID:
+                        add_logic_grid_cpsat_constraint(
+                            model,
+                            constraint,
+                            problem,
+                            variables,
+                        )
+                    else:
+                        add_cpsat_arithmetic_constraint(
+                            model,
+                            constraint,
+                            problem,
+                            variables,
+                        )
                 else:
                     raise EncodingError(f"unsupported active constraint kind: {constraint.kind}")
 
@@ -118,12 +137,13 @@ class CpSatProofBackend:
                     obligation,
                     started,
                     "source puzzle and state are already unsatisfiable",
+                    encoding_version,
                 )
             if base_status == cp_model.UNKNOWN:
                 return build_certificate(
                     backend_id=self.backend_id,
                     backend_version=self.backend_version,
-                    encoding_version=self.encoding_version,
+                    encoding_version=encoding_version,
                     obligation_id=obligation.obligation_id,
                     result="unknown",
                     duration_ms=(perf_counter_ns() - started) // 1_000_000,
@@ -152,7 +172,7 @@ class CpSatProofBackend:
             return build_certificate(
                 backend_id=self.backend_id,
                 backend_version=self.backend_version,
-                encoding_version=self.encoding_version,
+                encoding_version=encoding_version,
                 obligation_id=obligation.obligation_id,
                 result=result,
                 duration_ms=duration_ms,
@@ -160,18 +180,19 @@ class CpSatProofBackend:
                 raw_artifact_hash=raw_artifact_hash,
             )
         except EncodingError as error:
-            return self._invalid(obligation, started, str(error))
+            return self._invalid(obligation, started, str(error), encoding_version)
 
     def _invalid(
         self,
         obligation: ProofObligation,
         started: int,
         reason: str,
+        encoding_version: str,
     ) -> VerificationCertificate:
         return build_certificate(
             backend_id=self.backend_id,
             backend_version=self.backend_version,
-            encoding_version=self.encoding_version,
+            encoding_version=encoding_version,
             obligation_id=obligation.obligation_id,
             result="invalid",
             duration_ms=(perf_counter_ns() - started) // 1_000_000,

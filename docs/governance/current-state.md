@@ -40,7 +40,7 @@ The repository remains one Python distribution and one `deductra` import package
 - A verified CLI solve and write-once canonical HumanSolveTrace export.
 - Cross-process and cross-platform trace identities that are independent of Python hash randomization and host set iteration.
 
-### Logic Grid specification foundation
+### Logic Grid verified reasoning foundation
 
 - An immutable category contract for unordered one-to-one associations.
 - One stable item variable per visible item, aligned to a declared canonical anchor category.
@@ -50,14 +50,17 @@ The repository remains one Python distribution and one `deductra` import package
 - A checked-in Logic Grid Specification v1 JSON Schema with stable public identity.
 - Five deterministic human-rule technique groups for association, category bijection, ordering, numeric relations, and compound clues.
 - Explainable single-atom proposals with stable identities, exact source-state binding, and no hidden multi-variable search.
+- Independent symbolic Z3 and bounded CP-SAT encodings for every normalized Logic Grid clue form.
+- Explicit separation of anchor-row identity, ordinal order, and exact integer or rational numeric meaning.
+- Cross-verified human-rule reduction with fail-closed counterexample, inconsistency, resource-limit, timeout, and disagreement behavior.
 
 ## Latest verification evidence
 
 The 2026-07-19 verification pass completed successfully:
 
 - local quality, formatting, typing, documentation, lockfile, and architecture checks passed;
-- the local suite completed with 194 passing tests and three platform-specific PDF skips;
-- the Docker test stage completed with 196 passing tests and one expected isolated-Git-index skip;
+- the local suite completed with 210 passing tests and three platform-specific PDF skips;
+- the Docker test stage completed with 212 passing tests and one expected isolated-Git-index skip;
 - the non-root runtime image ran the installed CLI without development tooling;
 - Windows and Linux produced the same canonical Logic Equations trace identity.
 
@@ -67,7 +70,7 @@ Hosted workflow results are authoritative for pull requests and tagged publicati
 
 M3 will deliver a complete Logic Grid vertical slice: formal family contracts, independent verification, deterministic human reasoning, three calibrated reference puzzles, guided and structured input, play and solve workflows, replay, local evidence, verified generation, difficulty and novelty evaluation, terminal interaction, and validated reports.
 
-Implementation remains packet-based. FAM-LG-001 establishes the Logic Grid specification and validation boundary, and FAM-LG-002 adds non-authoritative human-rule semantics. Later M3 behavior must consume those boundaries and cannot bypass independent verification authority.
+Implementation remains packet-based. FAM-LG-001 establishes the Logic Grid specification, FAM-LG-002 adds deterministic human-rule semantics, and FAM-LG-003 connects those proposals to independent proof authority. Later M3 behavior must consume these boundaries and cannot bypass cross-verification.
 
 ## Explicitly unavailable
 
