@@ -71,19 +71,35 @@ The repository remains one Python distribution and one `deductra` import package
 - Independent final-checker completion authority, exact full-history replay, and a checked-in Play Session v1 JSON Schema.
 - Strict, soft, deferred, and exam validation disclosure without elevating tentative marks to proof.
 - Replayable pause/resume and bounded named checkpoints that restore cursors without deleting later history.
+- Transactional local SQLite persistence for complete Logic Grid play histories with stale-writer rejection.
+- Exact recovery that verifies indexed storage, typed records, event chains, full play replay, and disposable projections.
+- Hashed descriptive action evidence that makes no correctness or mastery claim.
+- Common attempt lifecycle projection limited to durable start and independently verified completion.
+- A checked-in Logic Grid Attempt Record v1 JSON Schema.
 
 ## Latest verification evidence
 
-The 2026-07-20 verification pass completed successfully:
+The 2026-07-20 FAM-LG-009 verification pass completed successfully:
 
-- local quality, formatting, typing, documentation, lockfile, and architecture checks passed;
-- the local suite completed with 270 passing tests and three platform-specific PDF skips;
-- the Docker test stage completed with 272 passing tests and one expected isolated-Git-index skip;
+- local formatting, lint, documentation, lockfile, and architecture checks passed;
+- packet-scoped Windows typing completed with zero diagnostics; the locked Linux image completed the
+  full-project typing gate with zero diagnostics;
+- the local suite completed with 281 passing tests and three platform-specific PDF skips;
+- the Docker test stage completed with 283 passing tests and one expected isolated-Git-index skip;
+- the Docker test stage built the `0.0.0` wheel and source distribution;
 - the non-root runtime image ran the installed CLI without development tooling;
-- the non-root runtime image imported PyYAML 6.0.3 and the structured-input public surface as UID 10001;
+- the non-root runtime created and verified an active Logic Grid SQLite attempt record as UID 10001;
 - the Logic Grid play-session corpus passed identically on Windows and Linux, including retained branching replay and tamper rejection;
 - validation disclosure, pause/resume, checkpoint restoration, and lifecycle replay passed identically on Windows and Linux;
+- local attempt reopen, authoritative completion projection, stale-writer rejection, transaction
+  rollback, persistent tamper rejection, wrong-puzzle rejection, and schema parity passed on Windows
+  and Linux;
 - Windows and Linux produced the same canonical Logic Equations trace identity.
+
+The full-project Windows Pyright invocation currently emits `reportUnknownVariableType` diagnostics
+for Pydantic `Field` imports in unchanged modules; the new FAM-LG-009 modules have no such
+diagnostics, and the identical locked full-project gate passes in Linux. This host-specific tooling
+discrepancy remains non-authoritative until reproduced in the supported CI environment.
 
 Hosted workflow results are authoritative for pull requests and tagged publication. Local and container evidence does not replace those repository gates.
 
@@ -95,15 +111,18 @@ Implementation remains packet-based. FAM-LG-001 through FAM-LG-006 establish spe
 reasoning, verification, references, guided authoring, and structured input. FAM-LG-007 adds the
 presentation-neutral play and replay boundary while keeping tentative marks outside proof authority.
 FAM-LG-008 completes its validation-disclosure, pause, and checkpoint lifecycle. Later M3 behavior
-must consume these boundaries and cannot bypass cross-verification.
+must consume these boundaries and cannot bypass cross-verification. FAM-LG-009 persists complete
+play history and local lifecycle evidence while refusing to treat tentative marks as evaluated
+learning moves.
 
 ## Explicitly unavailable
 
-The current repository does not yet provide clue-level mistake evaluation, hints, play persistence,
-an interactive or filesystem authoring adapter, a disclosed general search path, a concrete
-generator, a playable queue, an interactive interface, composed solve reports, a stable cross-family
-public Python API, complete learning behavior, named agent experiences, additional playable puzzle
-families, or release installers.
+The current repository does not yet provide clue-level mistake evaluation, hints, attempt
+abandonment or deletion controls, retention and backup policy, an interactive or filesystem
+authoring adapter, a disclosed general search path, a concrete generator, a playable queue, an
+interactive interface, composed solve reports, a stable cross-family public Python API, complete
+learning behavior, named agent experiences, additional playable puzzle families, or release
+installers.
 
 ## Accepted administrative risk
 

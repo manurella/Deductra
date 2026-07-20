@@ -1,6 +1,6 @@
 # Event-Sourced Memory Projections
 
-Last reviewed: 2026-07-16
+Last reviewed: 2026-07-20
 
 CR-008 adds disposable read models for attempts, learning evidence, novelty fingerprints, and artifact metadata. Every view is rebuilt by pure replay from validated, immutable projection-source events. No projection is canonical evidence, and no projection may write back into puzzle, reasoning, generation, or artifact history.
 
@@ -17,7 +17,7 @@ Projection streams use a strict typed envelope with:
 
 Attempt streams cover attempt start, evaluated moves, revealed hints, viewed explanations, completion or abandonment, self-assessment, and replay views. Novelty streams record or remove accepted fingerprint entries. Artifact streams record, supersede, or remove metadata records.
 
-Each stream is independently ordered and hash chained. Rebuild rejects gaps, duplicate event identifiers, cross-stream mixing, broken hash links, altered payloads, attempt identity changes, and interaction events after completion or abandonment. CR-008 does not add a new persistence adapter; durable ingestion of these event streams remains a later integration concern.
+Each stream is independently ordered and hash chained. Rebuild rejects gaps, duplicate event identifiers, cross-stream mixing, broken hash links, altered payloads, attempt identity changes, and interaction events after completion or abandonment. CR-008 did not add a persistence adapter. FAM-LG-009 now supplies the first reviewed ingestion path: the family play log remains canonical, while only attempt start and independently verified completion are normalized into a durable attempt projection stream. Tentative play outcomes are not translated into evaluated moves.
 
 ## Derived views
 
@@ -45,6 +45,13 @@ Each projection and the aggregate bundle has a canonical SHA-256 hash. The check
 
 The public serialized contract is `schemas/memory-projections-v1.schema.json`.
 
+## First durable integration
+
+The Logic Grid attempt adapter stores its normalized lifecycle events atomically with the complete
+family play history and disposable attempt record. Every read rebuilds both the play session and
+common attempt projection. This integration does not alter CR-008's event schema or authorize
+direct projection writes. See [Logic Grid attempt persistence](logic-grid-attempt-persistence.md).
+
 ## Explicit non-goals
 
 CR-008 adds no:
@@ -54,4 +61,4 @@ CR-008 adds no:
 - novelty similarity algorithm, negative cache, or generator behavior;
 - report builder, renderer, PDF behavior, or artifact blob storage;
 - agent memory, vector database, cloud service, or synchronization protocol;
-- database migration or projection checkpoint implementation.
+- general projection database, cross-family migration, or projection checkpoint implementation.

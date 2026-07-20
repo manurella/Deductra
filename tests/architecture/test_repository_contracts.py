@@ -53,6 +53,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/architecture/logic-grid-guided-builder.md",
         "docs/architecture/logic-grid-structured-io.md",
         "docs/architecture/logic-grid-play-session.md",
+        "docs/architecture/logic-grid-attempt-persistence.md",
         "docs/architecture/logic-equations-human-rules.md",
         "docs/architecture/logic-equations-backend-encodings.md",
         "docs/architecture/logic-equations-cli-and-trace.md",
@@ -73,6 +74,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/architecture/decisions/0016-bound-structured-authoring-input.md",
         "docs/architecture/decisions/0017-retain-play-history-without-proof-authority.md",
         "docs/architecture/decisions/0018-separate-validation-disclosure-from-proof.md",
+        "docs/architecture/decisions/0019-persist-play-before-projecting-attempt-evidence.md",
         "docs/architecture/decisions/0001-single-package-foundation.md",
         "docs/architecture/decisions/README.md",
         "docs/architecture/dependency-rules.md",
@@ -100,6 +102,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "schemas/logic-grid-builder-draft-v1.schema.json",
         "schemas/logic-grid-structured-import-v1.schema.json",
         "schemas/logic-grid-play-session-v1.schema.json",
+        "schemas/logic-grid-attempt-record-v1.schema.json",
         "scripts/check_conventions.py",
         "scripts/check_docs.py",
         "scripts/export_json_schema.py",
@@ -131,11 +134,13 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "src/deductra/families/logic_equations/solver.py",
         "src/deductra/families/logic_equations/specification.py",
         "src/deductra/families/logic_grid/__init__.py",
+        "src/deductra/families/logic_grid/attempts.py",
         "src/deductra/families/logic_grid/checker.py",
         "src/deductra/families/logic_grid/builder.py",
         "src/deductra/families/logic_grid/golden.py",
         "src/deductra/families/logic_grid/play.py",
         "src/deductra/families/logic_grid/schema.py",
+        "src/deductra/families/logic_grid/sqlite_attempt_store.py",
         "src/deductra/families/logic_grid/rules.py",
         "src/deductra/families/logic_grid/solver.py",
         "src/deductra/families/logic_grid/specification.py",
@@ -211,6 +216,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "tests/families/logic_grid/test_builder.py",
         "tests/families/logic_grid/test_structured_io.py",
         "tests/families/logic_grid/test_play.py",
+        "tests/families/logic_grid/test_attempt_store.py",
         "tests/graph/test_hypergraph_projection.py",
         "tests/generation/test_generation_contracts.py",
         "tests/memory/test_sqlite_event_store.py",
@@ -312,7 +318,7 @@ def test_source_tree_has_one_distribution_package() -> None:
 
 
 def test_package_contains_only_approved_packet_modules() -> None:
-    """Keep the package limited to approved M1 and Logic Equations surfaces."""
+    """Keep the package limited to approved common and family packet surfaces."""
     package_root = REPOSITORY_ROOT / "src" / "deductra"
     public_files = {
         path.relative_to(package_root).as_posix()
@@ -348,11 +354,13 @@ def test_package_contains_only_approved_packet_modules() -> None:
         "families/logic_equations/solver.py",
         "families/logic_equations/specification.py",
         "families/logic_grid/__init__.py",
+        "families/logic_grid/attempts.py",
         "families/logic_grid/checker.py",
         "families/logic_grid/builder.py",
         "families/logic_grid/golden.py",
         "families/logic_grid/play.py",
         "families/logic_grid/schema.py",
+        "families/logic_grid/sqlite_attempt_store.py",
         "families/logic_grid/rules.py",
         "families/logic_grid/solver.py",
         "families/logic_grid/specification.py",

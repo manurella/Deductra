@@ -6,6 +6,10 @@ checkpoints. Fixed puzzle givens and tentative user marks form an immutable curr
 complete, tamper-evident action history. Terminal and graphical adapters can consume this boundary
 without placing domain state inside widgets.
 
+FAM-LG-009 persists this contract through the separate
+[Logic Grid attempt persistence](logic-grid-attempt-persistence.md) adapter. The play service itself
+remains independent of filesystem and database policy.
+
 ## Interaction model
 
 A session starts from one immutable puzzle revision, one caller-supplied attempt identifier, and one
@@ -71,11 +75,11 @@ sessions retain later rejected actions but cannot change state.
 `schemas/logic-grid-play-session-v1.schema.json`. The public service accepts in-memory typed values;
 identifiers and checkpoint names are bounded by typed contracts, and no raw parser exceptions or
 supplied source documents are retained. Each attempt is capped at 10,000 events so replay work and
-retained history remain bounded before persistence policy exists.
+retained history remain bounded during persistence and recovery.
 
 ## Deliberate exclusions
 
-This packet does not provide clue-level mistake disclosure, hints, timers, persistence, learning
-projections, puzzle selection, filesystem behavior, terminal widgets, solve orchestration,
-generation, reports, or telemetry. Those capabilities must consume the play-session contract in
-later bounded packets and must not reinterpret tentative marks as proof.
+This play boundary does not provide clue-level mistake disclosure, hints, timers, storage policy,
+learning inference, puzzle selection, filesystem behavior, terminal widgets, solve orchestration,
+generation, reports, or telemetry. FAM-LG-009 consumes it for local persistence and descriptive
+evidence without reinterpreting tentative marks as proof.

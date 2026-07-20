@@ -268,6 +268,40 @@ def test_family_builders_are_bounded_outer_application_services() -> None:
     assert not violations, f"family builders import unrelated outer layers: {violations}"
 
 
+def test_logic_grid_attempt_persistence_is_a_bounded_family_adapter() -> None:
+    """Allow attempt integration to compose play and memory without leaking SQLite inward."""
+    violations: dict[str, list[str]] = {}
+    allowed = ("deductra.domain", "deductra.families", "deductra.memory")
+    for source in (
+        PACKAGE_ROOT / "families" / "logic_grid" / "attempts.py",
+        PACKAGE_ROOT / "families" / "logic_grid" / "sqlite_attempt_store.py",
+    ):
+        outward = {
+            module
+            for module in imported_modules(source)
+            if module.startswith("deductra.") and not module.startswith(allowed)
+        }
+        if outward:
+            violations[source.relative_to(REPOSITORY_ROOT).as_posix()] = sorted(outward)
+    assert not violations, f"Logic Grid attempt persistence imports unrelated layers: {violations}"
+
+
+def test_sqlite_details_are_confined_to_reviewed_adapters() -> None:
+    """Prevent database technology from entering domain or application policy modules."""
+    allowed = {
+        PACKAGE_ROOT / "memory" / "sqlite_store.py",
+        PACKAGE_ROOT / "families" / "logic_grid" / "sqlite_attempt_store.py",
+    }
+    violations = {
+        source.relative_to(REPOSITORY_ROOT).as_posix(): sorted(
+            module for module in imported_modules(source) if module == "sqlite3"
+        )
+        for source in production_sources()
+        if source not in allowed and "sqlite3" in imported_modules(source)
+    }
+    assert not violations, f"SQLite imports outside reviewed adapters: {violations}"
+
+
 def test_cli_is_an_outer_delivery_adapter() -> None:
     """Allow CLI composition without permitting delivery dependencies to point inward."""
     allowed = (

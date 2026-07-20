@@ -1,5 +1,21 @@
 """Typed specification and reference boundary for the Logic Grid family."""
 
+from deductra.families.logic_grid.attempts import (
+    ATTEMPT_RECORD_SCHEMA_VERSION,
+    AttemptAlreadyExistsError,
+    AttemptConflictError,
+    AttemptIntegrityError,
+    AttemptStoreError,
+    LogicGridAttemptEvidence,
+    LogicGridAttemptStore,
+    ObservedPlayEvent,
+    PersistedLogicGridAttempt,
+    PlayActionEvidence,
+    build_attempt_projection_events,
+    build_logic_grid_attempt_evidence,
+    build_persisted_logic_grid_attempt,
+    observe_play_event,
+)
 from deductra.families.logic_grid.builder import (
     BUILDER_SCHEMA_VERSION,
     MAX_BUILDER_CATEGORIES,
@@ -72,10 +88,12 @@ from deductra.families.logic_grid.play import (
     start_logic_grid_play,
 )
 from deductra.families.logic_grid.schema import (
+    logic_grid_attempt_record_json_schema,
     logic_grid_builder_json_schema,
     logic_grid_play_session_json_schema,
     logic_grid_spec_json_schema,
     logic_grid_structured_import_json_schema,
+    rendered_logic_grid_attempt_record_json_schema,
     rendered_logic_grid_builder_json_schema,
     rendered_logic_grid_play_session_json_schema,
     rendered_logic_grid_spec_json_schema,
@@ -91,6 +109,7 @@ from deductra.families.logic_grid.specification import (
     LogicGridCategory,
     LogicGridSpec,
 )
+from deductra.families.logic_grid.sqlite_attempt_store import SQLiteLogicGridAttemptStore
 from deductra.families.logic_grid.structured_io import (
     MAX_STRUCTURED_COLLECTION_ITEMS,
     MAX_STRUCTURED_DEPTH,
@@ -107,6 +126,7 @@ from deductra.families.logic_grid.structured_io import (
 )
 
 __all__ = [
+    "ATTEMPT_RECORD_SCHEMA_VERSION",
     "BUILDER_SCHEMA_VERSION",
     "FAMILY_ID",
     "GALLERY_OPENING_SOLUTION",
@@ -128,6 +148,10 @@ __all__ = [
     "AnyTemplate",
     "AssignCell",
     "AssociationTemplate",
+    "AttemptAlreadyExistsError",
+    "AttemptConflictError",
+    "AttemptIntegrityError",
+    "AttemptStoreError",
     "BuilderItemRef",
     "BuilderMessageLevel",
     "BuilderPredicate",
@@ -142,6 +166,8 @@ __all__ = [
     "EquivalentTemplate",
     "ExcludeCell",
     "ExclusiveTemplate",
+    "LogicGridAttemptEvidence",
+    "LogicGridAttemptStore",
     "LogicGridBuilderAssessment",
     "LogicGridBuilderCategory",
     "LogicGridBuilderClue",
@@ -156,8 +182,11 @@ __all__ = [
     "LogicGridStructuredImport",
     "NegationTemplate",
     "NumericDifferenceTemplate",
+    "ObservedPlayEvent",
     "OrderingTemplate",
     "PauseSession",
+    "PersistedLogicGridAttempt",
+    "PlayActionEvidence",
     "PlayActionResult",
     "PlayCheckpoint",
     "PlayConflict",
@@ -168,6 +197,7 @@ __all__ = [
     "RedoMove",
     "RestoreCheckpoint",
     "ResumeSession",
+    "SQLiteLogicGridAttemptStore",
     "StructuredFormat",
     "StructuredInputError",
     "StructuredInputErrorCode",
@@ -175,6 +205,9 @@ __all__ = [
     "ValidateProgress",
     "apply_logic_grid_play_action",
     "assess_logic_grid_builder",
+    "build_attempt_projection_events",
+    "build_logic_grid_attempt_evidence",
+    "build_persisted_logic_grid_attempt",
     "check_logic_grid_solution",
     "discover_logic_grid_applications",
     "export_logic_grid_builder_json",
@@ -182,6 +215,7 @@ __all__ = [
     "gallery_opening",
     "harbor_morning",
     "import_logic_grid_builder",
+    "logic_grid_attempt_record_json_schema",
     "logic_grid_builder_json_schema",
     "logic_grid_goldens",
     "logic_grid_play_session_json_schema",
@@ -189,6 +223,8 @@ __all__ = [
     "logic_grid_spec_json_schema",
     "logic_grid_structured_import_json_schema",
     "observatory_rotation",
+    "observe_play_event",
+    "rendered_logic_grid_attempt_record_json_schema",
     "rendered_logic_grid_builder_json_schema",
     "rendered_logic_grid_builder_preview",
     "rendered_logic_grid_play_session_json_schema",

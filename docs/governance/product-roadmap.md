@@ -34,7 +34,9 @@ established the specification, human reasoning, independent verification, and ca
 FAM-LG-005 added the guided authoring service; FAM-LG-006 added bounded JSON/YAML import and
 deterministic export; and FAM-LG-007 added tentative play state, non-destructive undo/redo,
 completion checking, and deterministic replay. FAM-LG-008 completes validation disclosure,
-pause/resume, and named restorable checkpoints. Local evidence, generation, evaluation, terminal
+pause/resume, and named restorable checkpoints. FAM-LG-009 adds transactional local attempt
+persistence, exact recovery, descriptive action evidence, and authoritative start/completion
+projection. Clue-level evaluation, hints, generation, difficulty and novelty evaluation, terminal
 delivery, and composed reports remain later M3 work.
 
 ## M4 — Proven common platform

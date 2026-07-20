@@ -5,6 +5,10 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from deductra.families.logic_grid.attempts import (
+    ATTEMPT_RECORD_SCHEMA_VERSION,
+    PersistedLogicGridAttempt,
+)
 from deductra.families.logic_grid.builder import LogicGridBuilderDraft
 from deductra.families.logic_grid.play import PLAY_SCHEMA_VERSION, LogicGridPlaySession
 from deductra.families.logic_grid.specification import (
@@ -76,6 +80,28 @@ def rendered_logic_grid_play_session_json_schema() -> str:
     return (
         json.dumps(
             logic_grid_play_session_json_schema(),
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n"
+    )
+
+
+def logic_grid_attempt_record_json_schema() -> dict[str, Any]:
+    """Return the versioned durable Logic Grid attempt-record JSON Schema."""
+    schema = PersistedLogicGridAttempt.model_json_schema()
+    schema["$id"] = "urn:deductra:schema:logic-grid-attempt-record:1"
+    schema["title"] = "Deductra Logic Grid Attempt Record v1"
+    schema["properties"]["schema_version"]["const"] = ATTEMPT_RECORD_SCHEMA_VERSION
+    return schema
+
+
+def rendered_logic_grid_attempt_record_json_schema() -> str:
+    """Return the normalized checked-in durable-attempt schema."""
+    return (
+        json.dumps(
+            logic_grid_attempt_record_json_schema(),
             ensure_ascii=False,
             indent=2,
             sort_keys=True,
