@@ -19,6 +19,7 @@ Architecture decision records preserve why a significant technical choice was ma
 - [ADR-0013: Model Logic Grid as anchor-aligned bijections](0013-model-logic-grid-as-anchor-aligned-bijections.md)
 - [ADR-0014: Encode Logic Grid independently in Z3 and CP-SAT](0014-encode-logic-grid-independently.md)
 - [ADR-0015: Keep guided authoring presentation-neutral](0015-keep-guided-authoring-presentation-neutral.md)
+- [ADR-0016: Bound structured authoring input before model validation](0016-bound-structured-authoring-input.md)
 
 ## Lifecycle
 

@@ -1,6 +1,6 @@
 # Runtime Dependency Admissions
 
-Last reviewed: 2026-07-19
+Last reviewed: 2026-07-20
 
 Runtime dependencies require an explicit purpose, compatibility evidence, supply-chain review, and removal strategy. The uv lockfile is the reproducible dependency record; security automation audits the resolved graph.
 
@@ -38,10 +38,6 @@ Admitted in CR-001 for strict immutable domain validation and JSON Schema genera
 - Operational cost: none beyond the existing resolved runtime graph because OR-Tools already requires protobuf; direct admission makes Deductra's import explicit and independently governed.
 - Removal strategy: remove the direct dependency if OR-Tools exposes a stable deterministic byte representation through its own public Python API.
 
-## Review controls
-
-Dependabot, locked installation, dependency review, vulnerability audit, license review, Python compatibility tests, container builds, and backend acceptance tests are the continuing controls. A missing wheel, unresolved high-severity advisory, license incompatibility, or unexplained solver disagreement blocks release.
-
 ## Jinja
 
 - Admitted version range: `>=3.1.6,<4`.
@@ -67,3 +63,34 @@ Dependabot, locked installation, dependency review, vulnerability audit, license
 - Operational controls: no embedded credentials, tracing off by default, sensitive trace payloads disabled, strict tool registration, preflight allowlists, post-output evidence guardrails, exact lock, and fixed offline evaluations.
 - Operational cost: the SDK adds HTTP, schema, server, cryptography, and protocol transitives; security and license automation must audit the complete locked graph.
 - Removal strategy: preserve `AgentRuntime`, switch registrations to the disabled runtime or a reviewed adapter, and replay all guardrail and evaluation cases.
+
+## PyYAML
+
+- Admitted version: exactly `6.0.3`.
+- Purpose: parse and render the restricted YAML profile at the Logic Grid structured-authoring
+  boundary.
+- Why the standard library is insufficient: Python provides a JSON parser but no YAML parser or
+  emitter.
+- Compatibility: the admitted release publishes CPython 3.13 and 3.14 wheels for the declared
+  platforms; compatibility and container jobs exercise the locked package.
+- License and stewardship: PyYAML is community-maintained in its canonical `yaml/pyyaml`
+  repository and distributed under the MIT license.
+- Boundary: only reviewed structured-input adapters may import `yaml`; inner domain, reasoning,
+  verification, persistence, and family-semantic modules remain independent of the parser.
+- Operational controls: explicit format selection, `SafeLoader` derivation, byte/node/depth and
+  collection caps, one-document enforcement, duplicate-key detection, anchor and alias rejection,
+  custom-tag rejection, JSON-compatible value validation, deterministic alias-free export, exact
+  locking, and adversarial tests.
+- Alternatives considered: a JSON-only boundary would not meet the structured-authoring contract;
+  a handwritten YAML subset would create a fragile parser; a round-trip-preserving YAML editor
+  would add complexity not required by the immutable draft workflow.
+- Removal strategy: preserve the Deductra-owned import, result, and export contracts; substitute a
+  reviewed parser adapter; and replay the complete round-trip, malformed-input, limit, and
+  cross-version corpus before removal.
+
+## Review controls
+
+Dependabot, locked installation, dependency review, vulnerability audit, license review, Python
+compatibility tests, container builds, and capability-specific acceptance tests are the continuing
+controls. A missing wheel, unresolved high-severity advisory, license incompatibility, unexplained
+solver disagreement, or structured-input safety regression blocks release.

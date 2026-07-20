@@ -1,6 +1,6 @@
 # Current State
 
-Last reviewed: 2026-07-19
+Last reviewed: 2026-07-20
 
 ## Summary
 
@@ -62,15 +62,20 @@ The repository remains one Python distribution and one `deductra` import package
 - Composable guided templates covering every normalized Logic Grid Boolean and numeric clue form.
 - Deterministic compilation into the canonical Logic Grid specification with generated natural-language and association-grid previews.
 - A fail-closed readiness gate that requires dual-backend human-rule completion and independent final checking without hidden search.
+- Bounded, explicit JSON and restricted-YAML import into the same immutable guided-draft contract.
+- Sanitized syntax, resource, and schema errors with stable codes, precise paths, corrective actions, and source locations where available.
+- Deterministic canonical JSON and human-readable alias-free YAML exports with cross-format semantic parity.
+- A checked-in Logic Grid Structured Import Result v1 JSON Schema and an exact PyYAML runtime admission.
 
 ## Latest verification evidence
 
-The 2026-07-19 verification pass completed successfully:
+The 2026-07-20 verification pass completed successfully:
 
 - local quality, formatting, typing, documentation, lockfile, and architecture checks passed;
-- the local suite completed with 240 passing tests and three platform-specific PDF skips;
-- the Docker test stage completed with 242 passing tests and one expected isolated-Git-index skip;
+- the local suite completed with 255 passing tests and three platform-specific PDF skips;
+- the Docker test stage completed with 257 passing tests and one expected isolated-Git-index skip;
 - the non-root runtime image ran the installed CLI without development tooling;
+- the non-root runtime image imported PyYAML 6.0.3 and the structured-input public surface as UID 10001;
 - Windows and Linux produced the same canonical Logic Equations trace identity.
 
 Hosted workflow results are authoritative for pull requests and tagged publication. Local and container evidence does not replace those repository gates.
@@ -79,11 +84,11 @@ Hosted workflow results are authoritative for pull requests and tagged publicati
 
 M3 will deliver a complete Logic Grid vertical slice: formal family contracts, independent verification, deterministic human reasoning, three calibrated reference puzzles, guided and structured input, play and solve workflows, replay, local evidence, verified generation, difficulty and novelty evaluation, terminal interaction, and validated reports.
 
-Implementation remains packet-based. FAM-LG-001 establishes the Logic Grid specification, FAM-LG-002 adds deterministic human-rule semantics, FAM-LG-003 connects those proposals to independent proof authority, FAM-LG-004 fixes the independently checked reference triad, and FAM-LG-005 establishes the presentation-neutral guided authoring boundary. Later M3 behavior must consume these boundaries and cannot bypass cross-verification.
+Implementation remains packet-based. FAM-LG-001 establishes the Logic Grid specification, FAM-LG-002 adds deterministic human-rule semantics, FAM-LG-003 connects those proposals to independent proof authority, FAM-LG-004 fixes the independently checked reference triad, FAM-LG-005 establishes the presentation-neutral guided authoring boundary, and FAM-LG-006 provides bounded structured import and deterministic export. Later M3 behavior must consume these boundaries and cannot bypass cross-verification.
 
 ## Explicitly unavailable
 
-The current repository does not yet provide an interactive or file-based authoring adapter, a disclosed general search path, a concrete generator, a playable queue, an interactive interface, composed solve reports, a stable public Python API, complete learning behavior, named agent experiences, additional playable puzzle families, or release installers.
+The current repository does not yet provide an interactive or filesystem authoring adapter, a disclosed general search path, a concrete generator, a playable queue, an interactive interface, composed solve reports, a stable cross-family public Python API, complete learning behavior, named agent experiences, additional playable puzzle families, or release installers.
 
 ## Accepted administrative risk
 

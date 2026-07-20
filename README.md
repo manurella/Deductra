@@ -29,6 +29,7 @@ The current repository provides:
 - independent Z3 and CP-SAT verification for Logic Grid proposals, including exact rational and compound-clue semantics.
 - an original 3x3 Easy, 4x4 Medium, and 5x5 Hard Logic Grid reference triad with an independent final checker and dual-backend uniqueness evidence.
 - a presentation-neutral Logic Grid guided builder with staged feedback, composable clue templates, normalized previews, and a verified readiness gate.
+- bounded Logic Grid JSON/YAML import with precise corrective errors, deterministic canonical JSON and human-readable YAML export, and the same verified readiness gate.
 
 ## Reference solve
 

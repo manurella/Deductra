@@ -77,3 +77,7 @@ not import delivery adapters, persistence, reports, generation, or agents.
 This packet adds no file parser, YAML dependency, terminal screen, mutable draft store, save action,
 play workflow, general search, difficulty score, novelty analysis, generation, or report. Those
 capabilities must consume this contract in later bounded packets.
+
+FAM-LG-006 now consumes this draft and assessment boundary through the separately documented
+[structured input and export adapter](logic-grid-structured-io.md). Guided authoring remains free of
+parser and delivery concerns.

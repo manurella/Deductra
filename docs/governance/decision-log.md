@@ -1,6 +1,6 @@
 # Decision Log
 
-Last reviewed: 2026-07-19
+Last reviewed: 2026-07-20
 
 This log summarizes accepted project-level decisions. Architecturally significant decisions link to a detailed record containing context and consequences.
 
@@ -33,5 +33,6 @@ This log summarizes accepted project-level decisions. Architecturally significan
 | D-025 | Encode Logic Grid independently with symbolic Z3 formulas and bounded CP-SAT tables while separating row identity, ordinal order, and exact numeric meaning. | Accepted | Repository owner | [ADR-0014](../architecture/decisions/0014-encode-logic-grid-independently.md) |
 | D-026 | Fix the first Logic Grid Easy, Medium, and Hard references at 3x3, 4x4, and 5x5, and accept solutions through an evaluator independent of reasoning and proof adapters. | Accepted | Repository owner | [Logic Grid reference triad](../architecture/logic-grid-reference-triad.md) |
 | D-027 | Keep guided Logic Grid authoring presentation-neutral, incomplete-safe, canonically compiled, and unable to claim readiness without verified human completion. | Accepted | Repository owner | [ADR-0015](../architecture/decisions/0015-keep-guided-authoring-presentation-neutral.md) |
+| D-028 | Accept JSON and a restricted YAML profile only through a bounded adapter that returns the canonical Logic Grid builder assessment and deterministic exports. | Accepted | Repository owner | [ADR-0016](../architecture/decisions/0016-bound-structured-authoring-input.md) |
 
 New decisions receive the next sequential identifier. A superseding decision retains the old entry and links both records rather than erasing the earlier ruling.

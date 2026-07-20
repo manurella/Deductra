@@ -1,6 +1,6 @@
 # Product Roadmap
 
-Last reviewed: 2026-07-19
+Last reviewed: 2026-07-20
 
 ## Release principle
 
@@ -28,6 +28,12 @@ The roadmap defines sequence and exit evidence, not fixed dates. Only one bounde
 M3 turns the existing reasoning substrate into the first complete end-to-end user experience. It introduces the Logic Grid family, three calibrated reference puzzles, guided and structured input, play and solve workflows, replay, local progress evidence, verified generation, difficulty and novelty evaluation, terminal interaction, and standards-oriented reports.
 
 M3 exits only when a user can provide or select a Logic Grid puzzle, interact with or solve it, obtain a verified trace, retain local evidence, and produce a validated report without an unverified subsystem becoming authoritative.
+
+Implementation is proceeding through bounded family packets. FAM-LG-001 through FAM-LG-004
+established the specification, human reasoning, independent verification, and calibrated references;
+FAM-LG-005 added the guided authoring service; and FAM-LG-006 added bounded JSON/YAML import and
+deterministic export. Interaction, replay, local evidence, generation, evaluation, terminal delivery,
+and composed reports remain later M3 work.
 
 ## M4 — Proven common platform
 

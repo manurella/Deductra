@@ -1,6 +1,6 @@
 # Dependency Rules
 
-Last reviewed: 2026-07-16
+Last reviewed: 2026-07-20
 
 ## Foundation rules
 
@@ -31,6 +31,11 @@ modules. A builder may compose its family contracts with reasoning and verificat
 import delivery adapters, persistence, generation, reports, or agents. The stricter specification,
 schema, rule, and solver boundaries remain unchanged.
 
+Family structured-input modules sit at the same outer application boundary. They may consume a
+family builder and an explicitly admitted parser, but parser types and exceptions must remain
+inside the adapter. Structured input does not authorize filesystem, delivery, persistence,
+generation, report, or agent dependencies.
+
 This direction is a constraint, not permission to create speculative layers. Until a capability exists, the corresponding package should not exist.
 
 Cross-module imports must use an intentional public surface. Generic dumping grounds such as `common`, `helpers`, or `utils` require specific justification because they obscure ownership and dependency direction.
@@ -46,4 +51,4 @@ A new architecture decision record is required when a change introduces or mater
 - a dependency-direction exception;
 - a supported Python or platform boundary.
 
-Architecture enforcement in `tests/architecture` translates these rules into mechanical checks. The current contracts cover the public path allowlist, single-package layout, CR-001 through CR-010 and FAM-LE-001/FAM-LE-002 module boundaries, inward dependency direction, package metadata, Docker stage design, and production import roots. A check may be changed only with the governing documentation and decision record in the same reviewed change.
+Architecture enforcement in `tests/architecture` translates these rules into mechanical checks. The current contracts cover the public path allowlist, single-package layout, CR-001 through CR-010, Logic Equations, Logic Grid, builder, and structured-input module boundaries, inward dependency direction, package metadata, Docker stage design, and production import roots. A check may be changed only with the governing documentation and decision record in the same reviewed change.

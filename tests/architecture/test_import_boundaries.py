@@ -15,6 +15,7 @@ ALLOWED_IMPORT_ROOTS = frozenset(sys.stdlib_module_names) | {
     "ortools",
     "pydantic",
     "weasyprint",
+    "yaml",
     "z3",
 }
 FORBIDDEN_INTERNAL_ROOTS = frozenset({"scripts", "tests"})
@@ -252,7 +253,10 @@ def test_family_builders_are_bounded_outer_application_services() -> None:
         "deductra.reasoning",
         "deductra.verification",
     )
-    for source in (PACKAGE_ROOT / "families" / "logic_grid" / "builder.py",):
+    for source in (
+        PACKAGE_ROOT / "families" / "logic_grid" / "builder.py",
+        PACKAGE_ROOT / "families" / "logic_grid" / "structured_io.py",
+    ):
         outward = {
             module
             for module in imported_modules(source)
