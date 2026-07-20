@@ -6,6 +6,7 @@ import json
 from typing import Any
 
 from deductra.families.logic_grid.builder import LogicGridBuilderDraft
+from deductra.families.logic_grid.play import PLAY_SCHEMA_VERSION, LogicGridPlaySession
 from deductra.families.logic_grid.specification import (
     FAMILY_ID,
     SPEC_SCHEMA_VERSION,
@@ -53,6 +54,28 @@ def rendered_logic_grid_structured_import_json_schema() -> str:
     return (
         json.dumps(
             logic_grid_structured_import_json_schema(),
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n"
+    )
+
+
+def logic_grid_play_session_json_schema() -> dict[str, Any]:
+    """Return the versioned replayable Logic Grid play-session JSON Schema."""
+    schema = LogicGridPlaySession.model_json_schema()
+    schema["$id"] = "urn:deductra:schema:logic-grid-play-session:1"
+    schema["title"] = "Deductra Logic Grid Play Session v1"
+    schema["properties"]["schema_version"]["const"] = PLAY_SCHEMA_VERSION
+    return schema
+
+
+def rendered_logic_grid_play_session_json_schema() -> str:
+    """Return the normalized checked-in play-session schema."""
+    return (
+        json.dumps(
+            logic_grid_play_session_json_schema(),
             ensure_ascii=False,
             indent=2,
             sort_keys=True,

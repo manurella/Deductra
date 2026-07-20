@@ -1,0 +1,391 @@
+{
+  "$defs": {
+    "AssignCell": {
+      "additionalProperties": false,
+      "description": "Tentatively select one anchor row for an item variable.",
+      "properties": {
+        "kind": {
+          "const": "assign_cell",
+          "default": "assign_cell",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "AssignCell",
+      "type": "object"
+    },
+    "AssignmentAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "assignment",
+          "default": "assignment",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "AssignmentAtom",
+      "type": "object"
+    },
+    "AttemptId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "CheckCompletion": {
+      "additionalProperties": false,
+      "description": "Ask the independent final checker to evaluate the active marks.",
+      "properties": {
+        "kind": {
+          "const": "check_completion",
+          "default": "check_completion",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "title": "CheckCompletion",
+      "type": "object"
+    },
+    "ClearCell": {
+      "additionalProperties": false,
+      "description": "Clear a tentative selection or exclusion from one cell.",
+      "properties": {
+        "kind": {
+          "const": "clear_cell",
+          "default": "clear_cell",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "ClearCell",
+      "type": "object"
+    },
+    "EventId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ExcludeCell": {
+      "additionalProperties": false,
+      "description": "Tentatively exclude one anchor row from an item variable.",
+      "properties": {
+        "kind": {
+          "const": "exclude_cell",
+          "default": "exclude_cell",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "ExcludeCell",
+      "type": "object"
+    },
+    "ExclusionAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "exclusion",
+          "default": "exclusion",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "ExclusionAtom",
+      "type": "object"
+    },
+    "PlayAction": {
+      "discriminator": {
+        "mapping": {
+          "assign_cell": "#/$defs/AssignCell",
+          "check_completion": "#/$defs/CheckCompletion",
+          "clear_cell": "#/$defs/ClearCell",
+          "exclude_cell": "#/$defs/ExcludeCell",
+          "redo_move": "#/$defs/RedoMove",
+          "undo_move": "#/$defs/UndoMove"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AssignCell"
+        },
+        {
+          "$ref": "#/$defs/ExcludeCell"
+        },
+        {
+          "$ref": "#/$defs/ClearCell"
+        },
+        {
+          "$ref": "#/$defs/UndoMove"
+        },
+        {
+          "$ref": "#/$defs/RedoMove"
+        },
+        {
+          "$ref": "#/$defs/CheckCompletion"
+        }
+      ]
+    },
+    "PlayEvent": {
+      "additionalProperties": false,
+      "description": "One retained interaction outcome in a tamper-evident attempt stream.",
+      "properties": {
+        "accepted": {
+          "title": "Accepted",
+          "type": "boolean"
+        },
+        "action": {
+          "$ref": "#/$defs/PlayAction"
+        },
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "event_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "event_id": {
+          "$ref": "#/$defs/EventId"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "parent_move_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EventId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "previous_event_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "resulting_move_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EventId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "resulting_state_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "sequence_no": {
+          "minimum": 0,
+          "title": "Sequence No",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_id",
+        "sequence_no",
+        "action",
+        "accepted",
+        "code",
+        "message",
+        "resulting_state_hash",
+        "previous_event_hash",
+        "event_hash"
+      ],
+      "title": "PlayEvent",
+      "type": "object"
+    },
+    "PlaySessionStatus": {
+      "description": "Terminal status of a presentation-neutral play attempt.",
+      "enum": [
+        "active",
+        "completed"
+      ],
+      "title": "PlaySessionStatus",
+      "type": "string"
+    },
+    "PuzzleRevisionId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "RedoMove": {
+      "additionalProperties": false,
+      "description": "Move the active history cursor to one retained direct child.",
+      "properties": {
+        "kind": {
+          "const": "redo_move",
+          "default": "redo_move",
+          "title": "Kind",
+          "type": "string"
+        },
+        "target_move_id": {
+          "$ref": "#/$defs/EventId"
+        }
+      },
+      "required": [
+        "target_move_id"
+      ],
+      "title": "RedoMove",
+      "type": "object"
+    },
+    "Sha256Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "UndoMove": {
+      "additionalProperties": false,
+      "description": "Move the active history cursor to the parent of its current move.",
+      "properties": {
+        "kind": {
+          "const": "undo_move",
+          "default": "undo_move",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "title": "UndoMove",
+      "type": "object"
+    },
+    "ValueId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "VariableId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "$id": "urn:deductra:schema:logic-grid-play-session:1",
+  "additionalProperties": false,
+  "description": "Current immutable marks plus the complete retained interaction history.",
+  "properties": {
+    "active_move_id": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EventId"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "assignments": {
+      "items": {
+        "$ref": "#/$defs/AssignmentAtom"
+      },
+      "title": "Assignments",
+      "type": "array"
+    },
+    "attempt_id": {
+      "$ref": "#/$defs/AttemptId"
+    },
+    "events": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PlayEvent"
+      },
+      "maxItems": 10000,
+      "title": "Events",
+      "type": "array"
+    },
+    "exclusions": {
+      "items": {
+        "$ref": "#/$defs/ExclusionAtom"
+      },
+      "title": "Exclusions",
+      "type": "array"
+    },
+    "puzzle_revision_id": {
+      "$ref": "#/$defs/PuzzleRevisionId"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "session_hash": {
+      "$ref": "#/$defs/Sha256Digest"
+    },
+    "state_hash": {
+      "$ref": "#/$defs/Sha256Digest"
+    },
+    "status": {
+      "$ref": "#/$defs/PlaySessionStatus"
+    }
+  },
+  "required": [
+    "attempt_id",
+    "puzzle_revision_id",
+    "status",
+    "assignments",
+    "exclusions",
+    "state_hash",
+    "session_hash"
+  ],
+  "title": "Deductra Logic Grid Play Session v1",
+  "type": "object"
+}

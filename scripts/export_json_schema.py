@@ -11,6 +11,7 @@ from deductra.families.logic_equations.schema import (
 )
 from deductra.families.logic_grid.schema import (
     rendered_logic_grid_builder_json_schema,
+    rendered_logic_grid_play_session_json_schema,
     rendered_logic_grid_spec_json_schema,
     rendered_logic_grid_structured_import_json_schema,
 )
@@ -43,6 +44,9 @@ LOGIC_GRID_BUILDER_SCHEMA_PATH = (
 )
 LOGIC_GRID_STRUCTURED_IMPORT_SCHEMA_PATH = (
     REPOSITORY_ROOT / "schemas" / "logic-grid-structured-import-v1.schema.json"
+)
+LOGIC_GRID_PLAY_SESSION_SCHEMA_PATH = (
+    REPOSITORY_ROOT / "schemas" / "logic-grid-play-session-v1.schema.json"
 )
 
 
@@ -116,6 +120,11 @@ def main() -> None:
     )
     LOGIC_GRID_STRUCTURED_IMPORT_SCHEMA_PATH.write_text(
         rendered_logic_grid_structured_import_json_schema(),
+        encoding="utf-8",
+        newline="\n",
+    )
+    LOGIC_GRID_PLAY_SESSION_SCHEMA_PATH.write_text(
+        rendered_logic_grid_play_session_json_schema(),
         encoding="utf-8",
         newline="\n",
     )

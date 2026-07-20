@@ -255,6 +255,7 @@ def test_family_builders_are_bounded_outer_application_services() -> None:
     )
     for source in (
         PACKAGE_ROOT / "families" / "logic_grid" / "builder.py",
+        PACKAGE_ROOT / "families" / "logic_grid" / "play.py",
         PACKAGE_ROOT / "families" / "logic_grid" / "structured_io.py",
     ):
         outward = {

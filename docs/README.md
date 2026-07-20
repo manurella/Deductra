@@ -20,6 +20,7 @@ This directory contains Deductra's canonical public engineering documentation. I
 - [Logic Grid reference triad](architecture/logic-grid-reference-triad.md)
 - [Logic Grid guided builder](architecture/logic-grid-guided-builder.md)
 - [Logic Grid structured input and export](architecture/logic-grid-structured-io.md)
+- [Logic Grid play session](architecture/logic-grid-play-session.md)
 
 ## Governance
 

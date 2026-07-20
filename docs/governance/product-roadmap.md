@@ -31,9 +31,10 @@ M3 exits only when a user can provide or select a Logic Grid puzzle, interact wi
 
 Implementation is proceeding through bounded family packets. FAM-LG-001 through FAM-LG-004
 established the specification, human reasoning, independent verification, and calibrated references;
-FAM-LG-005 added the guided authoring service; and FAM-LG-006 added bounded JSON/YAML import and
-deterministic export. Interaction, replay, local evidence, generation, evaluation, terminal delivery,
-and composed reports remain later M3 work.
+FAM-LG-005 added the guided authoring service; FAM-LG-006 added bounded JSON/YAML import and
+deterministic export; and FAM-LG-007 added tentative play state, non-destructive undo/redo,
+completion checking, and deterministic replay. Validation modes, local evidence, generation,
+evaluation, terminal delivery, and composed reports remain later M3 work.
 
 ## M4 — Proven common platform
 
