@@ -5,11 +5,34 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from deductra.families.logic_grid.builder import LogicGridBuilderDraft
 from deductra.families.logic_grid.specification import (
     FAMILY_ID,
     SPEC_SCHEMA_VERSION,
     LogicGridSpec,
 )
+
+
+def logic_grid_builder_json_schema() -> dict[str, Any]:
+    """Return the versioned guided-builder draft JSON Schema."""
+    schema = LogicGridBuilderDraft.model_json_schema()
+    schema["$id"] = "urn:deductra:schema:logic-grid-builder-draft:1"
+    schema["title"] = "Deductra Logic Grid Builder Draft v1"
+    schema["properties"]["schema_version"]["const"] = "1.0.0"
+    return schema
+
+
+def rendered_logic_grid_builder_json_schema() -> str:
+    """Return the normalized checked-in guided-builder schema."""
+    return (
+        json.dumps(
+            logic_grid_builder_json_schema(),
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n"
+    )
 
 
 def logic_grid_spec_json_schema() -> dict[str, Any]:

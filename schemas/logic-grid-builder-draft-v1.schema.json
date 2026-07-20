@@ -1,0 +1,975 @@
+{
+  "$defs": {
+    "AllTemplate": {
+      "additionalProperties": false,
+      "description": "Conjunction of two or more guided predicates.",
+      "properties": {
+        "kind": {
+          "const": "all",
+          "default": "all",
+          "title": "Kind",
+          "type": "string"
+        },
+        "operands": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "all": "#/$defs/AllTemplate",
+                "any": "#/$defs/AnyTemplate",
+                "association": "#/$defs/AssociationTemplate",
+                "cardinality": "#/$defs/CardinalityTemplate",
+                "conditional": "#/$defs/ConditionalTemplate",
+                "equivalent": "#/$defs/EquivalentTemplate",
+                "exclusive": "#/$defs/ExclusiveTemplate",
+                "not": "#/$defs/NegationTemplate",
+                "numeric_difference": "#/$defs/NumericDifferenceTemplate",
+                "ordering": "#/$defs/OrderingTemplate"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/AssociationTemplate"
+              },
+              {
+                "$ref": "#/$defs/OrderingTemplate"
+              },
+              {
+                "$ref": "#/$defs/NumericDifferenceTemplate"
+              },
+              {
+                "$ref": "#/$defs/AllTemplate"
+              },
+              {
+                "$ref": "#/$defs/AnyTemplate"
+              },
+              {
+                "$ref": "#/$defs/NegationTemplate"
+              },
+              {
+                "$ref": "#/$defs/ExclusiveTemplate"
+              },
+              {
+                "$ref": "#/$defs/ConditionalTemplate"
+              },
+              {
+                "$ref": "#/$defs/EquivalentTemplate"
+              },
+              {
+                "$ref": "#/$defs/CardinalityTemplate"
+              }
+            ]
+          },
+          "title": "Operands",
+          "type": "array"
+        }
+      },
+      "required": [
+        "operands"
+      ],
+      "title": "AllTemplate",
+      "type": "object"
+    },
+    "AnyTemplate": {
+      "additionalProperties": false,
+      "description": "Inclusive alternative over two or more guided predicates.",
+      "properties": {
+        "kind": {
+          "const": "any",
+          "default": "any",
+          "title": "Kind",
+          "type": "string"
+        },
+        "operands": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "all": "#/$defs/AllTemplate",
+                "any": "#/$defs/AnyTemplate",
+                "association": "#/$defs/AssociationTemplate",
+                "cardinality": "#/$defs/CardinalityTemplate",
+                "conditional": "#/$defs/ConditionalTemplate",
+                "equivalent": "#/$defs/EquivalentTemplate",
+                "exclusive": "#/$defs/ExclusiveTemplate",
+                "not": "#/$defs/NegationTemplate",
+                "numeric_difference": "#/$defs/NumericDifferenceTemplate",
+                "ordering": "#/$defs/OrderingTemplate"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/AssociationTemplate"
+              },
+              {
+                "$ref": "#/$defs/OrderingTemplate"
+              },
+              {
+                "$ref": "#/$defs/NumericDifferenceTemplate"
+              },
+              {
+                "$ref": "#/$defs/AllTemplate"
+              },
+              {
+                "$ref": "#/$defs/AnyTemplate"
+              },
+              {
+                "$ref": "#/$defs/NegationTemplate"
+              },
+              {
+                "$ref": "#/$defs/ExclusiveTemplate"
+              },
+              {
+                "$ref": "#/$defs/ConditionalTemplate"
+              },
+              {
+                "$ref": "#/$defs/EquivalentTemplate"
+              },
+              {
+                "$ref": "#/$defs/CardinalityTemplate"
+              }
+            ]
+          },
+          "title": "Operands",
+          "type": "array"
+        }
+      },
+      "required": [
+        "operands"
+      ],
+      "title": "AnyTemplate",
+      "type": "object"
+    },
+    "AssociationTemplate": {
+      "additionalProperties": false,
+      "description": "Same-row or different-row association template.",
+      "properties": {
+        "kind": {
+          "const": "association",
+          "default": "association",
+          "title": "Kind",
+          "type": "string"
+        },
+        "left": {
+          "$ref": "#/$defs/BuilderItemRef"
+        },
+        "relation": {
+          "enum": [
+            "same",
+            "different"
+          ],
+          "title": "Relation",
+          "type": "string"
+        },
+        "right": {
+          "$ref": "#/$defs/BuilderItemRef"
+        }
+      },
+      "required": [
+        "left",
+        "right",
+        "relation"
+      ],
+      "title": "AssociationTemplate",
+      "type": "object"
+    },
+    "BuilderItemRef": {
+      "additionalProperties": false,
+      "description": "User-facing reference to one item in a named category.",
+      "properties": {
+        "category_key": {
+          "title": "Category Key",
+          "type": "string"
+        },
+        "item_key": {
+          "title": "Item Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "category_key",
+        "item_key"
+      ],
+      "title": "BuilderItemRef",
+      "type": "object"
+    },
+    "CardinalityTemplate": {
+      "additionalProperties": false,
+      "description": "Bounded number of true guided predicates.",
+      "properties": {
+        "kind": {
+          "const": "cardinality",
+          "default": "cardinality",
+          "title": "Kind",
+          "type": "string"
+        },
+        "maximum": {
+          "title": "Maximum",
+          "type": "integer"
+        },
+        "minimum": {
+          "title": "Minimum",
+          "type": "integer"
+        },
+        "operands": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "all": "#/$defs/AllTemplate",
+                "any": "#/$defs/AnyTemplate",
+                "association": "#/$defs/AssociationTemplate",
+                "cardinality": "#/$defs/CardinalityTemplate",
+                "conditional": "#/$defs/ConditionalTemplate",
+                "equivalent": "#/$defs/EquivalentTemplate",
+                "exclusive": "#/$defs/ExclusiveTemplate",
+                "not": "#/$defs/NegationTemplate",
+                "numeric_difference": "#/$defs/NumericDifferenceTemplate",
+                "ordering": "#/$defs/OrderingTemplate"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/AssociationTemplate"
+              },
+              {
+                "$ref": "#/$defs/OrderingTemplate"
+              },
+              {
+                "$ref": "#/$defs/NumericDifferenceTemplate"
+              },
+              {
+                "$ref": "#/$defs/AllTemplate"
+              },
+              {
+                "$ref": "#/$defs/AnyTemplate"
+              },
+              {
+                "$ref": "#/$defs/NegationTemplate"
+              },
+              {
+                "$ref": "#/$defs/ExclusiveTemplate"
+              },
+              {
+                "$ref": "#/$defs/ConditionalTemplate"
+              },
+              {
+                "$ref": "#/$defs/EquivalentTemplate"
+              },
+              {
+                "$ref": "#/$defs/CardinalityTemplate"
+              }
+            ]
+          },
+          "title": "Operands",
+          "type": "array"
+        }
+      },
+      "required": [
+        "operands",
+        "minimum",
+        "maximum"
+      ],
+      "title": "CardinalityTemplate",
+      "type": "object"
+    },
+    "ConditionalTemplate": {
+      "additionalProperties": false,
+      "description": "Implication between two guided predicates.",
+      "properties": {
+        "conclusion": {
+          "discriminator": {
+            "mapping": {
+              "all": "#/$defs/AllTemplate",
+              "any": "#/$defs/AnyTemplate",
+              "association": "#/$defs/AssociationTemplate",
+              "cardinality": "#/$defs/CardinalityTemplate",
+              "conditional": "#/$defs/ConditionalTemplate",
+              "equivalent": "#/$defs/EquivalentTemplate",
+              "exclusive": "#/$defs/ExclusiveTemplate",
+              "not": "#/$defs/NegationTemplate",
+              "numeric_difference": "#/$defs/NumericDifferenceTemplate",
+              "ordering": "#/$defs/OrderingTemplate"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/AssociationTemplate"
+            },
+            {
+              "$ref": "#/$defs/OrderingTemplate"
+            },
+            {
+              "$ref": "#/$defs/NumericDifferenceTemplate"
+            },
+            {
+              "$ref": "#/$defs/AllTemplate"
+            },
+            {
+              "$ref": "#/$defs/AnyTemplate"
+            },
+            {
+              "$ref": "#/$defs/NegationTemplate"
+            },
+            {
+              "$ref": "#/$defs/ExclusiveTemplate"
+            },
+            {
+              "$ref": "#/$defs/ConditionalTemplate"
+            },
+            {
+              "$ref": "#/$defs/EquivalentTemplate"
+            },
+            {
+              "$ref": "#/$defs/CardinalityTemplate"
+            }
+          ],
+          "title": "Conclusion"
+        },
+        "kind": {
+          "const": "conditional",
+          "default": "conditional",
+          "title": "Kind",
+          "type": "string"
+        },
+        "premise": {
+          "discriminator": {
+            "mapping": {
+              "all": "#/$defs/AllTemplate",
+              "any": "#/$defs/AnyTemplate",
+              "association": "#/$defs/AssociationTemplate",
+              "cardinality": "#/$defs/CardinalityTemplate",
+              "conditional": "#/$defs/ConditionalTemplate",
+              "equivalent": "#/$defs/EquivalentTemplate",
+              "exclusive": "#/$defs/ExclusiveTemplate",
+              "not": "#/$defs/NegationTemplate",
+              "numeric_difference": "#/$defs/NumericDifferenceTemplate",
+              "ordering": "#/$defs/OrderingTemplate"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/AssociationTemplate"
+            },
+            {
+              "$ref": "#/$defs/OrderingTemplate"
+            },
+            {
+              "$ref": "#/$defs/NumericDifferenceTemplate"
+            },
+            {
+              "$ref": "#/$defs/AllTemplate"
+            },
+            {
+              "$ref": "#/$defs/AnyTemplate"
+            },
+            {
+              "$ref": "#/$defs/NegationTemplate"
+            },
+            {
+              "$ref": "#/$defs/ExclusiveTemplate"
+            },
+            {
+              "$ref": "#/$defs/ConditionalTemplate"
+            },
+            {
+              "$ref": "#/$defs/EquivalentTemplate"
+            },
+            {
+              "$ref": "#/$defs/CardinalityTemplate"
+            }
+          ],
+          "title": "Premise"
+        }
+      },
+      "required": [
+        "premise",
+        "conclusion"
+      ],
+      "title": "ConditionalTemplate",
+      "type": "object"
+    },
+    "EquivalentTemplate": {
+      "additionalProperties": false,
+      "description": "Logical equivalence between two guided predicates.",
+      "properties": {
+        "kind": {
+          "const": "equivalent",
+          "default": "equivalent",
+          "title": "Kind",
+          "type": "string"
+        },
+        "left": {
+          "discriminator": {
+            "mapping": {
+              "all": "#/$defs/AllTemplate",
+              "any": "#/$defs/AnyTemplate",
+              "association": "#/$defs/AssociationTemplate",
+              "cardinality": "#/$defs/CardinalityTemplate",
+              "conditional": "#/$defs/ConditionalTemplate",
+              "equivalent": "#/$defs/EquivalentTemplate",
+              "exclusive": "#/$defs/ExclusiveTemplate",
+              "not": "#/$defs/NegationTemplate",
+              "numeric_difference": "#/$defs/NumericDifferenceTemplate",
+              "ordering": "#/$defs/OrderingTemplate"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/AssociationTemplate"
+            },
+            {
+              "$ref": "#/$defs/OrderingTemplate"
+            },
+            {
+              "$ref": "#/$defs/NumericDifferenceTemplate"
+            },
+            {
+              "$ref": "#/$defs/AllTemplate"
+            },
+            {
+              "$ref": "#/$defs/AnyTemplate"
+            },
+            {
+              "$ref": "#/$defs/NegationTemplate"
+            },
+            {
+              "$ref": "#/$defs/ExclusiveTemplate"
+            },
+            {
+              "$ref": "#/$defs/ConditionalTemplate"
+            },
+            {
+              "$ref": "#/$defs/EquivalentTemplate"
+            },
+            {
+              "$ref": "#/$defs/CardinalityTemplate"
+            }
+          ],
+          "title": "Left"
+        },
+        "right": {
+          "discriminator": {
+            "mapping": {
+              "all": "#/$defs/AllTemplate",
+              "any": "#/$defs/AnyTemplate",
+              "association": "#/$defs/AssociationTemplate",
+              "cardinality": "#/$defs/CardinalityTemplate",
+              "conditional": "#/$defs/ConditionalTemplate",
+              "equivalent": "#/$defs/EquivalentTemplate",
+              "exclusive": "#/$defs/ExclusiveTemplate",
+              "not": "#/$defs/NegationTemplate",
+              "numeric_difference": "#/$defs/NumericDifferenceTemplate",
+              "ordering": "#/$defs/OrderingTemplate"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/AssociationTemplate"
+            },
+            {
+              "$ref": "#/$defs/OrderingTemplate"
+            },
+            {
+              "$ref": "#/$defs/NumericDifferenceTemplate"
+            },
+            {
+              "$ref": "#/$defs/AllTemplate"
+            },
+            {
+              "$ref": "#/$defs/AnyTemplate"
+            },
+            {
+              "$ref": "#/$defs/NegationTemplate"
+            },
+            {
+              "$ref": "#/$defs/ExclusiveTemplate"
+            },
+            {
+              "$ref": "#/$defs/ConditionalTemplate"
+            },
+            {
+              "$ref": "#/$defs/EquivalentTemplate"
+            },
+            {
+              "$ref": "#/$defs/CardinalityTemplate"
+            }
+          ],
+          "title": "Right"
+        }
+      },
+      "required": [
+        "left",
+        "right"
+      ],
+      "title": "EquivalentTemplate",
+      "type": "object"
+    },
+    "ExclusiveTemplate": {
+      "additionalProperties": false,
+      "description": "Exclusive alternative between two guided predicates.",
+      "properties": {
+        "kind": {
+          "const": "exclusive",
+          "default": "exclusive",
+          "title": "Kind",
+          "type": "string"
+        },
+        "left": {
+          "discriminator": {
+            "mapping": {
+              "all": "#/$defs/AllTemplate",
+              "any": "#/$defs/AnyTemplate",
+              "association": "#/$defs/AssociationTemplate",
+              "cardinality": "#/$defs/CardinalityTemplate",
+              "conditional": "#/$defs/ConditionalTemplate",
+              "equivalent": "#/$defs/EquivalentTemplate",
+              "exclusive": "#/$defs/ExclusiveTemplate",
+              "not": "#/$defs/NegationTemplate",
+              "numeric_difference": "#/$defs/NumericDifferenceTemplate",
+              "ordering": "#/$defs/OrderingTemplate"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/AssociationTemplate"
+            },
+            {
+              "$ref": "#/$defs/OrderingTemplate"
+            },
+            {
+              "$ref": "#/$defs/NumericDifferenceTemplate"
+            },
+            {
+              "$ref": "#/$defs/AllTemplate"
+            },
+            {
+              "$ref": "#/$defs/AnyTemplate"
+            },
+            {
+              "$ref": "#/$defs/NegationTemplate"
+            },
+            {
+              "$ref": "#/$defs/ExclusiveTemplate"
+            },
+            {
+              "$ref": "#/$defs/ConditionalTemplate"
+            },
+            {
+              "$ref": "#/$defs/EquivalentTemplate"
+            },
+            {
+              "$ref": "#/$defs/CardinalityTemplate"
+            }
+          ],
+          "title": "Left"
+        },
+        "right": {
+          "discriminator": {
+            "mapping": {
+              "all": "#/$defs/AllTemplate",
+              "any": "#/$defs/AnyTemplate",
+              "association": "#/$defs/AssociationTemplate",
+              "cardinality": "#/$defs/CardinalityTemplate",
+              "conditional": "#/$defs/ConditionalTemplate",
+              "equivalent": "#/$defs/EquivalentTemplate",
+              "exclusive": "#/$defs/ExclusiveTemplate",
+              "not": "#/$defs/NegationTemplate",
+              "numeric_difference": "#/$defs/NumericDifferenceTemplate",
+              "ordering": "#/$defs/OrderingTemplate"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/AssociationTemplate"
+            },
+            {
+              "$ref": "#/$defs/OrderingTemplate"
+            },
+            {
+              "$ref": "#/$defs/NumericDifferenceTemplate"
+            },
+            {
+              "$ref": "#/$defs/AllTemplate"
+            },
+            {
+              "$ref": "#/$defs/AnyTemplate"
+            },
+            {
+              "$ref": "#/$defs/NegationTemplate"
+            },
+            {
+              "$ref": "#/$defs/ExclusiveTemplate"
+            },
+            {
+              "$ref": "#/$defs/ConditionalTemplate"
+            },
+            {
+              "$ref": "#/$defs/EquivalentTemplate"
+            },
+            {
+              "$ref": "#/$defs/CardinalityTemplate"
+            }
+          ],
+          "title": "Right"
+        }
+      },
+      "required": [
+        "left",
+        "right"
+      ],
+      "title": "ExclusiveTemplate",
+      "type": "object"
+    },
+    "LogicGridBuilderCategory": {
+      "additionalProperties": false,
+      "description": "One category table entered through the guided builder.",
+      "properties": {
+        "category_key": {
+          "title": "Category Key",
+          "type": "string"
+        },
+        "items": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/LogicGridBuilderItem"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "category_key",
+        "label"
+      ],
+      "title": "LogicGridBuilderCategory",
+      "type": "object"
+    },
+    "LogicGridBuilderClue": {
+      "additionalProperties": false,
+      "description": "One guided clue and its optional author-supplied presentation text.",
+      "properties": {
+        "clue_key": {
+          "title": "Clue Key",
+          "type": "string"
+        },
+        "predicate": {
+          "discriminator": {
+            "mapping": {
+              "all": "#/$defs/AllTemplate",
+              "any": "#/$defs/AnyTemplate",
+              "association": "#/$defs/AssociationTemplate",
+              "cardinality": "#/$defs/CardinalityTemplate",
+              "conditional": "#/$defs/ConditionalTemplate",
+              "equivalent": "#/$defs/EquivalentTemplate",
+              "exclusive": "#/$defs/ExclusiveTemplate",
+              "not": "#/$defs/NegationTemplate",
+              "numeric_difference": "#/$defs/NumericDifferenceTemplate",
+              "ordering": "#/$defs/OrderingTemplate"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/AssociationTemplate"
+            },
+            {
+              "$ref": "#/$defs/OrderingTemplate"
+            },
+            {
+              "$ref": "#/$defs/NumericDifferenceTemplate"
+            },
+            {
+              "$ref": "#/$defs/AllTemplate"
+            },
+            {
+              "$ref": "#/$defs/AnyTemplate"
+            },
+            {
+              "$ref": "#/$defs/NegationTemplate"
+            },
+            {
+              "$ref": "#/$defs/ExclusiveTemplate"
+            },
+            {
+              "$ref": "#/$defs/ConditionalTemplate"
+            },
+            {
+              "$ref": "#/$defs/EquivalentTemplate"
+            },
+            {
+              "$ref": "#/$defs/CardinalityTemplate"
+            }
+          ],
+          "title": "Predicate"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        }
+      },
+      "required": [
+        "clue_key",
+        "predicate"
+      ],
+      "title": "LogicGridBuilderClue",
+      "type": "object"
+    },
+    "LogicGridBuilderItem": {
+      "additionalProperties": false,
+      "description": "One item entered in a guided category table.",
+      "properties": {
+        "item_key": {
+          "title": "Item Key",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "numeric_value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "format": "fraction",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Numeric Value"
+        }
+      },
+      "required": [
+        "item_key",
+        "label"
+      ],
+      "title": "LogicGridBuilderItem",
+      "type": "object"
+    },
+    "NegationTemplate": {
+      "additionalProperties": false,
+      "description": "Logical negation of one guided predicate.",
+      "properties": {
+        "kind": {
+          "const": "not",
+          "default": "not",
+          "title": "Kind",
+          "type": "string"
+        },
+        "operand": {
+          "discriminator": {
+            "mapping": {
+              "all": "#/$defs/AllTemplate",
+              "any": "#/$defs/AnyTemplate",
+              "association": "#/$defs/AssociationTemplate",
+              "cardinality": "#/$defs/CardinalityTemplate",
+              "conditional": "#/$defs/ConditionalTemplate",
+              "equivalent": "#/$defs/EquivalentTemplate",
+              "exclusive": "#/$defs/ExclusiveTemplate",
+              "not": "#/$defs/NegationTemplate",
+              "numeric_difference": "#/$defs/NumericDifferenceTemplate",
+              "ordering": "#/$defs/OrderingTemplate"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/AssociationTemplate"
+            },
+            {
+              "$ref": "#/$defs/OrderingTemplate"
+            },
+            {
+              "$ref": "#/$defs/NumericDifferenceTemplate"
+            },
+            {
+              "$ref": "#/$defs/AllTemplate"
+            },
+            {
+              "$ref": "#/$defs/AnyTemplate"
+            },
+            {
+              "$ref": "#/$defs/NegationTemplate"
+            },
+            {
+              "$ref": "#/$defs/ExclusiveTemplate"
+            },
+            {
+              "$ref": "#/$defs/ConditionalTemplate"
+            },
+            {
+              "$ref": "#/$defs/EquivalentTemplate"
+            },
+            {
+              "$ref": "#/$defs/CardinalityTemplate"
+            }
+          ],
+          "title": "Operand"
+        }
+      },
+      "required": [
+        "operand"
+      ],
+      "title": "NegationTemplate",
+      "type": "object"
+    },
+    "NumericDifferenceTemplate": {
+      "additionalProperties": false,
+      "description": "Exact positive difference over declared anchor numeric values.",
+      "properties": {
+        "difference": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "format": "fraction",
+              "type": "string"
+            }
+          ],
+          "title": "Difference"
+        },
+        "greater": {
+          "$ref": "#/$defs/BuilderItemRef"
+        },
+        "kind": {
+          "const": "numeric_difference",
+          "default": "numeric_difference",
+          "title": "Kind",
+          "type": "string"
+        },
+        "lesser": {
+          "$ref": "#/$defs/BuilderItemRef"
+        }
+      },
+      "required": [
+        "greater",
+        "lesser",
+        "difference"
+      ],
+      "title": "NumericDifferenceTemplate",
+      "type": "object"
+    },
+    "OrderingTemplate": {
+      "additionalProperties": false,
+      "description": "Strict before relationship over ordered anchor rows.",
+      "properties": {
+        "earlier": {
+          "$ref": "#/$defs/BuilderItemRef"
+        },
+        "kind": {
+          "const": "ordering",
+          "default": "ordering",
+          "title": "Kind",
+          "type": "string"
+        },
+        "later": {
+          "$ref": "#/$defs/BuilderItemRef"
+        }
+      },
+      "required": [
+        "earlier",
+        "later"
+      ],
+      "title": "OrderingTemplate",
+      "type": "object"
+    }
+  },
+  "$id": "urn:deductra:schema:logic-grid-builder-draft:1",
+  "additionalProperties": false,
+  "description": "Incomplete-safe, immutable input model for one authoring revision.",
+  "properties": {
+    "anchor_category_key": {
+      "default": "",
+      "title": "Anchor Category Key",
+      "type": "string"
+    },
+    "author": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Author"
+    },
+    "categories": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/LogicGridBuilderCategory"
+      },
+      "title": "Categories",
+      "type": "array"
+    },
+    "clues": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/LogicGridBuilderClue"
+      },
+      "title": "Clues",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "draft_id": {
+      "title": "Draft Id",
+      "type": "string"
+    },
+    "locale": {
+      "default": "en",
+      "title": "Locale",
+      "type": "string"
+    },
+    "revision": {
+      "default": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "title": {
+      "default": "",
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "draft_id",
+    "created_at"
+  ],
+  "title": "Deductra Logic Grid Builder Draft v1",
+  "type": "object"
+}

@@ -9,7 +9,10 @@ from deductra.domain.schema import rendered_puzzle_spec_json_schema
 from deductra.families.logic_equations.schema import (
     rendered_logic_equations_spec_json_schema,
 )
-from deductra.families.logic_grid.schema import rendered_logic_grid_spec_json_schema
+from deductra.families.logic_grid.schema import (
+    rendered_logic_grid_builder_json_schema,
+    rendered_logic_grid_spec_json_schema,
+)
 from deductra.generation.schema import rendered_generation_contract_json_schema
 from deductra.graph.schema import rendered_reasoning_hypergraph_json_schema
 from deductra.memory.projections.schema import rendered_memory_projection_json_schema
@@ -34,6 +37,9 @@ REPORT_MODEL_SCHEMA_PATH = REPOSITORY_ROOT / "schemas" / "report-model-v1.schema
 AGENT_BOUNDARY_SCHEMA_PATH = REPOSITORY_ROOT / "schemas" / "agent-boundary-v1.schema.json"
 LOGIC_EQUATIONS_SCHEMA_PATH = REPOSITORY_ROOT / "schemas" / "logic-equations-spec-v1.schema.json"
 LOGIC_GRID_SCHEMA_PATH = REPOSITORY_ROOT / "schemas" / "logic-grid-spec-v1.schema.json"
+LOGIC_GRID_BUILDER_SCHEMA_PATH = (
+    REPOSITORY_ROOT / "schemas" / "logic-grid-builder-draft-v1.schema.json"
+)
 
 
 def main() -> None:
@@ -96,6 +102,11 @@ def main() -> None:
     )
     LOGIC_GRID_SCHEMA_PATH.write_text(
         rendered_logic_grid_spec_json_schema(),
+        encoding="utf-8",
+        newline="\n",
+    )
+    LOGIC_GRID_BUILDER_SCHEMA_PATH.write_text(
+        rendered_logic_grid_builder_json_schema(),
         encoding="utf-8",
         newline="\n",
     )

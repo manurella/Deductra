@@ -26,6 +26,11 @@ delivery and integrations -> application policy -> domain policy
 `deductra.cli` is an outer delivery adapter. It may compose the concrete family, reasoning,
 and verification boundaries, but no inner package may import it.
 
+Family builder modules are outer application services rather than specification or human-rule
+modules. A builder may compose its family contracts with reasoning and verification, but it may not
+import delivery adapters, persistence, generation, reports, or agents. The stricter specification,
+schema, rule, and solver boundaries remain unchanged.
+
 This direction is a constraint, not permission to create speculative layers. Until a capability exists, the corresponding package should not exist.
 
 Cross-module imports must use an intentional public surface. Generic dumping grounds such as `common`, `helpers`, or `utils` require specific justification because they obscure ownership and dependency direction.

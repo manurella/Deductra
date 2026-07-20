@@ -18,6 +18,7 @@ Architecture decision records preserve why a significant technical choice was ma
 - [ADR-0012: Encode Logic Equations independently in Z3 and CP-SAT](0012-encode-logic-equations-independently.md)
 - [ADR-0013: Model Logic Grid as anchor-aligned bijections](0013-model-logic-grid-as-anchor-aligned-bijections.md)
 - [ADR-0014: Encode Logic Grid independently in Z3 and CP-SAT](0014-encode-logic-grid-independently.md)
+- [ADR-0015: Keep guided authoring presentation-neutral](0015-keep-guided-authoring-presentation-neutral.md)
 
 ## Lifecycle
 
