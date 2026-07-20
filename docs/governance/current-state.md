@@ -69,17 +69,20 @@ The repository remains one Python distribution and one `deductra` import package
 - An immutable Logic Grid play session with tentative assignments, exclusions, and fixed-given protection.
 - Parent-linked move history with non-destructive undo, explicit redo, retained branches, and rejected-action evidence.
 - Independent final-checker completion authority, exact full-history replay, and a checked-in Play Session v1 JSON Schema.
+- Strict, soft, deferred, and exam validation disclosure without elevating tentative marks to proof.
+- Replayable pause/resume and bounded named checkpoints that restore cursors without deleting later history.
 
 ## Latest verification evidence
 
 The 2026-07-20 verification pass completed successfully:
 
 - local quality, formatting, typing, documentation, lockfile, and architecture checks passed;
-- the local suite completed with 264 passing tests and three platform-specific PDF skips;
-- the Docker test stage completed with 266 passing tests and one expected isolated-Git-index skip;
+- the local suite completed with 270 passing tests and three platform-specific PDF skips;
+- the Docker test stage completed with 272 passing tests and one expected isolated-Git-index skip;
 - the non-root runtime image ran the installed CLI without development tooling;
 - the non-root runtime image imported PyYAML 6.0.3 and the structured-input public surface as UID 10001;
 - the Logic Grid play-session corpus passed identically on Windows and Linux, including retained branching replay and tamper rejection;
+- validation disclosure, pause/resume, checkpoint restoration, and lifecycle replay passed identically on Windows and Linux;
 - Windows and Linux produced the same canonical Logic Equations trace identity.
 
 Hosted workflow results are authoritative for pull requests and tagged publication. Local and container evidence does not replace those repository gates.
@@ -91,15 +94,16 @@ M3 will deliver a complete Logic Grid vertical slice: formal family contracts, i
 Implementation remains packet-based. FAM-LG-001 through FAM-LG-006 establish specification,
 reasoning, verification, references, guided authoring, and structured input. FAM-LG-007 adds the
 presentation-neutral play and replay boundary while keeping tentative marks outside proof authority.
-Later M3 behavior must consume these boundaries and cannot bypass cross-verification.
+FAM-LG-008 completes its validation-disclosure, pause, and checkpoint lifecycle. Later M3 behavior
+must consume these boundaries and cannot bypass cross-verification.
 
 ## Explicitly unavailable
 
-The current repository does not yet provide validation modes, hints, play persistence, an interactive
-or filesystem authoring adapter, a disclosed general search path, a concrete generator, a playable
-queue, an interactive interface, composed solve reports, a stable cross-family public Python API,
-complete learning behavior, named agent experiences, additional playable puzzle families, or
-release installers.
+The current repository does not yet provide clue-level mistake evaluation, hints, play persistence,
+an interactive or filesystem authoring adapter, a disclosed general search path, a concrete
+generator, a playable queue, an interactive interface, composed solve reports, a stable cross-family
+public Python API, complete learning behavior, named agent experiences, additional playable puzzle
+families, or release installers.
 
 ## Accepted administrative risk
 

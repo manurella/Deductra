@@ -21,6 +21,7 @@ Architecture decision records preserve why a significant technical choice was ma
 - [ADR-0015: Keep guided authoring presentation-neutral](0015-keep-guided-authoring-presentation-neutral.md)
 - [ADR-0016: Bound structured authoring input before model validation](0016-bound-structured-authoring-input.md)
 - [ADR-0017: Retain play history without granting proof authority](0017-retain-play-history-without-proof-authority.md)
+- [ADR-0018: Separate validation disclosure from proof](0018-separate-validation-disclosure-from-proof.md)
 
 ## Lifecycle
 

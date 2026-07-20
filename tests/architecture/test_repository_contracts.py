@@ -72,6 +72,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/architecture/decisions/0015-keep-guided-authoring-presentation-neutral.md",
         "docs/architecture/decisions/0016-bound-structured-authoring-input.md",
         "docs/architecture/decisions/0017-retain-play-history-without-proof-authority.md",
+        "docs/architecture/decisions/0018-separate-validation-disclosure-from-proof.md",
         "docs/architecture/decisions/0001-single-package-foundation.md",
         "docs/architecture/decisions/README.md",
         "docs/architecture/dependency-rules.md",

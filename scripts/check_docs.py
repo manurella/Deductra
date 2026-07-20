@@ -45,6 +45,7 @@ REQUIRED_DOCUMENTS = {
     Path("docs/architecture/decisions/0013-model-logic-grid-as-anchor-aligned-bijections.md"),
     Path("docs/architecture/decisions/0014-encode-logic-grid-independently.md"),
     Path("docs/architecture/decisions/0017-retain-play-history-without-proof-authority.md"),
+    Path("docs/architecture/decisions/0018-separate-validation-disclosure-from-proof.md"),
     Path("docs/architecture/decisions/README.md"),
     Path("docs/architecture/overview.md"),
     Path("docs/governance/README.md"),

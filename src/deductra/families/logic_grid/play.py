@@ -5,25 +5,46 @@ from __future__ import annotations
 from enum import StrEnum
 from typing import Annotated, Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field, StringConstraints, model_validator
 
 from deductra.domain.atoms import AssignmentAtom, ExclusionAtom
 from deductra.domain.base import DomainModel
-from deductra.domain.ids import AttemptId, EventId, PuzzleRevisionId, ValueId, VariableId
+from deductra.domain.ids import (
+    AttemptId,
+    EventId,
+    Identifier,
+    PuzzleRevisionId,
+    ValueId,
+    VariableId,
+)
 from deductra.domain.serialization import canonical_sha256
 from deductra.families.logic_grid.checker import check_logic_grid_solution
 from deductra.families.logic_grid.specification import LogicGridSpec
 
-PLAY_SCHEMA_VERSION = "1.0.0"
+PLAY_SCHEMA_VERSION = "1.1.0"
 PLAY_GENESIS_HASH = "0" * 64
 MAX_PLAY_EVENTS = 10_000
 type Sha256Digest = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
+type CheckpointName = Annotated[
+    str,
+    StringConstraints(strip_whitespace=True, min_length=1, max_length=80),
+]
+
+
+class PlayValidationMode(StrEnum):
+    """When structural progress conflicts are disclosed to the player."""
+
+    STRICT = "strict"
+    SOFT = "soft"
+    DEFERRED = "deferred"
+    EXAM = "exam"
 
 
 class PlaySessionStatus(StrEnum):
     """Terminal status of a presentation-neutral play attempt."""
 
     ACTIVE = "active"
+    PAUSED = "paused"
     COMPLETED = "completed"
 
 
@@ -70,11 +91,79 @@ class CheckCompletion(DomainModel):
     kind: Literal["check_completion"] = "check_completion"
 
 
+class ValidateProgress(DomainModel):
+    """Request structural progress validation when the mode permits it."""
+
+    kind: Literal["validate_progress"] = "validate_progress"
+
+
+class PauseSession(DomainModel):
+    """Pause interaction without changing the current history position."""
+
+    kind: Literal["pause_session"] = "pause_session"
+
+
+class ResumeSession(DomainModel):
+    """Resume a paused interaction session."""
+
+    kind: Literal["resume_session"] = "resume_session"
+
+
+class CreateCheckpoint(DomainModel):
+    """Name the current retained history position."""
+
+    kind: Literal["create_checkpoint"] = "create_checkpoint"
+    name: CheckpointName
+
+
+class RestoreCheckpoint(DomainModel):
+    """Move the active cursor to a retained named checkpoint."""
+
+    kind: Literal["restore_checkpoint"] = "restore_checkpoint"
+    checkpoint_id: EventId
+
+
 type PlayAction = Annotated[
-    AssignCell | ExcludeCell | ClearCell | UndoMove | RedoMove | CheckCompletion,
+    AssignCell
+    | ExcludeCell
+    | ClearCell
+    | UndoMove
+    | RedoMove
+    | CheckCompletion
+    | ValidateProgress
+    | PauseSession
+    | ResumeSession
+    | CreateCheckpoint
+    | RestoreCheckpoint,
     Field(discriminator="kind"),
 ]
 type CellAction = AssignCell | ExcludeCell | ClearCell
+
+
+class PlayConflict(DomainModel):
+    """Presentation-safe structural conflict in tentative play marks."""
+
+    code: Literal["duplicate_row", "no_candidate"]
+    references: tuple[Identifier, ...]
+    message: str
+
+    @model_validator(mode="after")
+    def validate_conflict(self) -> PlayConflict:
+        if not self.references or not self.message:
+            raise ValueError("play conflicts require references and a message")
+        if self.references != tuple(sorted(set(self.references))):
+            raise ValueError("play conflict references must be unique and sorted")
+        return self
+
+
+class PlayCheckpoint(DomainModel):
+    """A named reference to one retained move cursor and captured state."""
+
+    checkpoint_id: EventId
+    name: CheckpointName
+    move_id: EventId | None = None
+    captured_sequence_no: Annotated[int, Field(ge=0)]
+    captured_state_hash: Sha256Digest
 
 
 class PlayEvent(DomainModel):
@@ -82,7 +171,7 @@ class PlayEvent(DomainModel):
 
     event_id: EventId
     sequence_no: Annotated[int, Field(ge=0)]
-    schema_version: Literal["1.0.0"] = PLAY_SCHEMA_VERSION
+    schema_version: Literal["1.1.0"] = PLAY_SCHEMA_VERSION
     action: PlayAction
     accepted: bool
     code: str
@@ -105,12 +194,15 @@ class PlayEvent(DomainModel):
 class LogicGridPlaySession(DomainModel):
     """Current immutable marks plus the complete retained interaction history."""
 
-    schema_version: Literal["1.0.0"] = PLAY_SCHEMA_VERSION
+    schema_version: Literal["1.1.0"] = PLAY_SCHEMA_VERSION
     attempt_id: AttemptId
     puzzle_revision_id: PuzzleRevisionId
+    validation_mode: PlayValidationMode = PlayValidationMode.SOFT
     status: PlaySessionStatus
     assignments: tuple[AssignmentAtom, ...]
     exclusions: tuple[ExclusionAtom, ...]
+    conflicts: tuple[PlayConflict, ...] = ()
+    checkpoints: tuple[PlayCheckpoint, ...] = ()
     active_move_id: EventId | None = None
     events: Annotated[tuple[PlayEvent, ...], Field(max_length=MAX_PLAY_EVENTS)] = ()
     state_hash: Sha256Digest
@@ -128,6 +220,19 @@ class LogicGridPlaySession(DomainModel):
             raise ValueError("a play session cannot assign one variable more than once")
         if set(assignment_keys) & set(exclusion_keys):
             raise ValueError("a cell cannot be both assigned and excluded")
+        conflict_keys = tuple((item.code, item.references) for item in self.conflicts)
+        if conflict_keys != tuple(sorted(conflict_keys)):
+            raise ValueError("play conflicts must use canonical order")
+        checkpoint_ids = tuple(item.checkpoint_id for item in self.checkpoints)
+        if len(checkpoint_ids) != len(set(checkpoint_ids)):
+            raise ValueError("checkpoint identifiers must be unique")
+        checkpoint_names = tuple(item.name.casefold() for item in self.checkpoints)
+        if len(checkpoint_names) != len(set(checkpoint_names)):
+            raise ValueError("checkpoint names must be unique ignoring case")
+        if tuple(item.captured_sequence_no for item in self.checkpoints) != tuple(
+            sorted(item.captured_sequence_no for item in self.checkpoints)
+        ):
+            raise ValueError("checkpoints must use capture order")
         if self.state_hash != compute_play_state_hash(self):
             raise ValueError("state_hash does not match the current play state")
         if self.session_hash != compute_play_session_hash(self):
@@ -159,9 +264,12 @@ def compute_play_state_hash(session: LogicGridPlaySession) -> str:
         {
             "attempt_id": session.attempt_id,
             "puzzle_revision_id": session.puzzle_revision_id,
+            "validation_mode": session.validation_mode,
             "status": session.status,
             "assignments": session.assignments,
             "exclusions": session.exclusions,
+            "conflicts": session.conflicts,
+            "checkpoints": session.checkpoints,
             "active_move_id": session.active_move_id,
         }
     )
@@ -176,9 +284,12 @@ def _build_session(
     *,
     attempt_id: AttemptId,
     puzzle_revision_id: PuzzleRevisionId,
+    validation_mode: PlayValidationMode,
     status: PlaySessionStatus,
     assignments: dict[VariableId, ValueId],
     exclusions: set[tuple[VariableId, ValueId]],
+    conflicts: tuple[PlayConflict, ...],
+    checkpoints: tuple[PlayCheckpoint, ...],
     active_move_id: EventId | None,
     events: tuple[PlayEvent, ...],
 ) -> LogicGridPlaySession:
@@ -194,9 +305,12 @@ def _build_session(
         schema_version=PLAY_SCHEMA_VERSION,
         attempt_id=attempt_id,
         puzzle_revision_id=puzzle_revision_id,
+        validation_mode=validation_mode,
         status=status,
         assignments=ordered_assignments,
         exclusions=ordered_exclusions,
+        conflicts=conflicts,
+        checkpoints=checkpoints,
         active_move_id=active_move_id,
         events=events,
         state_hash=PLAY_GENESIS_HASH,
@@ -214,6 +328,7 @@ def start_logic_grid_play(
     puzzle: LogicGridSpec,
     *,
     attempt_id: AttemptId,
+    validation_mode: PlayValidationMode = PlayValidationMode.SOFT,
 ) -> LogicGridPlaySession:
     """Start an empty immutable session containing only fixed puzzle givens."""
     assignments = {
@@ -229,9 +344,12 @@ def start_logic_grid_play(
     return _build_session(
         attempt_id=attempt_id,
         puzzle_revision_id=puzzle.identity.revision_id,
+        validation_mode=validation_mode,
         status=PlaySessionStatus.ACTIVE,
         assignments=assignments,
         exclusions=exclusions,
+        conflicts=(),
+        checkpoints=(),
         active_move_id=None,
         events=(),
     )
@@ -313,6 +431,66 @@ def _apply_cell_action(
         exclusions.discard(cell)
 
 
+def _progress_conflicts(
+    puzzle: LogicGridSpec,
+    assignments: dict[VariableId, ValueId],
+    exclusions: set[tuple[VariableId, ValueId]],
+) -> tuple[PlayConflict, ...]:
+    """Return deterministic structural conflicts without evaluating clue correctness."""
+    anchor_category = next(
+        item for item in puzzle.categories if item.category_id == puzzle.anchor_category_id
+    )
+    anchor_domain = next(
+        item for item in puzzle.domains if item.domain_id == anchor_category.domain_id
+    )
+    anchor_values = {item.value_id for item in anchor_domain.values}
+    conflicts: list[PlayConflict] = []
+
+    for variable in puzzle.variables:
+        if variable.variable_id in assignments:
+            continue
+        remaining = anchor_values - {
+            value_id for variable_id, value_id in exclusions if variable_id == variable.variable_id
+        }
+        if not remaining:
+            conflicts.append(
+                PlayConflict(
+                    code="no_candidate",
+                    references=(variable.variable_id,),
+                    message="A puzzle item has no remaining row candidate.",
+                )
+            )
+
+    for category in puzzle.categories:
+        variables_by_value: dict[ValueId, list[VariableId]] = {}
+        for variable_id in category.variable_ids:
+            value_id = assignments.get(variable_id)
+            if value_id is not None:
+                variables_by_value.setdefault(value_id, []).append(variable_id)
+        for value_id, variable_ids in variables_by_value.items():
+            if len(variable_ids) > 1:
+                conflicts.append(
+                    PlayConflict(
+                        code="duplicate_row",
+                        references=tuple(sorted({category.category_id, value_id, *variable_ids})),
+                        message="Two items in one category select the same row.",
+                    )
+                )
+
+    return tuple(sorted(conflicts, key=lambda item: (item.code, item.references)))
+
+
+def _automatic_conflicts(
+    mode: PlayValidationMode,
+    puzzle: LogicGridSpec,
+    assignments: dict[VariableId, ValueId],
+    exclusions: set[tuple[VariableId, ValueId]],
+) -> tuple[PlayConflict, ...]:
+    if mode in {PlayValidationMode.STRICT, PlayValidationMode.SOFT}:
+        return _progress_conflicts(puzzle, assignments, exclusions)
+    return ()
+
+
 def _project_marks(
     puzzle: LogicGridSpec,
     moves: dict[EventId, PlayEvent],
@@ -378,13 +556,20 @@ def _append_outcome(
     status: PlaySessionStatus,
     assignments: dict[VariableId, ValueId],
     exclusions: set[tuple[VariableId, ValueId]],
+    conflicts: tuple[PlayConflict, ...] | None = None,
+    checkpoints: tuple[PlayCheckpoint, ...] | None = None,
 ) -> PlayActionResult:
+    resulting_conflicts = session.conflicts if conflicts is None else conflicts
+    resulting_checkpoints = session.checkpoints if checkpoints is None else checkpoints
     provisional = _build_session(
         attempt_id=session.attempt_id,
         puzzle_revision_id=session.puzzle_revision_id,
+        validation_mode=session.validation_mode,
         status=status,
         assignments=assignments,
         exclusions=exclusions,
+        conflicts=resulting_conflicts,
+        checkpoints=resulting_checkpoints,
         active_move_id=resulting_move_id,
         events=session.events,
     )
@@ -403,9 +588,12 @@ def _append_outcome(
     result = _build_session(
         attempt_id=session.attempt_id,
         puzzle_revision_id=session.puzzle_revision_id,
+        validation_mode=session.validation_mode,
         status=status,
         assignments=assignments,
         exclusions=exclusions,
+        conflicts=resulting_conflicts,
+        checkpoints=resulting_checkpoints,
         active_move_id=resulting_move_id,
         events=(*session.events, event),
     )
@@ -430,6 +618,7 @@ def _apply_logic_grid_play_action(
         replayed = replay_logic_grid_play(
             puzzle,
             attempt_id=session.attempt_id,
+            validation_mode=session.validation_mode,
             events=session.events,
         )
         if replayed != session:
@@ -439,7 +628,7 @@ def _apply_logic_grid_play_action(
     exclusions = {(item.variable_id, item.value_id) for item in session.exclusions}
     head = session.active_move_id
     moves = _move_events(session.events)
-    if session.status is not PlaySessionStatus.ACTIVE:
+    if session.status is PlaySessionStatus.COMPLETED:
         return _append_outcome(
             session,
             event_id=event_id,
@@ -452,6 +641,136 @@ def _apply_logic_grid_play_action(
             status=session.status,
             assignments=assignments,
             exclusions=exclusions,
+        )
+
+    if isinstance(action, ResumeSession):
+        accepted = session.status is PlaySessionStatus.PAUSED
+        return _append_outcome(
+            session,
+            event_id=event_id,
+            action=action,
+            accepted=accepted,
+            code="session_resumed" if accepted else "session_not_paused",
+            message=(
+                "The play session resumed." if accepted else "The play session is already active."
+            ),
+            parent_move_id=head,
+            resulting_move_id=head,
+            status=PlaySessionStatus.ACTIVE if accepted else session.status,
+            assignments=assignments,
+            exclusions=exclusions,
+        )
+
+    if isinstance(action, PauseSession):
+        accepted = session.status is PlaySessionStatus.ACTIVE
+        return _append_outcome(
+            session,
+            event_id=event_id,
+            action=action,
+            accepted=accepted,
+            code="session_paused" if accepted else "session_already_paused",
+            message=(
+                "The play session paused." if accepted else "The play session is already paused."
+            ),
+            parent_move_id=head,
+            resulting_move_id=head,
+            status=PlaySessionStatus.PAUSED,
+            assignments=assignments,
+            exclusions=exclusions,
+        )
+
+    if isinstance(action, CreateCheckpoint):
+        duplicate = action.name.casefold() in {item.name.casefold() for item in session.checkpoints}
+        if duplicate:
+            return _append_outcome(
+                session,
+                event_id=event_id,
+                action=action,
+                accepted=False,
+                code="checkpoint_name_exists",
+                message="Choose a checkpoint name that is not already in use.",
+                parent_move_id=head,
+                resulting_move_id=head,
+                status=session.status,
+                assignments=assignments,
+                exclusions=exclusions,
+            )
+        checkpoint = PlayCheckpoint(
+            checkpoint_id=event_id,
+            name=action.name,
+            move_id=head,
+            captured_sequence_no=len(session.events),
+            captured_state_hash=session.state_hash,
+        )
+        return _append_outcome(
+            session,
+            event_id=event_id,
+            action=action,
+            accepted=True,
+            code="checkpoint_created",
+            message="The current history position was saved as a checkpoint.",
+            parent_move_id=head,
+            resulting_move_id=head,
+            status=session.status,
+            assignments=assignments,
+            exclusions=exclusions,
+            checkpoints=(*session.checkpoints, checkpoint),
+        )
+
+    if session.status is PlaySessionStatus.PAUSED:
+        return _append_outcome(
+            session,
+            event_id=event_id,
+            action=action,
+            accepted=False,
+            code="session_paused",
+            message="Resume the play session before changing or checking the puzzle.",
+            parent_move_id=head,
+            resulting_move_id=head,
+            status=session.status,
+            assignments=assignments,
+            exclusions=exclusions,
+        )
+
+    if isinstance(action, RestoreCheckpoint):
+        checkpoint = next(
+            (item for item in session.checkpoints if item.checkpoint_id == action.checkpoint_id),
+            None,
+        )
+        if checkpoint is None:
+            return _append_outcome(
+                session,
+                event_id=event_id,
+                action=action,
+                accepted=False,
+                code="checkpoint_unavailable",
+                message="Choose a retained checkpoint from this play session.",
+                parent_move_id=head,
+                resulting_move_id=head,
+                status=session.status,
+                assignments=assignments,
+                exclusions=exclusions,
+            )
+        target = checkpoint.move_id
+        assignments, exclusions = _project_marks(puzzle, moves, target)
+        return _append_outcome(
+            session,
+            event_id=event_id,
+            action=action,
+            accepted=True,
+            code="checkpoint_restored",
+            message="The retained checkpoint was restored without deleting later history.",
+            parent_move_id=head,
+            resulting_move_id=target,
+            status=session.status,
+            assignments=assignments,
+            exclusions=exclusions,
+            conflicts=_automatic_conflicts(
+                session.validation_mode,
+                puzzle,
+                assignments,
+                exclusions,
+            ),
         )
 
     if isinstance(action, (AssignCell, ExcludeCell, ClearCell)):
@@ -471,7 +790,26 @@ def _apply_logic_grid_play_action(
                 assignments=assignments,
                 exclusions=exclusions,
             )
-        _apply_cell_action(assignments, exclusions, action)
+        next_assignments = assignments.copy()
+        next_exclusions = set(exclusions)
+        _apply_cell_action(next_assignments, next_exclusions, action)
+        next_conflicts = _progress_conflicts(puzzle, next_assignments, next_exclusions)
+        if session.validation_mode is PlayValidationMode.STRICT and next_conflicts:
+            return _append_outcome(
+                session,
+                event_id=event_id,
+                action=action,
+                accepted=False,
+                code="structural_conflict",
+                message="That mark would create a structural puzzle conflict.",
+                parent_move_id=head,
+                resulting_move_id=head,
+                status=session.status,
+                assignments=assignments,
+                exclusions=exclusions,
+            )
+        assignments = next_assignments
+        exclusions = next_exclusions
         return _append_outcome(
             session,
             event_id=event_id,
@@ -484,6 +822,9 @@ def _apply_logic_grid_play_action(
             status=session.status,
             assignments=assignments,
             exclusions=exclusions,
+            conflicts=(
+                next_conflicts if session.validation_mode is PlayValidationMode.SOFT else ()
+            ),
         )
 
     if isinstance(action, UndoMove):
@@ -514,6 +855,12 @@ def _apply_logic_grid_play_action(
             status=session.status,
             assignments=assignments,
             exclusions=exclusions,
+            conflicts=_automatic_conflicts(
+                session.validation_mode,
+                puzzle,
+                assignments,
+                exclusions,
+            ),
         )
 
     if isinstance(action, RedoMove):
@@ -539,6 +886,47 @@ def _apply_logic_grid_play_action(
             status=session.status,
             assignments=assignments,
             exclusions=exclusions,
+            conflicts=_automatic_conflicts(
+                session.validation_mode,
+                puzzle,
+                assignments,
+                exclusions,
+            ),
+        )
+
+    if isinstance(action, ValidateProgress):
+        if session.validation_mode is PlayValidationMode.EXAM:
+            return _append_outcome(
+                session,
+                event_id=event_id,
+                action=action,
+                accepted=False,
+                code="validation_unavailable",
+                message="Progress validation is unavailable in exam mode.",
+                parent_move_id=head,
+                resulting_move_id=head,
+                status=session.status,
+                assignments=assignments,
+                exclusions=exclusions,
+            )
+        conflicts = _progress_conflicts(puzzle, assignments, exclusions)
+        return _append_outcome(
+            session,
+            event_id=event_id,
+            action=action,
+            accepted=True,
+            code="conflicts_found" if conflicts else "progress_structurally_valid",
+            message=(
+                "Structural conflicts were found in the current marks."
+                if conflicts
+                else "No structural conflicts were found; clue correctness remains unchecked."
+            ),
+            parent_move_id=head,
+            resulting_move_id=head,
+            status=session.status,
+            assignments=assignments,
+            exclusions=exclusions,
+            conflicts=conflicts,
         )
 
     check = check_logic_grid_solution(
@@ -567,6 +955,11 @@ def _apply_logic_grid_play_action(
         status=PlaySessionStatus.COMPLETED if accepted else session.status,
         assignments=assignments,
         exclusions=exclusions,
+        conflicts=(
+            _progress_conflicts(puzzle, assignments, exclusions)
+            if not accepted and session.validation_mode is not PlayValidationMode.EXAM
+            else ()
+        ),
     )
 
 
@@ -591,10 +984,15 @@ def replay_logic_grid_play(
     puzzle: LogicGridSpec,
     *,
     attempt_id: AttemptId,
+    validation_mode: PlayValidationMode = PlayValidationMode.SOFT,
     events: tuple[PlayEvent, ...],
 ) -> LogicGridPlaySession:
     """Rebuild an attempt and reject any non-canonical or tampered event stream."""
-    session = start_logic_grid_play(puzzle, attempt_id=attempt_id)
+    session = start_logic_grid_play(
+        puzzle,
+        attempt_id=attempt_id,
+        validation_mode=validation_mode,
+    )
     for source in events:
         if source.sequence_no != len(session.events):
             raise PlaySessionError("play event sequence is not contiguous")

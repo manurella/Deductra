@@ -66,6 +66,11 @@
       "title": "CheckCompletion",
       "type": "object"
     },
+    "CheckpointName": {
+      "maxLength": 80,
+      "minLength": 1,
+      "type": "string"
+    },
     "ClearCell": {
       "additionalProperties": false,
       "description": "Clear a tentative selection or exclusion from one cell.",
@@ -88,6 +93,26 @@
         "value_id"
       ],
       "title": "ClearCell",
+      "type": "object"
+    },
+    "CreateCheckpoint": {
+      "additionalProperties": false,
+      "description": "Name the current retained history position.",
+      "properties": {
+        "kind": {
+          "const": "create_checkpoint",
+          "default": "create_checkpoint",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "$ref": "#/$defs/CheckpointName"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateCheckpoint",
       "type": "object"
     },
     "EventId": {
@@ -142,15 +167,39 @@
       "title": "ExclusionAtom",
       "type": "object"
     },
+    "Identifier": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "PauseSession": {
+      "additionalProperties": false,
+      "description": "Pause interaction without changing the current history position.",
+      "properties": {
+        "kind": {
+          "const": "pause_session",
+          "default": "pause_session",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "title": "PauseSession",
+      "type": "object"
+    },
     "PlayAction": {
       "discriminator": {
         "mapping": {
           "assign_cell": "#/$defs/AssignCell",
           "check_completion": "#/$defs/CheckCompletion",
           "clear_cell": "#/$defs/ClearCell",
+          "create_checkpoint": "#/$defs/CreateCheckpoint",
           "exclude_cell": "#/$defs/ExcludeCell",
+          "pause_session": "#/$defs/PauseSession",
           "redo_move": "#/$defs/RedoMove",
-          "undo_move": "#/$defs/UndoMove"
+          "restore_checkpoint": "#/$defs/RestoreCheckpoint",
+          "resume_session": "#/$defs/ResumeSession",
+          "undo_move": "#/$defs/UndoMove",
+          "validate_progress": "#/$defs/ValidateProgress"
         },
         "propertyName": "kind"
       },
@@ -172,8 +221,94 @@
         },
         {
           "$ref": "#/$defs/CheckCompletion"
+        },
+        {
+          "$ref": "#/$defs/ValidateProgress"
+        },
+        {
+          "$ref": "#/$defs/PauseSession"
+        },
+        {
+          "$ref": "#/$defs/ResumeSession"
+        },
+        {
+          "$ref": "#/$defs/CreateCheckpoint"
+        },
+        {
+          "$ref": "#/$defs/RestoreCheckpoint"
         }
       ]
+    },
+    "PlayCheckpoint": {
+      "additionalProperties": false,
+      "description": "A named reference to one retained move cursor and captured state.",
+      "properties": {
+        "captured_sequence_no": {
+          "minimum": 0,
+          "title": "Captured Sequence No",
+          "type": "integer"
+        },
+        "captured_state_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "checkpoint_id": {
+          "$ref": "#/$defs/EventId"
+        },
+        "move_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EventId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "name": {
+          "$ref": "#/$defs/CheckpointName"
+        }
+      },
+      "required": [
+        "checkpoint_id",
+        "name",
+        "captured_sequence_no",
+        "captured_state_hash"
+      ],
+      "title": "PlayCheckpoint",
+      "type": "object"
+    },
+    "PlayConflict": {
+      "additionalProperties": false,
+      "description": "Presentation-safe structural conflict in tentative play marks.",
+      "properties": {
+        "code": {
+          "enum": [
+            "duplicate_row",
+            "no_candidate"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "references": {
+          "items": {
+            "$ref": "#/$defs/Identifier"
+          },
+          "title": "References",
+          "type": "array"
+        }
+      },
+      "required": [
+        "code",
+        "references",
+        "message"
+      ],
+      "title": "PlayConflict",
+      "type": "object"
     },
     "PlayEvent": {
       "additionalProperties": false,
@@ -229,8 +364,8 @@
           "$ref": "#/$defs/Sha256Digest"
         },
         "schema_version": {
-          "const": "1.0.0",
-          "default": "1.0.0",
+          "const": "1.1.0",
+          "default": "1.1.0",
           "title": "Schema Version",
           "type": "string"
         },
@@ -258,9 +393,21 @@
       "description": "Terminal status of a presentation-neutral play attempt.",
       "enum": [
         "active",
+        "paused",
         "completed"
       ],
       "title": "PlaySessionStatus",
+      "type": "string"
+    },
+    "PlayValidationMode": {
+      "description": "When structural progress conflicts are disclosed to the player.",
+      "enum": [
+        "strict",
+        "soft",
+        "deferred",
+        "exam"
+      ],
+      "title": "PlayValidationMode",
       "type": "string"
     },
     "PuzzleRevisionId": {
@@ -288,6 +435,40 @@
       "title": "RedoMove",
       "type": "object"
     },
+    "RestoreCheckpoint": {
+      "additionalProperties": false,
+      "description": "Move the active cursor to a retained named checkpoint.",
+      "properties": {
+        "checkpoint_id": {
+          "$ref": "#/$defs/EventId"
+        },
+        "kind": {
+          "const": "restore_checkpoint",
+          "default": "restore_checkpoint",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "checkpoint_id"
+      ],
+      "title": "RestoreCheckpoint",
+      "type": "object"
+    },
+    "ResumeSession": {
+      "additionalProperties": false,
+      "description": "Resume a paused interaction session.",
+      "properties": {
+        "kind": {
+          "const": "resume_session",
+          "default": "resume_session",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "title": "ResumeSession",
+      "type": "object"
+    },
     "Sha256Digest": {
       "pattern": "^[0-9a-f]{64}$",
       "type": "string"
@@ -304,6 +485,20 @@
         }
       },
       "title": "UndoMove",
+      "type": "object"
+    },
+    "ValidateProgress": {
+      "additionalProperties": false,
+      "description": "Request structural progress validation when the mode permits it.",
+      "properties": {
+        "kind": {
+          "const": "validate_progress",
+          "default": "validate_progress",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "title": "ValidateProgress",
       "type": "object"
     },
     "ValueId": {
@@ -342,6 +537,22 @@
     "attempt_id": {
       "$ref": "#/$defs/AttemptId"
     },
+    "checkpoints": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PlayCheckpoint"
+      },
+      "title": "Checkpoints",
+      "type": "array"
+    },
+    "conflicts": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PlayConflict"
+      },
+      "title": "Conflicts",
+      "type": "array"
+    },
     "events": {
       "default": [],
       "items": {
@@ -362,8 +573,8 @@
       "$ref": "#/$defs/PuzzleRevisionId"
     },
     "schema_version": {
-      "const": "1.0.0",
-      "default": "1.0.0",
+      "const": "1.1.0",
+      "default": "1.1.0",
       "title": "Schema Version",
       "type": "string"
     },
@@ -375,6 +586,10 @@
     },
     "status": {
       "$ref": "#/$defs/PlaySessionStatus"
+    },
+    "validation_mode": {
+      "$ref": "#/$defs/PlayValidationMode",
+      "default": "soft"
     }
   },
   "required": [
