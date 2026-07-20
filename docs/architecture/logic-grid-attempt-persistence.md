@@ -48,9 +48,10 @@ The common memory bridge therefore normalizes only two authoritative lifecycle f
 - `AttemptCompleted` only after the play session's independent final checker accepted completion.
 
 Tentative assignments, exclusions, structural validation outcomes, undo, redo, pause, checkpoints,
-and rejected interface actions do not become `MoveEvaluated` events. A future learning packet may
-record evaluated moves only when it can cite an established reasoning or verification authority.
-Until then, the common attempt projection deliberately reports zero evaluated moves.
+and rejected interface actions do not become `MoveEvaluated` events. FAM-LG-010 now provides
+verified move evidence through a separate assistance service, but persistence does not yet ingest
+that contract. Until a dedicated integration preserves its source identities and certificates, the
+common attempt projection deliberately reports zero evaluated moves.
 
 ## Public contract
 
@@ -66,7 +67,7 @@ Callers retain responsibility for choosing and protecting the local database loc
 
 ## Deliberate exclusions
 
-FAM-LG-009 adds no clue-level evaluation, hint evidence, timers, abandonment or deletion workflow,
+FAM-LG-009 stores no clue-level evaluation or hint evidence and adds no timers, abandonment or deletion workflow,
 retention policy, learning inference, mastery score, puzzle library, synchronization, encryption
 key management, telemetry, terminal interface, generation, or report composition. Exact privacy
 deletion and backup behavior remain a later owner-reviewed security decision. The adapter exposes

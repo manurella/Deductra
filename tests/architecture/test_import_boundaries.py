@@ -244,8 +244,8 @@ def test_family_rules_depend_only_on_domain_and_reasoning_contracts() -> None:
     assert not violations, f"family rules import authoritative outer layers: {violations}"
 
 
-def test_family_builders_are_bounded_outer_application_services() -> None:
-    """Allow family authoring to compose proof without importing unrelated outer layers."""
+def test_family_application_services_are_bounded() -> None:
+    """Allow family applications to compose proof without unrelated outer layers."""
     violations: dict[str, list[str]] = {}
     allowed = (
         "deductra.domain",
@@ -254,6 +254,7 @@ def test_family_builders_are_bounded_outer_application_services() -> None:
         "deductra.verification",
     )
     for source in (
+        PACKAGE_ROOT / "families" / "logic_grid" / "assistance.py",
         PACKAGE_ROOT / "families" / "logic_grid" / "builder.py",
         PACKAGE_ROOT / "families" / "logic_grid" / "play.py",
         PACKAGE_ROOT / "families" / "logic_grid" / "structured_io.py",
@@ -265,7 +266,7 @@ def test_family_builders_are_bounded_outer_application_services() -> None:
         }
         if outward:
             violations[source.relative_to(REPOSITORY_ROOT).as_posix()] = sorted(outward)
-    assert not violations, f"family builders import unrelated outer layers: {violations}"
+    assert not violations, f"family application services import unrelated layers: {violations}"
 
 
 def test_logic_grid_attempt_persistence_is_a_bounded_family_adapter() -> None:

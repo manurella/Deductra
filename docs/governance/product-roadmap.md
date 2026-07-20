@@ -36,8 +36,9 @@ deterministic export; and FAM-LG-007 added tentative play state, non-destructive
 completion checking, and deterministic replay. FAM-LG-008 completes validation disclosure,
 pause/resume, and named restorable checkpoints. FAM-LG-009 adds transactional local attempt
 persistence, exact recovery, descriptive action evidence, and authoritative start/completion
-projection. Clue-level evaluation, hints, generation, difficulty and novelty evaluation, terminal
-delivery, and composed reports remain later M3 work.
+projection. FAM-LG-010 adds cross-verified move evaluation and seven-level, evidence-backed hints
+without mutating play or persistence. Assistance persistence, generation, difficulty and novelty
+evaluation, terminal delivery, and composed reports remain later M3 work.
 
 ## M4 — Proven common platform
 

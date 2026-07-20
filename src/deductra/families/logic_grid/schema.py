@@ -5,6 +5,10 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from deductra.families.logic_grid.assistance import (
+    ASSISTANCE_SCHEMA_VERSION,
+    LogicGridAssistanceContractDocument,
+)
 from deductra.families.logic_grid.attempts import (
     ATTEMPT_RECORD_SCHEMA_VERSION,
     PersistedLogicGridAttempt,
@@ -29,6 +33,28 @@ def logic_grid_builder_json_schema() -> dict[str, Any]:
     schema["title"] = "Deductra Logic Grid Builder Draft v1"
     schema["properties"]["schema_version"]["const"] = "1.0.0"
     return schema
+
+
+def logic_grid_assistance_json_schema() -> dict[str, Any]:
+    """Return the versioned move-evaluation and hint JSON Schema."""
+    schema = LogicGridAssistanceContractDocument.model_json_schema()
+    schema["$id"] = "urn:deductra:schema:logic-grid-assistance:1"
+    schema["title"] = "Deductra Logic Grid Assistance v1"
+    schema["properties"]["schema_version"]["const"] = ASSISTANCE_SCHEMA_VERSION
+    return schema
+
+
+def rendered_logic_grid_assistance_json_schema() -> str:
+    """Return the normalized checked-in assistance schema."""
+    return (
+        json.dumps(
+            logic_grid_assistance_json_schema(),
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n"
+    )
 
 
 def rendered_logic_grid_builder_json_schema() -> str:

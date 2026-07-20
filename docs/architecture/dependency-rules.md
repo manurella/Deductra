@@ -31,6 +31,11 @@ modules. A builder may compose its family contracts with reasoning and verificat
 import delivery adapters, persistence, generation, reports, or agents. The stricter specification,
 schema, rule, and solver boundaries remain unchanged.
 
+Family assistance modules are also outer application services. They may compose play, human-rule,
+and verification contracts to evaluate a move or derive evidence-backed disclosure. They may not
+mutate play state, import persistence or delivery adapters, or establish authority without the
+verification boundary.
+
 Family structured-input modules sit at the same outer application boundary. They may consume a
 family builder and an explicitly admitted parser, but parser types and exceptions must remain
 inside the adapter. Structured input does not authorize filesystem, delivery, persistence,
@@ -58,4 +63,4 @@ A new architecture decision record is required when a change introduces or mater
 - a dependency-direction exception;
 - a supported Python or platform boundary.
 
-Architecture enforcement in `tests/architecture` translates these rules into mechanical checks. The current contracts cover the public path allowlist, single-package layout, CR-001 through CR-010, Logic Equations, Logic Grid, builder, structured-input, play-persistence, and SQLite-adapter boundaries, inward dependency direction, package metadata, Docker stage design, and production import roots. A check may be changed only with the governing documentation and decision record in the same reviewed change.
+Architecture enforcement in `tests/architecture` translates these rules into mechanical checks. The current contracts cover the public path allowlist, single-package layout, CR-001 through CR-010, Logic Equations, Logic Grid, builder, structured-input, play, assistance, persistence, and SQLite-adapter boundaries, inward dependency direction, package metadata, Docker stage design, and production import roots. A check may be changed only with the governing documentation and decision record in the same reviewed change.

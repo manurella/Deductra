@@ -10,6 +10,10 @@ FAM-LG-009 persists this contract through the separate
 [Logic Grid attempt persistence](logic-grid-attempt-persistence.md) adapter. The play service itself
 remains independent of filesystem and database policy.
 
+FAM-LG-010 evaluates selected moves and derives hints through the separate
+[Logic Grid assistance](logic-grid-assistance.md) service. It does not change reducer acceptance or
+write suggested actions into play history.
+
 ## Interaction model
 
 A session starts from one immutable puzzle revision, one caller-supplied attempt identifier, and one
@@ -79,7 +83,7 @@ retained history remain bounded during persistence and recovery.
 
 ## Deliberate exclusions
 
-This play boundary does not provide clue-level mistake disclosure, hints, timers, storage policy,
+This play boundary does not itself provide clue-level mistake disclosure, hints, timers, storage policy,
 learning inference, puzzle selection, filesystem behavior, terminal widgets, solve orchestration,
 generation, reports, or telemetry. FAM-LG-009 consumes it for local persistence and descriptive
 evidence without reinterpreting tentative marks as proof.

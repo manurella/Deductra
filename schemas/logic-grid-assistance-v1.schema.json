@@ -1,0 +1,1276 @@
+{
+  "$defs": {
+    "AggregateAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "comparator": {
+          "enum": [
+            "eq",
+            "ne",
+            "lt",
+            "le",
+            "gt",
+            "ge"
+          ],
+          "title": "Comparator",
+          "type": "string"
+        },
+        "kind": {
+          "const": "aggregate",
+          "default": "aggregate",
+          "title": "Kind",
+          "type": "string"
+        },
+        "members": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Members",
+          "type": "array"
+        },
+        "operator": {
+          "enum": [
+            "sum",
+            "count",
+            "min",
+            "max",
+            "parity"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "operator",
+        "members",
+        "comparator",
+        "target"
+      ],
+      "title": "AggregateAtom",
+      "type": "object"
+    },
+    "AssignCell": {
+      "additionalProperties": false,
+      "description": "Tentatively select one anchor row for an item variable.",
+      "properties": {
+        "kind": {
+          "const": "assign_cell",
+          "default": "assign_cell",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "AssignCell",
+      "type": "object"
+    },
+    "AssignmentAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "assignment",
+          "default": "assignment",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "AssignmentAtom",
+      "type": "object"
+    },
+    "AssignmentNegation": {
+      "additionalProperties": false,
+      "description": "Counter-assume that a claimed assignment is false.",
+      "properties": {
+        "kind": {
+          "const": "assignment_negation",
+          "default": "assignment_negation",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "AssignmentNegation",
+      "type": "object"
+    },
+    "Atom": {
+      "discriminator": {
+        "mapping": {
+          "aggregate": "#/$defs/AggregateAtom",
+          "assignment": "#/$defs/AssignmentAtom",
+          "exclusion": "#/$defs/ExclusionAtom",
+          "relation": "#/$defs/RelationAtom",
+          "truth": "#/$defs/TruthAtom"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AssignmentAtom"
+        },
+        {
+          "$ref": "#/$defs/ExclusionAtom"
+        },
+        {
+          "$ref": "#/$defs/RelationAtom"
+        },
+        {
+          "$ref": "#/$defs/AggregateAtom"
+        },
+        {
+          "$ref": "#/$defs/TruthAtom"
+        }
+      ]
+    },
+    "AttemptId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "BackendResult": {
+      "enum": [
+        "sat",
+        "unsat",
+        "unknown",
+        "invalid"
+      ],
+      "type": "string"
+    },
+    "CertificateId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "CheckCompletion": {
+      "additionalProperties": false,
+      "description": "Ask the independent final checker to evaluate the active marks.",
+      "properties": {
+        "kind": {
+          "const": "check_completion",
+          "default": "check_completion",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "title": "CheckCompletion",
+      "type": "object"
+    },
+    "CheckpointName": {
+      "maxLength": 80,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ClearCell": {
+      "additionalProperties": false,
+      "description": "Clear a tentative selection or exclusion from one cell.",
+      "properties": {
+        "kind": {
+          "const": "clear_cell",
+          "default": "clear_cell",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "ClearCell",
+      "type": "object"
+    },
+    "ClueId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ConstraintId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "CreateCheckpoint": {
+      "additionalProperties": false,
+      "description": "Name the current retained history position.",
+      "properties": {
+        "kind": {
+          "const": "create_checkpoint",
+          "default": "create_checkpoint",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "$ref": "#/$defs/CheckpointName"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateCheckpoint",
+      "type": "object"
+    },
+    "EliminationNegation": {
+      "additionalProperties": false,
+      "description": "Counter-assume that a claimed eliminated value is possible.",
+      "properties": {
+        "kind": {
+          "const": "elimination_negation",
+          "default": "elimination_negation",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "EliminationNegation",
+      "type": "object"
+    },
+    "EvaluatableAtom": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AssignmentAtom"
+        },
+        {
+          "$ref": "#/$defs/ExclusionAtom"
+        }
+      ]
+    },
+    "EventId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ExcludeCell": {
+      "additionalProperties": false,
+      "description": "Tentatively exclude one anchor row from an item variable.",
+      "properties": {
+        "kind": {
+          "const": "exclude_cell",
+          "default": "exclude_cell",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "ExcludeCell",
+      "type": "object"
+    },
+    "ExclusionAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "exclusion",
+          "default": "exclusion",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "ExclusionAtom",
+      "type": "object"
+    },
+    "HintKind": {
+      "description": "Purpose served by one available hint.",
+      "enum": [
+        "progression"
+      ],
+      "title": "HintKind",
+      "type": "string"
+    },
+    "HintLevel": {
+      "description": "Progressive disclosure level requested by the player.",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "title": "HintLevel",
+      "type": "integer"
+    },
+    "HintResultStatus": {
+      "description": "Stable outcome of requesting assistance from one session state.",
+      "enum": [
+        "available",
+        "correction_required",
+        "already_complete",
+        "unavailable_mode",
+        "human_rules_exhausted",
+        "inconclusive",
+        "quarantined"
+      ],
+      "title": "HintResultStatus",
+      "type": "string"
+    },
+    "JsonValue": {},
+    "LogicGridClueEvidence": {
+      "additionalProperties": false,
+      "description": "One presentation clue supporting a verified human-rule candidate.",
+      "properties": {
+        "clue_id": {
+          "$ref": "#/$defs/ClueId"
+        },
+        "constraint_ids": {
+          "items": {
+            "$ref": "#/$defs/ConstraintId"
+          },
+          "title": "Constraint Ids",
+          "type": "array"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "clue_id",
+        "text",
+        "constraint_ids"
+      ],
+      "title": "LogicGridClueEvidence",
+      "type": "object"
+    },
+    "LogicGridHint": {
+      "additionalProperties": false,
+      "description": "One evidence-backed hint with an auditable core and bounded disclosure.",
+      "properties": {
+        "attempt_id": {
+          "$ref": "#/$defs/AttemptId"
+        },
+        "disclosure": {
+          "$ref": "#/$defs/LogicGridHintDisclosure"
+        },
+        "evidence": {
+          "$ref": "#/$defs/LogicGridTechniqueEvidence"
+        },
+        "hint_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "kind": {
+          "$ref": "#/$defs/HintKind"
+        },
+        "puzzle_revision_id": {
+          "$ref": "#/$defs/PuzzleRevisionId"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_session_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        }
+      },
+      "required": [
+        "attempt_id",
+        "puzzle_revision_id",
+        "source_session_hash",
+        "kind",
+        "evidence",
+        "disclosure",
+        "hint_hash"
+      ],
+      "title": "LogicGridHint",
+      "type": "object"
+    },
+    "LogicGridHintDisclosure": {
+      "additionalProperties": false,
+      "description": "The only level-sensitive content a presentation adapter may reveal.",
+      "properties": {
+        "clue_ids": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ClueId"
+          },
+          "title": "Clue Ids",
+          "type": "array"
+        },
+        "conclusion": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvaluatableAtom"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "focus_variable_ids": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/VariableId"
+          },
+          "title": "Focus Variable Ids",
+          "type": "array"
+        },
+        "level": {
+          "$ref": "#/$defs/HintLevel"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "premises": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Atom"
+          },
+          "title": "Premises",
+          "type": "array"
+        },
+        "rule_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RuleId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "suggested_action": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PlayAction"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "level",
+        "message"
+      ],
+      "title": "LogicGridHintDisclosure",
+      "type": "object"
+    },
+    "LogicGridHintResult": {
+      "additionalProperties": false,
+      "description": "Stable available or unavailable outcome for one hint request.",
+      "properties": {
+        "attempt_id": {
+          "$ref": "#/$defs/AttemptId"
+        },
+        "blocking_evaluation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LogicGridMoveEvaluation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "hint": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LogicGridHint"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "puzzle_revision_id": {
+          "$ref": "#/$defs/PuzzleRevisionId"
+        },
+        "result_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_session_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "status": {
+          "$ref": "#/$defs/HintResultStatus"
+        }
+      },
+      "required": [
+        "attempt_id",
+        "puzzle_revision_id",
+        "source_session_hash",
+        "status",
+        "code",
+        "message",
+        "result_hash"
+      ],
+      "title": "LogicGridHintResult",
+      "type": "object"
+    },
+    "LogicGridMoveEvaluation": {
+      "additionalProperties": false,
+      "description": "Cross-verified classification of one retained tentative cell event.",
+      "properties": {
+        "attempt_id": {
+          "$ref": "#/$defs/AttemptId"
+        },
+        "authoritative_atom": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvaluatableAtom"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "diagnostic_verifications": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/VerificationRecord"
+          },
+          "title": "Diagnostic Verifications",
+          "type": "array"
+        },
+        "evaluation_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "puzzle_revision_id": {
+          "$ref": "#/$defs/PuzzleRevisionId"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_event_id": {
+          "$ref": "#/$defs/EventId"
+        },
+        "source_session_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "status": {
+          "$ref": "#/$defs/MoveEvaluationStatus"
+        },
+        "submitted_atom": {
+          "$ref": "#/$defs/EvaluatableAtom"
+        },
+        "technique": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LogicGridTechniqueEvidence"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "verification": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VerificationRecord"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "attempt_id",
+        "puzzle_revision_id",
+        "source_session_hash",
+        "source_event_id",
+        "submitted_atom",
+        "status",
+        "evaluation_hash"
+      ],
+      "title": "LogicGridMoveEvaluation",
+      "type": "object"
+    },
+    "LogicGridTechniqueEvidence": {
+      "additionalProperties": false,
+      "description": "Auditable human-rule explanation for one cross-verified atom.",
+      "properties": {
+        "affected_variable_ids": {
+          "items": {
+            "$ref": "#/$defs/VariableId"
+          },
+          "title": "Affected Variable Ids",
+          "type": "array"
+        },
+        "candidate_id": {
+          "$ref": "#/$defs/RuleCandidateId"
+        },
+        "clues": {
+          "items": {
+            "$ref": "#/$defs/LogicGridClueEvidence"
+          },
+          "title": "Clues",
+          "type": "array"
+        },
+        "conclusion": {
+          "$ref": "#/$defs/EvaluatableAtom"
+        },
+        "evidence_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "premises": {
+          "items": {
+            "$ref": "#/$defs/Atom"
+          },
+          "title": "Premises",
+          "type": "array"
+        },
+        "proposal_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "rule": {
+          "$ref": "#/$defs/RuleReference"
+        },
+        "source_state_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "supporting_constraint_ids": {
+          "items": {
+            "$ref": "#/$defs/ConstraintId"
+          },
+          "title": "Supporting Constraint Ids",
+          "type": "array"
+        },
+        "verification": {
+          "$ref": "#/$defs/VerificationRecord"
+        }
+      },
+      "required": [
+        "source_state_hash",
+        "candidate_id",
+        "rule",
+        "premises",
+        "conclusion",
+        "affected_variable_ids",
+        "supporting_constraint_ids",
+        "clues",
+        "proposal_hash",
+        "verification",
+        "evidence_hash"
+      ],
+      "title": "LogicGridTechniqueEvidence",
+      "type": "object"
+    },
+    "MoveEvaluationStatus": {
+      "description": "Cross-verification outcome for one accepted tentative cell move.",
+      "enum": [
+        "supported",
+        "contradicted",
+        "inconclusive",
+        "quarantined"
+      ],
+      "title": "MoveEvaluationStatus",
+      "type": "string"
+    },
+    "NegatedClaim": {
+      "discriminator": {
+        "mapping": {
+          "assignment_negation": "#/$defs/AssignmentNegation",
+          "elimination_negation": "#/$defs/EliminationNegation"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AssignmentNegation"
+        },
+        {
+          "$ref": "#/$defs/EliminationNegation"
+        }
+      ]
+    },
+    "ObligationId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "PauseSession": {
+      "additionalProperties": false,
+      "description": "Pause interaction without changing the current history position.",
+      "properties": {
+        "kind": {
+          "const": "pause_session",
+          "default": "pause_session",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "title": "PauseSession",
+      "type": "object"
+    },
+    "PlayAction": {
+      "discriminator": {
+        "mapping": {
+          "assign_cell": "#/$defs/AssignCell",
+          "check_completion": "#/$defs/CheckCompletion",
+          "clear_cell": "#/$defs/ClearCell",
+          "create_checkpoint": "#/$defs/CreateCheckpoint",
+          "exclude_cell": "#/$defs/ExcludeCell",
+          "pause_session": "#/$defs/PauseSession",
+          "redo_move": "#/$defs/RedoMove",
+          "restore_checkpoint": "#/$defs/RestoreCheckpoint",
+          "resume_session": "#/$defs/ResumeSession",
+          "undo_move": "#/$defs/UndoMove",
+          "validate_progress": "#/$defs/ValidateProgress"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AssignCell"
+        },
+        {
+          "$ref": "#/$defs/ExcludeCell"
+        },
+        {
+          "$ref": "#/$defs/ClearCell"
+        },
+        {
+          "$ref": "#/$defs/UndoMove"
+        },
+        {
+          "$ref": "#/$defs/RedoMove"
+        },
+        {
+          "$ref": "#/$defs/CheckCompletion"
+        },
+        {
+          "$ref": "#/$defs/ValidateProgress"
+        },
+        {
+          "$ref": "#/$defs/PauseSession"
+        },
+        {
+          "$ref": "#/$defs/ResumeSession"
+        },
+        {
+          "$ref": "#/$defs/CreateCheckpoint"
+        },
+        {
+          "$ref": "#/$defs/RestoreCheckpoint"
+        }
+      ]
+    },
+    "ProofObligation": {
+      "additionalProperties": false,
+      "description": "One claim whose negation must be unsatisfiable in the named source state.",
+      "properties": {
+        "assumptions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Atom"
+          },
+          "title": "Assumptions",
+          "type": "array"
+        },
+        "claimed_conclusions": {
+          "items": {
+            "$ref": "#/$defs/Atom"
+          },
+          "title": "Claimed Conclusions",
+          "type": "array"
+        },
+        "encoding_version": {
+          "default": "1.0.0",
+          "title": "Encoding Version",
+          "type": "string"
+        },
+        "expected_result": {
+          "const": "unsat",
+          "default": "unsat",
+          "title": "Expected Result",
+          "type": "string"
+        },
+        "negated_claim": {
+          "$ref": "#/$defs/NegatedClaim"
+        },
+        "obligation_id": {
+          "$ref": "#/$defs/ObligationId"
+        },
+        "puzzle_revision_id": {
+          "$ref": "#/$defs/PuzzleRevisionId"
+        },
+        "source_state_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        }
+      },
+      "required": [
+        "obligation_id",
+        "puzzle_revision_id",
+        "source_state_hash",
+        "claimed_conclusions",
+        "negated_claim"
+      ],
+      "title": "ProofObligation",
+      "type": "object"
+    },
+    "PuzzleRevisionId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "RedoMove": {
+      "additionalProperties": false,
+      "description": "Move the active history cursor to one retained direct child.",
+      "properties": {
+        "kind": {
+          "const": "redo_move",
+          "default": "redo_move",
+          "title": "Kind",
+          "type": "string"
+        },
+        "target_move_id": {
+          "$ref": "#/$defs/EventId"
+        }
+      },
+      "required": [
+        "target_move_id"
+      ],
+      "title": "RedoMove",
+      "type": "object"
+    },
+    "RelationAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "arguments": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Arguments",
+          "type": "array"
+        },
+        "kind": {
+          "const": "relation",
+          "default": "relation",
+          "title": "Kind",
+          "type": "string"
+        },
+        "relation": {
+          "title": "Relation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "relation",
+        "arguments"
+      ],
+      "title": "RelationAtom",
+      "type": "object"
+    },
+    "RestoreCheckpoint": {
+      "additionalProperties": false,
+      "description": "Move the active cursor to a retained named checkpoint.",
+      "properties": {
+        "checkpoint_id": {
+          "$ref": "#/$defs/EventId"
+        },
+        "kind": {
+          "const": "restore_checkpoint",
+          "default": "restore_checkpoint",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "checkpoint_id"
+      ],
+      "title": "RestoreCheckpoint",
+      "type": "object"
+    },
+    "ResumeSession": {
+      "additionalProperties": false,
+      "description": "Resume a paused interaction session.",
+      "properties": {
+        "kind": {
+          "const": "resume_session",
+          "default": "resume_session",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "title": "ResumeSession",
+      "type": "object"
+    },
+    "RuleCandidateId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "RuleId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "RuleReference": {
+      "additionalProperties": false,
+      "description": "Stable identity and teaching rank for one versioned human rule.",
+      "properties": {
+        "family_scope": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Family Scope",
+          "type": "array"
+        },
+        "rule_id": {
+          "$ref": "#/$defs/RuleId"
+        },
+        "rule_version": {
+          "title": "Rule Version",
+          "type": "string"
+        },
+        "technique_rank": {
+          "minimum": 0,
+          "title": "Technique Rank",
+          "type": "integer"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "rule_version",
+        "title",
+        "technique_rank"
+      ],
+      "title": "RuleReference",
+      "type": "object"
+    },
+    "Sha256Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "TruthAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "truth",
+          "default": "truth",
+          "title": "Kind",
+          "type": "string"
+        },
+        "proposition_id": {
+          "title": "Proposition Id",
+          "type": "string"
+        },
+        "truth_value": {
+          "title": "Truth Value",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "proposition_id",
+        "truth_value"
+      ],
+      "title": "TruthAtom",
+      "type": "object"
+    },
+    "UndoMove": {
+      "additionalProperties": false,
+      "description": "Move the active history cursor to the parent of its current move.",
+      "properties": {
+        "kind": {
+          "const": "undo_move",
+          "default": "undo_move",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "title": "UndoMove",
+      "type": "object"
+    },
+    "ValidateProgress": {
+      "additionalProperties": false,
+      "description": "Request structural progress validation when the mode permits it.",
+      "properties": {
+        "kind": {
+          "const": "validate_progress",
+          "default": "validate_progress",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "title": "ValidateProgress",
+      "type": "object"
+    },
+    "ValueId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "VariableId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "VerificationCertificate": {
+      "additionalProperties": false,
+      "description": "Immutable result and provenance returned by one verification backend.",
+      "properties": {
+        "backend_id": {
+          "title": "Backend Id",
+          "type": "string"
+        },
+        "backend_version": {
+          "title": "Backend Version",
+          "type": "string"
+        },
+        "certificate_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "certificate_id": {
+          "$ref": "#/$defs/CertificateId"
+        },
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "encoding_version": {
+          "title": "Encoding Version",
+          "type": "string"
+        },
+        "model_snapshot": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Snapshot"
+        },
+        "obligation_id": {
+          "$ref": "#/$defs/ObligationId"
+        },
+        "raw_artifact_hash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256Digest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "result": {
+          "$ref": "#/$defs/BackendResult"
+        },
+        "unsat_core_refs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Unsat Core Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "certificate_id",
+        "backend_id",
+        "backend_version",
+        "encoding_version",
+        "obligation_id",
+        "result",
+        "duration_ms",
+        "certificate_hash"
+      ],
+      "title": "VerificationCertificate",
+      "type": "object"
+    },
+    "VerificationDecision": {
+      "additionalProperties": false,
+      "description": "Coordinator outcome controlling whether a state change may be applied.",
+      "properties": {
+        "certificates": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/VerificationCertificate"
+          },
+          "title": "Certificates",
+          "type": "array"
+        },
+        "obligation_id": {
+          "$ref": "#/$defs/ObligationId"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/VerificationStatus"
+        }
+      },
+      "required": [
+        "obligation_id",
+        "status",
+        "reason"
+      ],
+      "title": "VerificationDecision",
+      "type": "object"
+    },
+    "VerificationRecord": {
+      "additionalProperties": false,
+      "description": "Public serialized verification contract for one obligation and decision.",
+      "properties": {
+        "decision": {
+          "$ref": "#/$defs/VerificationDecision"
+        },
+        "obligation": {
+          "$ref": "#/$defs/ProofObligation"
+        }
+      },
+      "required": [
+        "obligation",
+        "decision"
+      ],
+      "title": "VerificationRecord",
+      "type": "object"
+    },
+    "VerificationStatus": {
+      "description": "Authority level assigned to one proof decision.",
+      "enum": [
+        "not_checked",
+        "structurally_valid",
+        "backend_verified",
+        "cross_verified",
+        "rejected",
+        "inconclusive",
+        "quarantined"
+      ],
+      "title": "VerificationStatus",
+      "type": "string"
+    }
+  },
+  "$id": "urn:deductra:schema:logic-grid-assistance:1",
+  "additionalProperties": false,
+  "description": "Serialized major-v1 envelope for exactly one assistance result.",
+  "properties": {
+    "hint_result": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LogicGridHintResult"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "move_evaluation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LogicGridMoveEvaluation"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "title": "Deductra Logic Grid Assistance v1",
+  "type": "object"
+}

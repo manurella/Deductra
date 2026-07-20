@@ -76,10 +76,27 @@ The repository remains one Python distribution and one `deductra` import package
 - Hashed descriptive action evidence that makes no correctness or mastery claim.
 - Common attempt lifecycle projection limited to durable start and independently verified completion.
 - A checked-in Logic Grid Attempt Record v1 JSON Schema.
+- Cross-verified evaluation of selected assignment and exclusion moves, including exact-opposite
+  contradiction evidence.
+- Seven-level hints derived only from verified human-rule proposals, with complete clue, premise,
+  rule, conclusion, state, and certificate evidence separated from progressive disclosure.
+- Exam-mode withholding, correction-first handling for contradicted active marks, explicit
+  human-rule exhaustion, and a checked-in Logic Grid Assistance v1 JSON Schema.
 
 ## Latest verification evidence
 
-The 2026-07-20 FAM-LG-009 verification pass completed successfully:
+The 2026-07-20 FAM-LG-010 local verification established:
+
+- formatting, lint, documentation, schema-drift, commit-message, and diff-integrity checks passed;
+- packet-scoped Windows typing completed with zero diagnostics;
+- all nine assistance acceptance tests passed;
+- 25 architecture tests passed, with the isolated temporary-directory fixture deselected because
+  the restricted host could not create its test directory; and
+- a full-suite attempt completed 274 tests with three expected PDF skips, while 16 tests could not
+  enter setup because the same host restriction denied their temporary directories.
+
+Docker/Linux verification has not been repeated for FAM-LG-010. The 2026-07-20 FAM-LG-009 pass
+remains the latest container evidence:
 
 - local formatting, lint, documentation, lockfile, and architecture checks passed;
 - packet-scoped Windows typing completed with zero diagnostics; the locked Linux image completed the
@@ -110,15 +127,17 @@ M3 will deliver a complete Logic Grid vertical slice: formal family contracts, i
 Implementation remains packet-based. FAM-LG-001 through FAM-LG-006 establish specification,
 reasoning, verification, references, guided authoring, and structured input. FAM-LG-007 adds the
 presentation-neutral play and replay boundary while keeping tentative marks outside proof authority.
-FAM-LG-008 completes its validation-disclosure, pause, and checkpoint lifecycle. Later M3 behavior
-must consume these boundaries and cannot bypass cross-verification. FAM-LG-009 persists complete
-play history and local lifecycle evidence while refusing to treat tentative marks as evaluated
-learning moves.
+FAM-LG-008 completes its validation-disclosure, pause, and checkpoint lifecycle. FAM-LG-009 persists
+complete play history and local lifecycle evidence while refusing to treat tentative marks as
+evaluated learning moves. FAM-LG-010 adds separate clue-aware evaluation and progressive verified
+hints without mutating play state or persistence. Later M3 behavior must consume these boundaries
+and cannot bypass cross-verification.
 
 ## Explicitly unavailable
 
-The current repository does not yet provide clue-level mistake evaluation, hints, attempt
-abandonment or deletion controls, retention and backup policy, an interactive or filesystem
+The current repository does not yet persist assistance evidence, normalize evaluated moves into
+learning projections, apply hints automatically, or provide attempt abandonment or deletion
+controls, retention and backup policy, an interactive or filesystem
 authoring adapter, a disclosed general search path, a concrete generator, a playable queue, an
 interactive interface, composed solve reports, a stable cross-family public Python API, complete
 learning behavior, named agent experiences, additional playable puzzle families, or release

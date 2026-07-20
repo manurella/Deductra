@@ -23,6 +23,7 @@ Architecture decision records preserve why a significant technical choice was ma
 - [ADR-0017: Retain play history without granting proof authority](0017-retain-play-history-without-proof-authority.md)
 - [ADR-0018: Separate validation disclosure from proof](0018-separate-validation-disclosure-from-proof.md)
 - [ADR-0019: Persist play before projecting attempt evidence](0019-persist-play-before-projecting-attempt-evidence.md)
+- [ADR-0020: Cross-verify assistance before disclosure](0020-cross-verify-assistance-before-disclosure.md)
 
 ## Lifecycle
 

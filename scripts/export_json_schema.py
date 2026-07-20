@@ -10,6 +10,7 @@ from deductra.families.logic_equations.schema import (
     rendered_logic_equations_spec_json_schema,
 )
 from deductra.families.logic_grid.schema import (
+    rendered_logic_grid_assistance_json_schema,
     rendered_logic_grid_attempt_record_json_schema,
     rendered_logic_grid_builder_json_schema,
     rendered_logic_grid_play_session_json_schema,
@@ -51,6 +52,9 @@ LOGIC_GRID_PLAY_SESSION_SCHEMA_PATH = (
 )
 LOGIC_GRID_ATTEMPT_RECORD_SCHEMA_PATH = (
     REPOSITORY_ROOT / "schemas" / "logic-grid-attempt-record-v1.schema.json"
+)
+LOGIC_GRID_ASSISTANCE_SCHEMA_PATH = (
+    REPOSITORY_ROOT / "schemas" / "logic-grid-assistance-v1.schema.json"
 )
 
 
@@ -134,6 +138,11 @@ def main() -> None:
     )
     LOGIC_GRID_ATTEMPT_RECORD_SCHEMA_PATH.write_text(
         rendered_logic_grid_attempt_record_json_schema(),
+        encoding="utf-8",
+        newline="\n",
+    )
+    LOGIC_GRID_ASSISTANCE_SCHEMA_PATH.write_text(
+        rendered_logic_grid_assistance_json_schema(),
         encoding="utf-8",
         newline="\n",
     )
