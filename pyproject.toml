@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling>=1.27,<2"]
+requires = ["hatchling>=1.31.0,<2"]
 build-backend = "hatchling.build"
 
 [project]
@@ -33,12 +33,12 @@ deductra = "deductra.cli:main"
 
 [dependency-groups]
 dev = [
-  "commitizen>=4,<5",
+  "commitizen>=4.16.5,<5",
   "pre-commit>=4,<5",
   "pyright>=1.1.408,<2",
   "pytest>=9,<10",
   "pytest-cov>=7,<8",
-  "ruff>=0.14,<1",
+  "ruff>=0.15.22,<1",
 ]
 security = [
   "pip-audit>=2.9,<3",
