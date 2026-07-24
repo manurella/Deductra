@@ -11,6 +11,9 @@ from deductra.domain.base import DomainModel
 from deductra.domain.ids import AttemptId, EventId, RuleId, UserId
 from deductra.domain.serialization import canonical_sha256
 from deductra.families.logic_grid.assistance import (
+    HintLevel,
+    HintResultStatus,
+    LogicGridHintResult,
     LogicGridMoveEvaluation,
     MoveEvaluationStatus,
 )
@@ -26,15 +29,17 @@ from deductra.memory.projections.events import (
     PROJECTION_GENESIS_HASH,
     AttemptCompleted,
     AttemptStarted,
+    HintRevealed,
     MoveEvaluated,
     ProjectionEvent,
     ProjectionStreamKind,
+    StepExplained,
     seal_projection_event,
 )
 from deductra.memory.projections.model import AttemptProjection
 from deductra.memory.projections.rebuild import rebuild_attempt_projection
 
-ATTEMPT_RECORD_SCHEMA_VERSION = "1.1.0"
+ATTEMPT_RECORD_SCHEMA_VERSION = "1.2.0"
 type Sha256Digest = Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{64}$")]
 type PlayActionKind = Literal[
     "assign_cell",
@@ -100,6 +105,23 @@ class ObservedMoveEvaluation(DomainModel):
         return self
 
 
+class ObservedHintResult(DomainModel):
+    """One durably observed hint request outcome, hash-chained by arrival order."""
+
+    result: LogicGridHintResult
+    occurred_at: datetime
+    previous_observation_hash: Sha256Digest
+    observation_hash: Sha256Digest
+
+    @model_validator(mode="after")
+    def validate_observation(self) -> ObservedHintResult:
+        if self.occurred_at.tzinfo is None or self.occurred_at.utcoffset() is None:
+            raise ValueError("occurred_at must include a timezone offset")
+        if self.observation_hash != compute_hint_result_observation_hash(self):
+            raise ValueError("observation_hash does not match the observed hint result")
+        return self
+
+
 class PlayActionEvidence(DomainModel):
     """Descriptive action counts without correctness or mastery meaning."""
 
@@ -162,12 +184,13 @@ class LogicGridAttemptEvidence(DomainModel):
 class PersistedLogicGridAttempt(DomainModel):
     """Validated durable view of one local attempt and its derived evidence."""
 
-    schema_version: Literal["1.1.0"] = ATTEMPT_RECORD_SCHEMA_VERSION
+    schema_version: Literal["1.2.0"] = ATTEMPT_RECORD_SCHEMA_VERSION
     user_id: UserId
     started_at: datetime
     updated_at: datetime
     observations: tuple[ObservedPlayEvent, ...]
     move_evaluations: tuple[ObservedMoveEvaluation, ...]
+    hint_results: tuple[ObservedHintResult, ...]
     session: LogicGridPlaySession
     evidence: LogicGridAttemptEvidence
     projection_events: tuple[ProjectionEvent, ...]
@@ -205,10 +228,23 @@ class PersistedLogicGridAttempt(DomainModel):
                     "move evaluation references an event outside the durable play history"
                 )
             previous_evaluation_hash = item.observation_hash
+        hint_times = tuple(item.occurred_at for item in self.hint_results)
+        if hint_times != tuple(sorted(hint_times)):
+            raise ValueError("hint result observations must use chronological order")
+        previous_hint_hash = PLAY_GENESIS_HASH
+        for hint_item in self.hint_results:
+            if hint_item.previous_observation_hash != previous_hint_hash:
+                raise ValueError("hint result observations are not hash-chained in order")
+            if hint_item.result.attempt_id != self.session.attempt_id:
+                raise ValueError("hint result attempt identity does not match this attempt")
+            if hint_item.result.puzzle_revision_id != self.session.puzzle_revision_id:
+                raise ValueError("hint result puzzle revision does not match this attempt")
+            previous_hint_hash = hint_item.observation_hash
         expected_updated = max(
             (
                 *observation_times,
                 *evaluation_times,
+                *hint_times,
                 self.started_at,
             )
         )
@@ -226,6 +262,7 @@ class PersistedLogicGridAttempt(DomainModel):
             started_at=self.started_at,
             observations=self.observations,
             move_evaluations=self.move_evaluations,
+            hint_results=self.hint_results,
         )
         if self.projection_events != expected_events:
             raise ValueError("memory events do not equal normalized play lifecycle evidence")
@@ -269,6 +306,16 @@ class LogicGridAttemptStore(Protocol):
         occurred_at: datetime,
     ) -> PersistedLogicGridAttempt:
         """Atomically append one already cross-verified move evaluation."""
+        ...
+
+    def record_hint_result(
+        self,
+        puzzle: LogicGridSpec,
+        result: LogicGridHintResult,
+        *,
+        occurred_at: datetime,
+    ) -> PersistedLogicGridAttempt:
+        """Atomically append one already cross-verified hint request outcome."""
         ...
 
     def read(
@@ -329,6 +376,32 @@ def observe_move_evaluation(
     )
 
 
+def compute_hint_result_observation_hash(observation: ObservedHintResult) -> str:
+    """Hash a sealed hint result, its arrival time, and its chain predecessor."""
+    return canonical_sha256(observation.model_dump(mode="json", exclude={"observation_hash"}))
+
+
+def observe_hint_result(
+    result: LogicGridHintResult,
+    *,
+    occurred_at: datetime,
+    previous_observation_hash: str,
+) -> ObservedHintResult:
+    """Seal one durable, hash-chained observation of an already cross-verified hint result."""
+    unsigned = ObservedHintResult.model_construct(
+        result=result,
+        occurred_at=occurred_at,
+        previous_observation_hash=previous_observation_hash,
+        observation_hash=PLAY_GENESIS_HASH,
+    )
+    return ObservedHintResult(
+        result=result,
+        occurred_at=occurred_at,
+        previous_observation_hash=previous_observation_hash,
+        observation_hash=compute_hint_result_observation_hash(unsigned),
+    )
+
+
 def compute_attempt_evidence_hash(evidence: LogicGridAttemptEvidence) -> str:
     return canonical_sha256(evidence.model_dump(mode="json", exclude={"projection_hash"}))
 
@@ -383,6 +456,38 @@ _DECIDED_EVALUATION_STATUSES = (
     MoveEvaluationStatus.SUPPORTED,
     MoveEvaluationStatus.CONTRADICTED,
 )
+_AVAILABLE_HINT_STATUSES = (HintResultStatus.AVAILABLE,)
+type _EligibleEntry = tuple[
+    datetime, str, Literal["move", "hint"], ObservedMoveEvaluation | ObservedHintResult
+]
+
+
+def _move_evaluation_payload(
+    attempt_id: AttemptId, evaluation: LogicGridMoveEvaluation
+) -> MoveEvaluated:
+    rule_id: RuleId | None = (
+        evaluation.technique.rule.rule_id if evaluation.technique is not None else None
+    )
+    outcome: Literal["accepted", "rejected"] = (
+        "accepted" if evaluation.status is MoveEvaluationStatus.SUPPORTED else "rejected"
+    )
+    return MoveEvaluated(
+        attempt_id=attempt_id,
+        outcome=outcome,
+        rule_id=rule_id,
+        duration_ms=0,
+    )
+
+
+def _hint_result_payload(
+    attempt_id: AttemptId, result: LogicGridHintResult
+) -> HintRevealed | StepExplained:
+    hint = result.hint
+    if hint is None:
+        raise ValueError("an available hint result must carry a hint")
+    if hint.disclosure.level >= HintLevel.EXPLANATION:
+        return StepExplained(attempt_id=attempt_id, rule_id=hint.evidence.rule.rule_id)
+    return HintRevealed(attempt_id=attempt_id, rule_id=hint.disclosure.rule_id)
 
 
 def build_attempt_projection_events(
@@ -392,6 +497,7 @@ def build_attempt_projection_events(
     started_at: datetime,
     observations: tuple[ObservedPlayEvent, ...],
     move_evaluations: tuple[ObservedMoveEvaluation, ...] = (),
+    hint_results: tuple[ObservedHintResult, ...] = (),
 ) -> tuple[ProjectionEvent, ...]:
     """Normalize only authoritative attempt lifecycle facts for common memory."""
     stream_id = _projection_stream_id(session.attempt_id)
@@ -421,50 +527,59 @@ def build_attempt_projection_events(
         None,
     )
 
-    eligible = tuple(
+    eligible_moves = tuple(
         item
         for item in move_evaluations
         if item.evaluation.status in _DECIDED_EVALUATION_STATUSES
         and (completion is None or item.occurred_at < completion.occurred_at)
     )
-    ordered = tuple(
-        sorted(eligible, key=lambda item: (item.occurred_at, item.evaluation.evaluation_hash))
+    eligible_hints = tuple(
+        item
+        for item in hint_results
+        if item.result.status in _AVAILABLE_HINT_STATUSES
+        and (completion is None or item.occurred_at < completion.occurred_at)
     )
+    combined: list[_EligibleEntry] = []
+    combined.extend(
+        (item.occurred_at, item.evaluation.evaluation_hash, "move", item) for item in eligible_moves
+    )
+    combined.extend(
+        (item.occurred_at, item.result.result_hash, "hint", item) for item in eligible_hints
+    )
+    ordered = sorted(combined, key=lambda entry: (entry[0], entry[1]))
+
     seen_evaluation_hashes: set[str] = set()
+    seen_result_hashes: set[str] = set()
     previous_hash = started.event_hash
-    for item in ordered:
-        evaluation_hash = item.evaluation.evaluation_hash
-        if evaluation_hash in seen_evaluation_hashes:
-            continue
-        seen_evaluation_hashes.add(evaluation_hash)
-        rule_id: RuleId | None = (
-            item.evaluation.technique.rule.rule_id
-            if item.evaluation.technique is not None
-            else None
-        )
-        outcome: Literal["accepted", "rejected"] = (
-            "accepted" if item.evaluation.status is MoveEvaluationStatus.SUPPORTED else "rejected"
-        )
-        move_event = seal_projection_event(
-            event_id=_projection_event_id(
-                session.attempt_id,
-                f"move-evaluated:{evaluation_hash}",
-            ),
+    for occurred_at, content_hash, kind, item in ordered:
+        if kind == "move":
+            if content_hash in seen_evaluation_hashes:
+                continue
+            seen_evaluation_hashes.add(content_hash)
+            evaluation = cast(ObservedMoveEvaluation, item).evaluation
+            payload: MoveEvaluated | HintRevealed | StepExplained = _move_evaluation_payload(
+                session.attempt_id, evaluation
+            )
+            source = f"move-evaluated:{content_hash}"
+        else:
+            if content_hash in seen_result_hashes:
+                continue
+            seen_result_hashes.add(content_hash)
+            result = cast(ObservedHintResult, item).result
+            payload = _hint_result_payload(session.attempt_id, result)
+            source = f"hint-result:{content_hash}"
+        fact_event = seal_projection_event(
+            event_id=_projection_event_id(session.attempt_id, source),
             stream_id=stream_id,
             stream_kind=ProjectionStreamKind.ATTEMPT,
             sequence_no=len(events),
             schema_version="1.0.0",
-            occurred_at=item.occurred_at,
+            occurred_at=occurred_at,
             previous_event_hash=previous_hash,
-            payload=MoveEvaluated(
-                attempt_id=session.attempt_id,
-                outcome=outcome,
-                rule_id=rule_id,
-                duration_ms=0,
-            ),
+            payload=payload,
         )
-        events.append(move_event)
-        previous_hash = move_event.event_hash
+        events.append(fact_event)
+        previous_hash = fact_event.event_hash
 
     if completion is not None:
         events.append(
@@ -496,12 +611,14 @@ def build_persisted_logic_grid_attempt(
     started_at: datetime,
     observations: tuple[ObservedPlayEvent, ...],
     move_evaluations: tuple[ObservedMoveEvaluation, ...] = (),
+    hint_results: tuple[ObservedHintResult, ...] = (),
 ) -> PersistedLogicGridAttempt:
     """Build and seal the complete verified durable attempt view."""
     updated_at = max(
         (
             *(item.occurred_at for item in observations),
             *(item.occurred_at for item in move_evaluations),
+            *(item.occurred_at for item in hint_results),
             started_at,
         )
     )
@@ -512,6 +629,7 @@ def build_persisted_logic_grid_attempt(
         started_at=started_at,
         observations=observations,
         move_evaluations=move_evaluations,
+        hint_results=hint_results,
     )
     attempt_projection = rebuild_attempt_projection(projection_events)
     values = {
@@ -521,6 +639,7 @@ def build_persisted_logic_grid_attempt(
         "updated_at": updated_at,
         "observations": observations,
         "move_evaluations": move_evaluations,
+        "hint_results": hint_results,
         "session": session,
         "evidence": evidence,
         "projection_events": projection_events,
@@ -533,6 +652,7 @@ def build_persisted_logic_grid_attempt(
         updated_at=updated_at,
         observations=observations,
         move_evaluations=move_evaluations,
+        hint_results=hint_results,
         session=session,
         evidence=evidence,
         projection_events=projection_events,

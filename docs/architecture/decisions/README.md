@@ -25,6 +25,7 @@ Architecture decision records preserve why a significant technical choice was ma
 - [ADR-0019: Persist play before projecting attempt evidence](0019-persist-play-before-projecting-attempt-evidence.md)
 - [ADR-0020: Cross-verify assistance before disclosure](0020-cross-verify-assistance-before-disclosure.md)
 - [ADR-0021: Persist verified move evaluations into attempt memory](0021-persist-verified-move-evaluations-into-attempt-memory.md)
+- [ADR-0022: Persist hint evidence into attempt memory](0022-persist-hint-evidence-into-attempt-memory.md)
 
 ## Lifecycle
 

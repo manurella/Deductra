@@ -52,11 +52,13 @@ part of user-facing text.
 
 This packet does not itself mutate play sessions, persist assistance records, normalize memory
 events, infer mastery, choose puzzles, generate content, render interfaces, compose reports, or
-continue play automatically. FAM-LG-011 later added a separate attempt-persistence integration that
-durably retains a sealed `LogicGridMoveEvaluation` and normalizes only its decided outcome into
-common memory; see [Logic Grid attempt persistence](logic-grid-attempt-persistence.md) and
-[ADR-0021](decisions/0021-persist-verified-move-evaluations-into-attempt-memory.md). That
-integration depends only on the sealed evaluation type this module exports, not on the service, its
-reasoning composition, or its verification backends; it never re-verifies a stored evaluation, and it
-does not yet cover hint evidence. Any further integration must consume the same typed evidence
-boundary and preserve its fail-closed authority rules.
+continue play automatically. FAM-LG-011 and FAM-LG-012 later added a separate attempt-persistence
+integration that durably retains a sealed `LogicGridMoveEvaluation` or `LogicGridHintResult` and
+normalizes only decided move outcomes and available hint outcomes into common memory; see
+[Logic Grid attempt persistence](logic-grid-attempt-persistence.md),
+[ADR-0021](decisions/0021-persist-verified-move-evaluations-into-attempt-memory.md), and
+[ADR-0022](decisions/0022-persist-hint-evidence-into-attempt-memory.md). That integration depends
+only on the sealed evaluation and hint-result types this module exports, not on the service, its
+reasoning composition, or its verification backends; it never re-verifies a stored evaluation or
+hint result, and it never applies a suggested action automatically. Any further integration must
+consume the same typed evidence boundary and preserve its fail-closed authority rules.

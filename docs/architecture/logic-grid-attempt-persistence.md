@@ -5,6 +5,9 @@ FAM-LG-008 event history, rebuilds the current session from the immutable puzzle
 read, and derives descriptive attempt evidence without converting tentative marks into proof.
 FAM-LG-011 extends the same adapter with a second, independent log that durably retains
 already cross-verified move evaluations and normalizes their decided outcomes into common memory.
+FAM-LG-012 adds a third, independent log that durably retains already cross-verified hint results
+and normalizes only their available outcomes into common memory, bounded by each hint's own
+disclosure level.
 
 ## Durable source of truth
 
@@ -44,16 +47,20 @@ kind and cites every source event identifier. It records the attempt status and 
 session, and projection hashes. This view answers what interaction occurred; it does not say that a
 mark was logically correct, independently derived, or evidence of mastery.
 
-The common memory bridge therefore normalizes only three authoritative facts:
+The common memory bridge therefore normalizes only four authoritative facts:
 
 - `AttemptStarted` when the durable attempt is created;
-- `AttemptCompleted` only after the play session's independent final checker accepted completion; and
-- `MoveEvaluated` for each decided move evaluation recorded through FAM-LG-011, described below.
+- `AttemptCompleted` only after the play session's independent final checker accepted completion;
+- `MoveEvaluated` for each decided move evaluation recorded through FAM-LG-011, described below; and
+- `HintRevealed` or `StepExplained` for each available hint result recorded through FAM-LG-012,
+  described below.
 
 Tentative assignments, exclusions, structural validation outcomes, undo, redo, pause, checkpoints,
 and rejected interface actions still do not become `MoveEvaluated` events on their own. Only an
 already cross-verified evaluation, submitted through the dedicated assistance-recording operation,
-can normalize into one.
+can normalize into one. Likewise, only an already cross-verified hint result whose status is
+`available`, submitted through its own dedicated recording operation, can normalize into a
+`HintRevealed` or `StepExplained` event.
 
 ## Move evaluation evidence
 
@@ -80,12 +87,43 @@ identity, when present, becomes the projection's `rule_id`; the shared `MoveEval
 field, which this integration does not measure, is fixed at zero rather than approximated. See
 [ADR-0021](decisions/0021-persist-verified-move-evaluations-into-attempt-memory.md).
 
+## Hint result evidence
+
+FAM-LG-012 adds a third append-only log, parallel to both the play-event log and the
+move-evaluation log, that retains complete `LogicGridHintResult` documents produced by the
+FAM-LG-010 assistance service. `record_hint_result` is independent of `append` and
+`record_move_evaluation`: it never mutates the play event stream or the move-evaluation log, and it
+accepts only a hint result whose attempt identity, puzzle revision, and source session hash all
+match the attempt's current durable head. A stale or foreign result is rejected before it reaches
+storage.
+
+Each `ObservedHintResult` pairs one sealed hint result with a local observation time and a hash of
+its predecessor, forming its own tamper-evident chain, exactly like `ObservedMoveEvaluation`. Reads
+recompute and compare every stored hash without invoking either solver backend again.
+
+Only `available` hint results normalize into common memory, each identified by the result's own
+content hash so a repeated identical hint request adds durable evidence without being
+double-counted. Every other status (`correction_required`, `already_complete`, `unavailable_mode`,
+`human_rules_exhausted`, `inconclusive`, `quarantined`) remains in the durable log for audit but
+never becomes a projection fact. A result observed at or after the session's completion time is
+retained but excluded from the projection stream, matching the move-evaluation rule.
+
+An available result's own disclosure level decides which shared event it becomes, and a projection
+fact never discloses more than that level already revealed to the caller. A hint disclosed below
+`HintLevel.EXPLANATION` (levels 0 through 4) normalizes into `HintRevealed`, whose `rule_id` is
+populated only when the disclosure ladder had already revealed the rule (from `HintLevel.TECHNIQUE`
+upward) and is `None` at the two lowest levels. A hint disclosed at `HintLevel.EXPLANATION` or
+`HintLevel.CONTINUE` normalizes into `StepExplained`, which always carries the rule identity because
+the disclosure ladder requires it at that level. Move evaluations and hint results share one
+chronologically ordered projection sequence per attempt, each still deduplicated within its own kind.
+See [ADR-0022](decisions/0022-persist-hint-evidence-into-attempt-memory.md).
+
 ## Public contract
 
-`PersistedLogicGridAttempt` is immutable and versioned as `1.1.0`. It contains the user identity,
-start and update times, observed play events, observed move evaluations, replayed session,
-descriptive action evidence, normalized lifecycle events, rebuilt common attempt projection, and a
-complete record hash. The checked-in major-version schema is
+`PersistedLogicGridAttempt` is immutable and versioned as `1.2.0`. It contains the user identity,
+start and update times, observed play events, observed move evaluations, observed hint results,
+replayed session, descriptive action evidence, normalized lifecycle events, rebuilt common attempt
+projection, and a complete record hash. The checked-in major-version schema is
 `schemas/logic-grid-attempt-record-v1.schema.json`.
 
 The persistence API accepts typed in-memory values and an explicit database path. It performs no
@@ -94,9 +132,9 @@ Callers retain responsibility for choosing and protecting the local database loc
 
 ## Deliberate exclusions
 
-FAM-LG-011 stores no hint evidence and adds no timers, abandonment or deletion workflow,
-retention policy, learning inference, mastery score, puzzle library, synchronization, encryption
-key management, telemetry, terminal interface, generation, or report composition. Exact privacy
-deletion and backup behavior remain a later owner-reviewed security decision. The adapter exposes
-no raw SQL or mutable projection operation through its public port, and it never re-verifies a
-stored evaluation against the solver backends.
+FAM-LG-012 adds no timers, abandonment or deletion workflow, retention policy, learning inference,
+mastery score, puzzle library, synchronization, encryption key management, telemetry, terminal
+interface, generation, or report composition. It does not apply a hint's suggested action
+automatically. Exact privacy deletion and backup behavior remain a later owner-reviewed security
+decision. The adapter exposes no raw SQL or mutable projection operation through its public port,
+and it never re-verifies a stored evaluation or hint result against the solver backends.

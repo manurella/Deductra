@@ -673,6 +673,42 @@
       "title": "ExclusionAtom",
       "type": "object"
     },
+    "HintKind": {
+      "description": "Purpose served by one available hint.",
+      "enum": [
+        "progression"
+      ],
+      "title": "HintKind",
+      "type": "string"
+    },
+    "HintLevel": {
+      "description": "Progressive disclosure level requested by the player.",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "title": "HintLevel",
+      "type": "integer"
+    },
+    "HintResultStatus": {
+      "description": "Stable outcome of requesting assistance from one session state.",
+      "enum": [
+        "available",
+        "correction_required",
+        "already_complete",
+        "unavailable_mode",
+        "human_rules_exhausted",
+        "inconclusive",
+        "quarantined"
+      ],
+      "title": "HintResultStatus",
+      "type": "string"
+    },
     "HintRevealed": {
       "additionalProperties": false,
       "properties": {
@@ -811,6 +847,194 @@
         "constraint_ids"
       ],
       "title": "LogicGridClueEvidence",
+      "type": "object"
+    },
+    "LogicGridHint": {
+      "additionalProperties": false,
+      "description": "One evidence-backed hint with an auditable core and bounded disclosure.",
+      "properties": {
+        "attempt_id": {
+          "$ref": "#/$defs/AttemptId"
+        },
+        "disclosure": {
+          "$ref": "#/$defs/LogicGridHintDisclosure"
+        },
+        "evidence": {
+          "$ref": "#/$defs/LogicGridTechniqueEvidence"
+        },
+        "hint_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "kind": {
+          "$ref": "#/$defs/HintKind"
+        },
+        "puzzle_revision_id": {
+          "$ref": "#/$defs/PuzzleRevisionId"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_session_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        }
+      },
+      "required": [
+        "attempt_id",
+        "puzzle_revision_id",
+        "source_session_hash",
+        "kind",
+        "evidence",
+        "disclosure",
+        "hint_hash"
+      ],
+      "title": "LogicGridHint",
+      "type": "object"
+    },
+    "LogicGridHintDisclosure": {
+      "additionalProperties": false,
+      "description": "The only level-sensitive content a presentation adapter may reveal.",
+      "properties": {
+        "clue_ids": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ClueId"
+          },
+          "title": "Clue Ids",
+          "type": "array"
+        },
+        "conclusion": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvaluatableAtom"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "focus_variable_ids": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/VariableId"
+          },
+          "title": "Focus Variable Ids",
+          "type": "array"
+        },
+        "level": {
+          "$ref": "#/$defs/HintLevel"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "premises": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Atom"
+          },
+          "title": "Premises",
+          "type": "array"
+        },
+        "rule_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RuleId"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "suggested_action": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PlayAction"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "level",
+        "message"
+      ],
+      "title": "LogicGridHintDisclosure",
+      "type": "object"
+    },
+    "LogicGridHintResult": {
+      "additionalProperties": false,
+      "description": "Stable available or unavailable outcome for one hint request.",
+      "properties": {
+        "attempt_id": {
+          "$ref": "#/$defs/AttemptId"
+        },
+        "blocking_evaluation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LogicGridMoveEvaluation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "hint": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LogicGridHint"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "puzzle_revision_id": {
+          "$ref": "#/$defs/PuzzleRevisionId"
+        },
+        "result_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_session_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "status": {
+          "$ref": "#/$defs/HintResultStatus"
+        }
+      },
+      "required": [
+        "attempt_id",
+        "puzzle_revision_id",
+        "source_session_hash",
+        "status",
+        "code",
+        "message",
+        "result_hash"
+      ],
+      "title": "LogicGridHintResult",
       "type": "object"
     },
     "LogicGridMoveEvaluation": {
@@ -1221,6 +1445,34 @@
       "maxLength": 255,
       "minLength": 1,
       "type": "string"
+    },
+    "ObservedHintResult": {
+      "additionalProperties": false,
+      "description": "One durably observed hint request outcome, hash-chained by arrival order.",
+      "properties": {
+        "observation_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "occurred_at": {
+          "format": "date-time",
+          "title": "Occurred At",
+          "type": "string"
+        },
+        "previous_observation_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "result": {
+          "$ref": "#/$defs/LogicGridHintResult"
+        }
+      },
+      "required": [
+        "result",
+        "occurred_at",
+        "previous_observation_hash",
+        "observation_hash"
+      ],
+      "title": "ObservedHintResult",
+      "type": "object"
     },
     "ObservedMoveEvaluation": {
       "additionalProperties": false,
@@ -2274,6 +2526,13 @@
     "evidence": {
       "$ref": "#/$defs/LogicGridAttemptEvidence"
     },
+    "hint_results": {
+      "items": {
+        "$ref": "#/$defs/ObservedHintResult"
+      },
+      "title": "Hint Results",
+      "type": "array"
+    },
     "move_evaluations": {
       "items": {
         "$ref": "#/$defs/ObservedMoveEvaluation"
@@ -2299,8 +2558,8 @@
       "$ref": "#/$defs/Sha256Digest"
     },
     "schema_version": {
-      "const": "1.1.0",
-      "default": "1.1.0",
+      "const": "1.2.0",
+      "default": "1.2.0",
       "title": "Schema Version",
       "type": "string"
     },
@@ -2327,6 +2586,7 @@
     "updated_at",
     "observations",
     "move_evaluations",
+    "hint_results",
     "session",
     "evidence",
     "projection_events",

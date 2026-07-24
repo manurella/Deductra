@@ -38,9 +38,10 @@ pause/resume, and named restorable checkpoints. FAM-LG-009 adds transactional lo
 persistence, exact recovery, descriptive action evidence, and authoritative start/completion
 projection. FAM-LG-010 adds cross-verified move evaluation and seven-level, evidence-backed hints
 without mutating play or persistence. FAM-LG-011 durably retains cross-verified move evaluations and
-normalizes only their decided outcomes into common attempt and learning evidence. Hint-evidence
-persistence, generation, difficulty and novelty evaluation, terminal delivery, and composed reports
-remain later M3 work.
+normalizes only their decided outcomes into common attempt and learning evidence. FAM-LG-012 durably
+retains cross-verified hint results and normalizes only their available outcomes into common attempt
+and learning evidence, bounded by each hint's own disclosure level. Generation, difficulty and
+novelty evaluation, terminal delivery, and composed reports remain later M3 work.
 
 ## M4 — Proven common platform
 

@@ -60,6 +60,15 @@ becoming a projection fact. `MoveEvaluated` and its rule-evidence aggregation ar
 CR-008 concepts; this integration is their first non-empty producer for any family. See
 [ADR-0021](decisions/0021-persist-verified-move-evaluations-into-attempt-memory.md).
 
+FAM-LG-012 added a third durable log for already cross-verified hint results. Only `available`
+results normalize, each deduplicated by its result's own content hash; every other status, and any
+result observed at or after an attempt's completion time, remains durable evidence without becoming
+a projection fact. An available result's own disclosure level selects `HintRevealed` (levels below
+`EXPLANATION`) or `StepExplained` (`EXPLANATION` and above), and a projection fact never discloses a
+rule identity the hint's own disclosure had not already revealed. `HintRevealed` and `StepExplained`
+are otherwise unchanged CR-008 concepts; this integration is their first non-empty producer for any
+family. See [ADR-0022](decisions/0022-persist-hint-evidence-into-attempt-memory.md).
+
 ## Explicit non-goals
 
 CR-008 adds no:

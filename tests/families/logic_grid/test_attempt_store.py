@@ -20,6 +20,7 @@ from deductra.families.logic_grid import (
     CheckCompletion,
     ExcludeCell,
     HintLevel,
+    HintResultStatus,
     LogicGridAttemptStore,
     LogicGridPlaySession,
     LogicGridSpec,
@@ -292,7 +293,7 @@ def test_attempt_record_schema_is_checked_in_and_strict() -> None:
     )
 
     assert schema["$id"] == "urn:deductra:schema:logic-grid-attempt-record:1"
-    assert schema["properties"]["schema_version"]["const"] == "1.1.0"
+    assert schema["properties"]["schema_version"]["const"] == "1.2.0"
     assert schema["additionalProperties"] is False
     assert json.loads(checked_in) == schema
     assert checked_in == rendered_logic_grid_attempt_record_json_schema()
@@ -430,3 +431,125 @@ def test_move_evaluation_rejects_stale_evidence_relative_to_the_current_head(
                 stale_evaluation,
                 occurred_at=STARTED_AT + timedelta(seconds=3),
             )
+
+
+def test_hint_result_is_persisted_and_normalized_into_the_attempt_projection(
+    tmp_path: Path,
+) -> None:
+    database = tmp_path / "attempts.sqlite3"
+    puzzle = harbor_morning()
+    service = default_logic_grid_assistance_service()
+    session = start_logic_grid_play(puzzle, attempt_id=ATTEMPT_ID)
+
+    with SQLiteLogicGridAttemptStore(database) as store:
+        store.create(puzzle, session, user_id=USER_ID, occurred_at=STARTED_AT)
+        result = service.request_hint(puzzle, session, level=HintLevel.EXPLANATION)
+        assert result.status is HintResultStatus.AVAILABLE
+        assert result.hint is not None
+
+        record = store.record_hint_result(
+            puzzle,
+            result,
+            occurred_at=STARTED_AT + timedelta(seconds=1),
+        )
+        assert len(record.hint_results) == 1
+        assert record.hint_results[0].result == result
+        assert record.attempt_projection.explanations_viewed == 1
+        assert record.attempt_projection.hints_revealed == 0
+        assert record.attempt_projection.rule_evidence[0].rule_id == (
+            result.hint.evidence.rule.rule_id
+        )
+        assert "step_explained" in {item.payload.kind for item in record.projection_events}
+        assert store.read(puzzle, ATTEMPT_ID) == record
+
+        # Recording the identical, already-verified hint result again is retained as
+        # additional evidence but is not double-counted in the common projection.
+        again = store.record_hint_result(
+            puzzle,
+            result,
+            occurred_at=STARTED_AT + timedelta(seconds=2),
+        )
+        assert len(again.hint_results) == 2
+        assert again.attempt_projection.explanations_viewed == 1
+
+    with SQLiteLogicGridAttemptStore(database) as reopened:
+        assert reopened.read(puzzle, ATTEMPT_ID) == again
+
+
+def test_hint_result_requires_an_existing_attempt_stream(tmp_path: Path) -> None:
+    database = tmp_path / "attempts.sqlite3"
+    puzzle = harbor_morning()
+    service = default_logic_grid_assistance_service()
+    session = start_logic_grid_play(puzzle, attempt_id=ATTEMPT_ID)
+    result = service.request_hint(puzzle, session, level=HintLevel.EXPLANATION)
+
+    with SQLiteLogicGridAttemptStore(database) as store, pytest.raises(AttemptConflictError):
+        store.record_hint_result(puzzle, result, occurred_at=STARTED_AT)
+
+
+def test_hint_result_rejects_stale_evidence_relative_to_the_current_head(
+    tmp_path: Path,
+) -> None:
+    database = tmp_path / "attempts.sqlite3"
+    puzzle = harbor_morning()
+    service = default_logic_grid_assistance_service()
+    session = start_logic_grid_play(puzzle, attempt_id=ATTEMPT_ID)
+
+    with SQLiteLogicGridAttemptStore(database) as store:
+        store.create(puzzle, session, user_id=USER_ID, occurred_at=STARTED_AT)
+        stale_result = service.request_hint(puzzle, session, level=HintLevel.EXPLANATION)
+
+        moved = apply_logic_grid_play_action(
+            session,
+            puzzle,
+            event_id="move-1",
+            action=_first_editable_assignment(),
+        ).session
+        store.append(puzzle, moved, occurred_at=STARTED_AT + timedelta(seconds=1))
+
+        with pytest.raises(AttemptConflictError):
+            store.record_hint_result(
+                puzzle,
+                stale_result,
+                occurred_at=STARTED_AT + timedelta(seconds=2),
+            )
+
+
+def test_hint_disclosure_level_gates_the_normalized_projection_fact(tmp_path: Path) -> None:
+    database = tmp_path / "attempts.sqlite3"
+    puzzle = harbor_morning()
+    service = default_logic_grid_assistance_service()
+    session = start_logic_grid_play(puzzle, attempt_id=ATTEMPT_ID)
+
+    with SQLiteLogicGridAttemptStore(database) as store:
+        store.create(puzzle, session, user_id=USER_ID, occurred_at=STARTED_AT)
+
+        reflection = service.request_hint(puzzle, session, level=HintLevel.REFLECTION)
+        assert reflection.status is HintResultStatus.AVAILABLE
+        assert reflection.hint is not None
+        assert reflection.hint.disclosure.rule_id is None
+        record = store.record_hint_result(
+            puzzle,
+            reflection,
+            occurred_at=STARTED_AT + timedelta(seconds=1),
+        )
+        fact = next(
+            item for item in record.projection_events if item.payload.kind != "attempt_started"
+        )
+        assert fact.payload.kind == "hint_revealed"
+        assert fact.payload.rule_id is None
+        assert record.attempt_projection.hints_revealed == 1
+        assert record.attempt_projection.explanations_viewed == 0
+        assert record.attempt_projection.rule_evidence == ()
+
+        explanation = service.request_hint(puzzle, session, level=HintLevel.EXPLANATION)
+        assert explanation.hint is not None
+        record = store.record_hint_result(
+            puzzle,
+            explanation,
+            occurred_at=STARTED_AT + timedelta(seconds=2),
+        )
+        latest_fact = record.projection_events[-1]
+        assert latest_fact.payload.kind == "step_explained"
+        assert latest_fact.payload.rule_id == explanation.hint.evidence.rule.rule_id
+        assert record.attempt_projection.explanations_viewed == 1

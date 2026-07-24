@@ -87,8 +87,15 @@ The repository remains one Python distribution and one `deductra` import package
 - Normalization of only decided (supported or contradicted) move evaluations into the common
   `MoveEvaluated` projection and rule-specific attempt and learning evidence, deduplicated by
   evaluation content hash and excluded once an attempt is complete.
-- A `1.1.0` Logic Grid Attempt Record contract reflecting both persisted play history and persisted
-  move-evaluation evidence.
+- A durable, hash-chained log of already cross-verified Logic Grid hint results, fail-closed against
+  a stale or foreign attempt head, stored independently of both the play event stream and the
+  move-evaluation log.
+- Normalization of only available hint results into the common `HintRevealed` or `StepExplained`
+  projection and rule-specific attempt and learning evidence, deduplicated by result content hash,
+  excluded once an attempt is complete, and bounded so a projection fact never discloses more than
+  the hint's own recorded disclosure level.
+- A `1.2.0` Logic Grid Attempt Record contract reflecting persisted play history, persisted
+  move-evaluation evidence, and persisted hint-result evidence.
 
 ## Latest verification evidence
 
@@ -140,17 +147,21 @@ evaluated learning moves. FAM-LG-010 adds separate clue-aware evaluation and pro
 hints without mutating play state or persistence. FAM-LG-011 durably retains those cross-verified
 move evaluations in the same attempt adapter and normalizes only their decided outcomes into common
 attempt and learning evidence, without re-verifying stored evidence or persisting hint evidence.
-Later M3 behavior must consume these boundaries and cannot bypass cross-verification.
+FAM-LG-012 durably retains cross-verified hint results in the same attempt adapter and normalizes
+only their available outcomes into common attempt and learning evidence, without re-verifying stored
+evidence or disclosing more than each hint's own recorded level. Later M3 behavior must consume
+these boundaries and cannot bypass cross-verification.
 
 ## Explicitly unavailable
 
-The current repository does not yet persist hint evidence, apply hints automatically, or provide
-attempt abandonment or deletion controls, retention and backup policy, an interactive or filesystem
-authoring adapter, a disclosed general search path, a concrete generator, a playable queue, an
-interactive interface, composed solve reports, a stable cross-family public Python API, complete
-learning behavior, named agent experiences, additional playable puzzle families, or release
-installers. Only cross-verified move evaluations are durably persisted and normalized into learning
-evidence; hint requests and their disclosure remain non-durable and outside common memory.
+The current repository does not yet apply hints automatically, or provide attempt abandonment or
+deletion controls, retention and backup policy, an interactive or filesystem authoring adapter, a
+disclosed general search path, a concrete generator, a playable queue, an interactive interface,
+composed solve reports, a stable cross-family public Python API, complete learning behavior, named
+agent experiences, additional playable puzzle families, or release installers. Cross-verified move
+evaluations and cross-verified hint results are durably persisted and normalized into learning
+evidence; a hint's suggested action is never submitted to play automatically, and a persisted
+projection fact never discloses more than the hint's own recorded disclosure level.
 
 ## Accepted administrative risk
 

@@ -46,11 +46,11 @@ contract may compose Logic Grid play, the family's sealed assistance evidence co
 memory projection contracts; its SQLite module may additionally depend on the standard-library
 database driver. Neither module may be imported by the specification, play service, reasoning rules,
 verification backends, assistance service, or common memory package. Persistence consumes only the
-already cross-verified `LogicGridMoveEvaluation` document the assistance service returns; it never
-imports the verification or reasoning boundaries the assistance service composes, and it never
-re-verifies a stored evaluation. SQLite imports remain confined to this adapter and the common
-canonical-event adapter. A shared interaction persistence framework is deferred until a second family
-proves common semantics.
+already cross-verified `LogicGridMoveEvaluation` and `LogicGridHintResult` documents the assistance
+service returns; it never imports the verification or reasoning boundaries the assistance service
+composes, and it never re-verifies a stored evaluation or hint result. SQLite imports remain
+confined to this adapter and the common canonical-event adapter. A shared interaction persistence
+framework is deferred until a second family proves common semantics.
 
 This direction is a constraint, not permission to create speculative layers. Until a capability exists, the corresponding package should not exist.
 
