@@ -12,14 +12,17 @@ from pydantic import ValidationError
 
 from deductra.domain.ids import AttemptId, UserId
 from deductra.domain.serialization import canonical_json
+from deductra.families.logic_grid.assistance import LogicGridMoveEvaluation
 from deductra.families.logic_grid.attempts import (
     ATTEMPT_RECORD_SCHEMA_VERSION,
     AttemptAlreadyExistsError,
     AttemptConflictError,
     AttemptIntegrityError,
+    ObservedMoveEvaluation,
     ObservedPlayEvent,
     PersistedLogicGridAttempt,
     build_persisted_logic_grid_attempt,
+    observe_move_evaluation,
     observe_play_event,
 )
 from deductra.families.logic_grid.play import (
@@ -30,7 +33,7 @@ from deductra.families.logic_grid.play import (
 )
 from deductra.families.logic_grid.specification import LogicGridSpec
 
-SQLITE_ATTEMPT_SCHEMA_VERSION = 1
+SQLITE_ATTEMPT_SCHEMA_VERSION = 2
 SCHEMA_SQL = """
 CREATE TABLE IF NOT EXISTS logic_grid_attempt_streams (
     attempt_id TEXT PRIMARY KEY,
@@ -61,6 +64,21 @@ CREATE TABLE IF NOT EXISTS logic_grid_attempt_events (
 
 CREATE INDEX IF NOT EXISTS idx_logic_grid_attempt_events_stream_sequence
 ON logic_grid_attempt_events(attempt_id, sequence_no);
+
+CREATE TABLE IF NOT EXISTS logic_grid_attempt_move_evaluations (
+    attempt_id TEXT NOT NULL REFERENCES logic_grid_attempt_streams(attempt_id),
+    sequence_no INTEGER NOT NULL CHECK (sequence_no >= 0),
+    occurred_at TEXT NOT NULL,
+    source_event_id TEXT NOT NULL,
+    status TEXT NOT NULL,
+    previous_observation_hash TEXT NOT NULL CHECK (length(previous_observation_hash) = 64),
+    observation_hash TEXT NOT NULL UNIQUE CHECK (length(observation_hash) = 64),
+    observation_json TEXT NOT NULL,
+    PRIMARY KEY (attempt_id, sequence_no)
+) STRICT;
+
+CREATE INDEX IF NOT EXISTS idx_logic_grid_attempt_move_evaluations_stream_sequence
+ON logic_grid_attempt_move_evaluations(attempt_id, sequence_no);
 
 CREATE TABLE IF NOT EXISTS logic_grid_attempt_schema_migrations (
     version INTEGER PRIMARY KEY,
@@ -171,6 +189,7 @@ class SQLiteLogicGridAttemptStore:
                 user_id=current.user_id,
                 started_at=current.started_at,
                 observations=observations,
+                move_evaluations=current.move_evaluations,
             )
             self._insert_observation(session.attempt_id, observation)
             self._update_stream(record)
@@ -179,6 +198,71 @@ class SQLiteLogicGridAttemptStore:
             self._connection.execute("ROLLBACK")
             raise AttemptConflictError(
                 "event identifier or attempt sequence already exists"
+            ) from error
+        except Exception:
+            self._connection.execute("ROLLBACK")
+            raise
+        return record
+
+    def record_move_evaluation(
+        self,
+        puzzle: LogicGridSpec,
+        evaluation: LogicGridMoveEvaluation,
+        *,
+        occurred_at: datetime,
+    ) -> PersistedLogicGridAttempt:
+        """Atomically append one already cross-verified move evaluation."""
+        self._connection.execute("BEGIN IMMEDIATE")
+        try:
+            current = self._read_verified(puzzle, evaluation.attempt_id)
+            if current is None:
+                raise AttemptConflictError("attempt stream does not exist")
+            if evaluation.puzzle_revision_id != current.session.puzzle_revision_id:
+                raise AttemptIntegrityError(
+                    "move evaluation puzzle revision does not match the attempt"
+                )
+            if evaluation.source_session_hash != current.session.session_hash:
+                raise AttemptConflictError(
+                    "move evaluation is stale relative to the current attempt head"
+                )
+            if evaluation.source_event_id not in {
+                event.event_id for event in current.session.events
+            }:
+                raise AttemptIntegrityError(
+                    "move evaluation references an event outside the durable attempt history"
+                )
+            if occurred_at < current.updated_at:
+                raise AttemptConflictError("evaluation observation time cannot move backwards")
+
+            previous_hash = (
+                current.move_evaluations[-1].observation_hash
+                if current.move_evaluations
+                else PLAY_GENESIS_HASH
+            )
+            observation = observe_move_evaluation(
+                evaluation,
+                occurred_at=occurred_at,
+                previous_observation_hash=previous_hash,
+            )
+            move_evaluations = (*current.move_evaluations, observation)
+            record = build_persisted_logic_grid_attempt(
+                current.session,
+                user_id=current.user_id,
+                started_at=current.started_at,
+                observations=current.observations,
+                move_evaluations=move_evaluations,
+            )
+            self._insert_move_evaluation(
+                evaluation.attempt_id,
+                len(current.move_evaluations),
+                observation,
+            )
+            self._update_stream(record)
+            self._connection.execute("COMMIT")
+        except sqlite3.IntegrityError as error:
+            self._connection.execute("ROLLBACK")
+            raise AttemptConflictError(
+                "move evaluation identifier or attempt sequence already exists"
             ) from error
         except Exception:
             self._connection.execute("ROLLBACK")
@@ -329,6 +413,69 @@ class SQLiteLogicGridAttemptStore:
             observations.append(observation)
         return tuple(observations)
 
+    def _insert_move_evaluation(
+        self,
+        attempt_id: AttemptId,
+        sequence_no: int,
+        observation: ObservedMoveEvaluation,
+    ) -> None:
+        self._connection.execute(
+            """
+            INSERT INTO logic_grid_attempt_move_evaluations(
+                attempt_id,
+                sequence_no,
+                occurred_at,
+                source_event_id,
+                status,
+                previous_observation_hash,
+                observation_hash,
+                observation_json
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                attempt_id,
+                sequence_no,
+                observation.occurred_at.isoformat(),
+                observation.evaluation.source_event_id,
+                observation.evaluation.status.value,
+                observation.previous_observation_hash,
+                observation.observation_hash,
+                canonical_json(observation),
+            ),
+        )
+
+    def _load_move_evaluations(self, attempt_id: AttemptId) -> tuple[ObservedMoveEvaluation, ...]:
+        rows = self._connection.execute(
+            """
+            SELECT
+                sequence_no,
+                previous_observation_hash,
+                observation_hash,
+                observation_json
+            FROM logic_grid_attempt_move_evaluations
+            WHERE attempt_id = ?
+            ORDER BY sequence_no ASC
+            """,
+            (attempt_id,),
+        ).fetchall()
+        observations: list[ObservedMoveEvaluation] = []
+        for row_value in rows:
+            row = cast(sqlite3.Row, row_value)
+            try:
+                observation = ObservedMoveEvaluation.model_validate_json(
+                    cast(str, row["observation_json"])
+                )
+            except ValidationError as error:
+                raise AttemptIntegrityError("stored move evaluation is invalid") from error
+            indexed = (row["previous_observation_hash"], row["observation_hash"])
+            represented = (observation.previous_observation_hash, observation.observation_hash)
+            if indexed != represented:
+                raise AttemptIntegrityError(
+                    "stored indexes disagree with a move evaluation observation"
+                )
+            observations.append(observation)
+        return tuple(observations)
+
     def _read_verified(
         self,
         puzzle: LogicGridSpec,
@@ -342,6 +489,7 @@ class SQLiteLogicGridAttemptStore:
             return None
         stream = cast(sqlite3.Row, stream_value)
         observations = self._load_observations(attempt_id)
+        move_evaluations = self._load_move_evaluations(attempt_id)
         events = tuple(item.event for item in observations)
         try:
             session = replay_logic_grid_play(
@@ -359,6 +507,7 @@ class SQLiteLogicGridAttemptStore:
                 user_id=cast(str, stream["user_id"]),
                 started_at=started_at,
                 observations=observations,
+                move_evaluations=move_evaluations,
             )
             stored_record = PersistedLogicGridAttempt.model_validate_json(
                 cast(str, stream["record_json"])

@@ -1,6 +1,6 @@
 # Product Roadmap
 
-Last reviewed: 2026-07-20
+Last reviewed: 2026-07-24
 
 ## Release principle
 
@@ -37,8 +37,10 @@ completion checking, and deterministic replay. FAM-LG-008 completes validation d
 pause/resume, and named restorable checkpoints. FAM-LG-009 adds transactional local attempt
 persistence, exact recovery, descriptive action evidence, and authoritative start/completion
 projection. FAM-LG-010 adds cross-verified move evaluation and seven-level, evidence-backed hints
-without mutating play or persistence. Assistance persistence, generation, difficulty and novelty
-evaluation, terminal delivery, and composed reports remain later M3 work.
+without mutating play or persistence. FAM-LG-011 durably retains cross-verified move evaluations and
+normalizes only their decided outcomes into common attempt and learning evidence. Hint-evidence
+persistence, generation, difficulty and novelty evaluation, terminal delivery, and composed reports
+remain later M3 work.
 
 ## M4 — Proven common platform
 

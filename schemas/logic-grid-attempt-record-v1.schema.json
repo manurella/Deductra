@@ -1,5 +1,58 @@
 {
   "$defs": {
+    "AggregateAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "comparator": {
+          "enum": [
+            "eq",
+            "ne",
+            "lt",
+            "le",
+            "gt",
+            "ge"
+          ],
+          "title": "Comparator",
+          "type": "string"
+        },
+        "kind": {
+          "const": "aggregate",
+          "default": "aggregate",
+          "title": "Kind",
+          "type": "string"
+        },
+        "members": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Members",
+          "type": "array"
+        },
+        "operator": {
+          "enum": [
+            "sum",
+            "count",
+            "min",
+            "max",
+            "parity"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "operator",
+        "members",
+        "comparator",
+        "target"
+      ],
+      "title": "AggregateAtom",
+      "type": "object"
+    },
     "ArtifactId": {
       "maxLength": 255,
       "minLength": 1,
@@ -180,6 +233,59 @@
       ],
       "title": "AssignmentAtom",
       "type": "object"
+    },
+    "AssignmentNegation": {
+      "additionalProperties": false,
+      "description": "Counter-assume that a claimed assignment is false.",
+      "properties": {
+        "kind": {
+          "const": "assignment_negation",
+          "default": "assignment_negation",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "AssignmentNegation",
+      "type": "object"
+    },
+    "Atom": {
+      "discriminator": {
+        "mapping": {
+          "aggregate": "#/$defs/AggregateAtom",
+          "assignment": "#/$defs/AssignmentAtom",
+          "exclusion": "#/$defs/ExclusionAtom",
+          "relation": "#/$defs/RelationAtom",
+          "truth": "#/$defs/TruthAtom"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AssignmentAtom"
+        },
+        {
+          "$ref": "#/$defs/ExclusionAtom"
+        },
+        {
+          "$ref": "#/$defs/RelationAtom"
+        },
+        {
+          "$ref": "#/$defs/AggregateAtom"
+        },
+        {
+          "$ref": "#/$defs/TruthAtom"
+        }
+      ]
     },
     "AttemptAbandoned": {
       "additionalProperties": false,
@@ -385,7 +491,21 @@
       "title": "AttemptStatus",
       "type": "string"
     },
+    "BackendResult": {
+      "enum": [
+        "sat",
+        "unsat",
+        "unknown",
+        "invalid"
+      ],
+      "type": "string"
+    },
     "CandidateId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "CertificateId": {
       "maxLength": 255,
       "minLength": 1,
       "type": "string"
@@ -433,6 +553,16 @@
       "title": "ClearCell",
       "type": "object"
     },
+    "ClueId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ConstraintId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
     "CreateCheckpoint": {
       "additionalProperties": false,
       "description": "Name the current retained history position.",
@@ -452,6 +582,40 @@
       ],
       "title": "CreateCheckpoint",
       "type": "object"
+    },
+    "EliminationNegation": {
+      "additionalProperties": false,
+      "description": "Counter-assume that a claimed eliminated value is possible.",
+      "properties": {
+        "kind": {
+          "const": "elimination_negation",
+          "default": "elimination_negation",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value_id": {
+          "$ref": "#/$defs/ValueId"
+        },
+        "variable_id": {
+          "$ref": "#/$defs/VariableId"
+        }
+      },
+      "required": [
+        "variable_id",
+        "value_id"
+      ],
+      "title": "EliminationNegation",
+      "type": "object"
+    },
+    "EvaluatableAtom": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AssignmentAtom"
+        },
+        {
+          "$ref": "#/$defs/ExclusionAtom"
+        }
+      ]
     },
     "EventId": {
       "maxLength": 255,
@@ -622,6 +786,118 @@
       "title": "LogicGridAttemptEvidence",
       "type": "object"
     },
+    "LogicGridClueEvidence": {
+      "additionalProperties": false,
+      "description": "One presentation clue supporting a verified human-rule candidate.",
+      "properties": {
+        "clue_id": {
+          "$ref": "#/$defs/ClueId"
+        },
+        "constraint_ids": {
+          "items": {
+            "$ref": "#/$defs/ConstraintId"
+          },
+          "title": "Constraint Ids",
+          "type": "array"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "clue_id",
+        "text",
+        "constraint_ids"
+      ],
+      "title": "LogicGridClueEvidence",
+      "type": "object"
+    },
+    "LogicGridMoveEvaluation": {
+      "additionalProperties": false,
+      "description": "Cross-verified classification of one retained tentative cell event.",
+      "properties": {
+        "attempt_id": {
+          "$ref": "#/$defs/AttemptId"
+        },
+        "authoritative_atom": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvaluatableAtom"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "diagnostic_verifications": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/VerificationRecord"
+          },
+          "title": "Diagnostic Verifications",
+          "type": "array"
+        },
+        "evaluation_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "puzzle_revision_id": {
+          "$ref": "#/$defs/PuzzleRevisionId"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_event_id": {
+          "$ref": "#/$defs/EventId"
+        },
+        "source_session_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "status": {
+          "$ref": "#/$defs/MoveEvaluationStatus"
+        },
+        "submitted_atom": {
+          "$ref": "#/$defs/EvaluatableAtom"
+        },
+        "technique": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LogicGridTechniqueEvidence"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "verification": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VerificationRecord"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "attempt_id",
+        "puzzle_revision_id",
+        "source_session_hash",
+        "source_event_id",
+        "submitted_atom",
+        "status",
+        "evaluation_hash"
+      ],
+      "title": "LogicGridMoveEvaluation",
+      "type": "object"
+    },
     "LogicGridPlaySession": {
       "additionalProperties": false,
       "description": "Current immutable marks plus the complete retained interaction history.",
@@ -714,6 +990,76 @@
       "title": "LogicGridPlaySession",
       "type": "object"
     },
+    "LogicGridTechniqueEvidence": {
+      "additionalProperties": false,
+      "description": "Auditable human-rule explanation for one cross-verified atom.",
+      "properties": {
+        "affected_variable_ids": {
+          "items": {
+            "$ref": "#/$defs/VariableId"
+          },
+          "title": "Affected Variable Ids",
+          "type": "array"
+        },
+        "candidate_id": {
+          "$ref": "#/$defs/RuleCandidateId"
+        },
+        "clues": {
+          "items": {
+            "$ref": "#/$defs/LogicGridClueEvidence"
+          },
+          "title": "Clues",
+          "type": "array"
+        },
+        "conclusion": {
+          "$ref": "#/$defs/EvaluatableAtom"
+        },
+        "evidence_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "premises": {
+          "items": {
+            "$ref": "#/$defs/Atom"
+          },
+          "title": "Premises",
+          "type": "array"
+        },
+        "proposal_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "rule": {
+          "$ref": "#/$defs/RuleReference"
+        },
+        "source_state_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "supporting_constraint_ids": {
+          "items": {
+            "$ref": "#/$defs/ConstraintId"
+          },
+          "title": "Supporting Constraint Ids",
+          "type": "array"
+        },
+        "verification": {
+          "$ref": "#/$defs/VerificationRecord"
+        }
+      },
+      "required": [
+        "source_state_hash",
+        "candidate_id",
+        "rule",
+        "premises",
+        "conclusion",
+        "affected_variable_ids",
+        "supporting_constraint_ids",
+        "clues",
+        "proposal_hash",
+        "verification",
+        "evidence_hash"
+      ],
+      "title": "LogicGridTechniqueEvidence",
+      "type": "object"
+    },
     "MoveEvaluated": {
       "additionalProperties": false,
       "properties": {
@@ -765,6 +1111,34 @@
       ],
       "title": "MoveEvaluated",
       "type": "object"
+    },
+    "MoveEvaluationStatus": {
+      "description": "Cross-verification outcome for one accepted tentative cell move.",
+      "enum": [
+        "supported",
+        "contradicted",
+        "inconclusive",
+        "quarantined"
+      ],
+      "title": "MoveEvaluationStatus",
+      "type": "string"
+    },
+    "NegatedClaim": {
+      "discriminator": {
+        "mapping": {
+          "assignment_negation": "#/$defs/AssignmentNegation",
+          "elimination_negation": "#/$defs/EliminationNegation"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AssignmentNegation"
+        },
+        {
+          "$ref": "#/$defs/EliminationNegation"
+        }
+      ]
     },
     "NoveltyEntryRecorded": {
       "additionalProperties": false,
@@ -841,6 +1215,39 @@
         "reason"
       ],
       "title": "NoveltyEntryRemoved",
+      "type": "object"
+    },
+    "ObligationId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ObservedMoveEvaluation": {
+      "additionalProperties": false,
+      "description": "One durably observed cross-verified move evaluation, hash-chained by arrival order.",
+      "properties": {
+        "evaluation": {
+          "$ref": "#/$defs/LogicGridMoveEvaluation"
+        },
+        "observation_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "occurred_at": {
+          "format": "date-time",
+          "title": "Occurred At",
+          "type": "string"
+        },
+        "previous_observation_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        }
+      },
+      "required": [
+        "evaluation",
+        "occurred_at",
+        "previous_observation_hash",
+        "observation_hash"
+      ],
+      "title": "ObservedMoveEvaluation",
       "type": "object"
     },
     "ObservedPlayEvent": {
@@ -1279,6 +1686,59 @@
       "title": "ProjectionStreamKind",
       "type": "string"
     },
+    "ProofObligation": {
+      "additionalProperties": false,
+      "description": "One claim whose negation must be unsatisfiable in the named source state.",
+      "properties": {
+        "assumptions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Atom"
+          },
+          "title": "Assumptions",
+          "type": "array"
+        },
+        "claimed_conclusions": {
+          "items": {
+            "$ref": "#/$defs/Atom"
+          },
+          "title": "Claimed Conclusions",
+          "type": "array"
+        },
+        "encoding_version": {
+          "default": "1.0.0",
+          "title": "Encoding Version",
+          "type": "string"
+        },
+        "expected_result": {
+          "const": "unsat",
+          "default": "unsat",
+          "title": "Expected Result",
+          "type": "string"
+        },
+        "negated_claim": {
+          "$ref": "#/$defs/NegatedClaim"
+        },
+        "obligation_id": {
+          "$ref": "#/$defs/ObligationId"
+        },
+        "puzzle_revision_id": {
+          "$ref": "#/$defs/PuzzleRevisionId"
+        },
+        "source_state_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        }
+      },
+      "required": [
+        "obligation_id",
+        "puzzle_revision_id",
+        "source_state_hash",
+        "claimed_conclusions",
+        "negated_claim"
+      ],
+      "title": "ProofObligation",
+      "type": "object"
+    },
     "PuzzleFingerprints": {
       "additionalProperties": false,
       "description": "Stable exact, equivalence, solution, structure, trace, and visual digests.",
@@ -1341,6 +1801,34 @@
         "target_move_id"
       ],
       "title": "RedoMove",
+      "type": "object"
+    },
+    "RelationAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "arguments": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Arguments",
+          "type": "array"
+        },
+        "kind": {
+          "const": "relation",
+          "default": "relation",
+          "title": "Kind",
+          "type": "string"
+        },
+        "relation": {
+          "title": "Relation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "relation",
+        "arguments"
+      ],
+      "title": "RelationAtom",
       "type": "object"
     },
     "ReplayViewed": {
@@ -1448,10 +1936,53 @@
       "title": "RuleAttemptEvidence",
       "type": "object"
     },
+    "RuleCandidateId": {
+      "maxLength": 255,
+      "minLength": 1,
+      "type": "string"
+    },
     "RuleId": {
       "maxLength": 255,
       "minLength": 1,
       "type": "string"
+    },
+    "RuleReference": {
+      "additionalProperties": false,
+      "description": "Stable identity and teaching rank for one versioned human rule.",
+      "properties": {
+        "family_scope": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Family Scope",
+          "type": "array"
+        },
+        "rule_id": {
+          "$ref": "#/$defs/RuleId"
+        },
+        "rule_version": {
+          "title": "Rule Version",
+          "type": "string"
+        },
+        "technique_rank": {
+          "minimum": 0,
+          "title": "Technique Rank",
+          "type": "integer"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "rule_version",
+        "title",
+        "technique_rank"
+      ],
+      "title": "RuleReference",
+      "type": "object"
     },
     "SelfAssessmentRecorded": {
       "additionalProperties": false,
@@ -1520,6 +2051,31 @@
       "title": "StepExplained",
       "type": "object"
     },
+    "TruthAtom": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "truth",
+          "default": "truth",
+          "title": "Kind",
+          "type": "string"
+        },
+        "proposition_id": {
+          "title": "Proposition Id",
+          "type": "string"
+        },
+        "truth_value": {
+          "title": "Truth Value",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "proposition_id",
+        "truth_value"
+      ],
+      "title": "TruthAtom",
+      "type": "object"
+    },
     "UndoMove": {
       "additionalProperties": false,
       "description": "Move the active history cursor to the parent of its current move.",
@@ -1562,6 +2118,150 @@
       "maxLength": 255,
       "minLength": 1,
       "type": "string"
+    },
+    "VerificationCertificate": {
+      "additionalProperties": false,
+      "description": "Immutable result and provenance returned by one verification backend.",
+      "properties": {
+        "backend_id": {
+          "title": "Backend Id",
+          "type": "string"
+        },
+        "backend_version": {
+          "title": "Backend Version",
+          "type": "string"
+        },
+        "certificate_hash": {
+          "$ref": "#/$defs/Sha256Digest"
+        },
+        "certificate_id": {
+          "$ref": "#/$defs/CertificateId"
+        },
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "encoding_version": {
+          "title": "Encoding Version",
+          "type": "string"
+        },
+        "model_snapshot": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Snapshot"
+        },
+        "obligation_id": {
+          "$ref": "#/$defs/ObligationId"
+        },
+        "raw_artifact_hash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256Digest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "result": {
+          "$ref": "#/$defs/BackendResult"
+        },
+        "unsat_core_refs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Unsat Core Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "certificate_id",
+        "backend_id",
+        "backend_version",
+        "encoding_version",
+        "obligation_id",
+        "result",
+        "duration_ms",
+        "certificate_hash"
+      ],
+      "title": "VerificationCertificate",
+      "type": "object"
+    },
+    "VerificationDecision": {
+      "additionalProperties": false,
+      "description": "Coordinator outcome controlling whether a state change may be applied.",
+      "properties": {
+        "certificates": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/VerificationCertificate"
+          },
+          "title": "Certificates",
+          "type": "array"
+        },
+        "obligation_id": {
+          "$ref": "#/$defs/ObligationId"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/VerificationStatus"
+        }
+      },
+      "required": [
+        "obligation_id",
+        "status",
+        "reason"
+      ],
+      "title": "VerificationDecision",
+      "type": "object"
+    },
+    "VerificationRecord": {
+      "additionalProperties": false,
+      "description": "Public serialized verification contract for one obligation and decision.",
+      "properties": {
+        "decision": {
+          "$ref": "#/$defs/VerificationDecision"
+        },
+        "obligation": {
+          "$ref": "#/$defs/ProofObligation"
+        }
+      },
+      "required": [
+        "obligation",
+        "decision"
+      ],
+      "title": "VerificationRecord",
+      "type": "object"
+    },
+    "VerificationStatus": {
+      "description": "Authority level assigned to one proof decision.",
+      "enum": [
+        "not_checked",
+        "structurally_valid",
+        "backend_verified",
+        "cross_verified",
+        "rejected",
+        "inconclusive",
+        "quarantined"
+      ],
+      "title": "VerificationStatus",
+      "type": "string"
     }
   },
   "$id": "urn:deductra:schema:logic-grid-attempt-record:1",
@@ -1573,6 +2273,13 @@
     },
     "evidence": {
       "$ref": "#/$defs/LogicGridAttemptEvidence"
+    },
+    "move_evaluations": {
+      "items": {
+        "$ref": "#/$defs/ObservedMoveEvaluation"
+      },
+      "title": "Move Evaluations",
+      "type": "array"
     },
     "observations": {
       "items": {
@@ -1592,8 +2299,8 @@
       "$ref": "#/$defs/Sha256Digest"
     },
     "schema_version": {
-      "const": "1.0.0",
-      "default": "1.0.0",
+      "const": "1.1.0",
+      "default": "1.1.0",
       "title": "Schema Version",
       "type": "string"
     },
@@ -1619,6 +2326,7 @@
     "started_at",
     "updated_at",
     "observations",
+    "move_evaluations",
     "session",
     "evidence",
     "projection_events",

@@ -50,7 +50,13 @@ part of user-facing text.
 
 ## Deliberate exclusions
 
-This packet does not mutate play sessions, persist assistance records, normalize `MoveEvaluated`
-memory events, infer mastery, choose puzzles, generate content, render interfaces, compose reports,
-or continue play automatically. Those integrations must consume the typed evidence boundary and
-preserve its fail-closed authority rules.
+This packet does not itself mutate play sessions, persist assistance records, normalize memory
+events, infer mastery, choose puzzles, generate content, render interfaces, compose reports, or
+continue play automatically. FAM-LG-011 later added a separate attempt-persistence integration that
+durably retains a sealed `LogicGridMoveEvaluation` and normalizes only its decided outcome into
+common memory; see [Logic Grid attempt persistence](logic-grid-attempt-persistence.md) and
+[ADR-0021](decisions/0021-persist-verified-move-evaluations-into-attempt-memory.md). That
+integration depends only on the sealed evaluation type this module exports, not on the service, its
+reasoning composition, or its verification backends; it never re-verifies a stored evaluation, and it
+does not yet cover hint evidence. Any further integration must consume the same typed evidence
+boundary and preserve its fail-closed authority rules.

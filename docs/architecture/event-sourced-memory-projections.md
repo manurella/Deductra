@@ -1,6 +1,6 @@
 # Event-Sourced Memory Projections
 
-Last reviewed: 2026-07-20
+Last reviewed: 2026-07-24
 
 CR-008 adds disposable read models for attempts, learning evidence, novelty fingerprints, and artifact metadata. Every view is rebuilt by pure replay from validated, immutable projection-source events. No projection is canonical evidence, and no projection may write back into puzzle, reasoning, generation, or artifact history.
 
@@ -51,6 +51,14 @@ The Logic Grid attempt adapter stores its normalized lifecycle events atomically
 family play history and disposable attempt record. Every read rebuilds both the play session and
 common attempt projection. This integration does not alter CR-008's event schema or authorize
 direct projection writes. See [Logic Grid attempt persistence](logic-grid-attempt-persistence.md).
+
+FAM-LG-011 extended that same adapter with a second durable log for already cross-verified move
+evaluations. Only `supported` and `contradicted` evaluations normalize into `MoveEvaluated`, each
+deduplicated by its evaluation's own content hash; `inconclusive` and `quarantined` outcomes, and any
+evaluation observed at or after an attempt's completion time, remain durable evidence without
+becoming a projection fact. `MoveEvaluated` and its rule-evidence aggregation are otherwise unchanged
+CR-008 concepts; this integration is their first non-empty producer for any family. See
+[ADR-0021](decisions/0021-persist-verified-move-evaluations-into-attempt-memory.md).
 
 ## Explicit non-goals
 

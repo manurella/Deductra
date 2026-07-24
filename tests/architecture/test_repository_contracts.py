@@ -77,6 +77,7 @@ PUBLIC_PATH_ALLOWLIST = frozenset(
         "docs/architecture/decisions/0018-separate-validation-disclosure-from-proof.md",
         "docs/architecture/decisions/0019-persist-play-before-projecting-attempt-evidence.md",
         "docs/architecture/decisions/0020-cross-verify-assistance-before-disclosure.md",
+        "docs/architecture/decisions/0021-persist-verified-move-evaluations-into-attempt-memory.md",
         "docs/architecture/decisions/0001-single-package-foundation.md",
         "docs/architecture/decisions/README.md",
         "docs/architecture/dependency-rules.md",

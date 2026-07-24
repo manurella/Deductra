@@ -8,8 +8,12 @@ from typing import Annotated, Literal, Protocol, cast, runtime_checkable
 from pydantic import StringConstraints, model_validator
 
 from deductra.domain.base import DomainModel
-from deductra.domain.ids import AttemptId, EventId, UserId
+from deductra.domain.ids import AttemptId, EventId, RuleId, UserId
 from deductra.domain.serialization import canonical_sha256
+from deductra.families.logic_grid.assistance import (
+    LogicGridMoveEvaluation,
+    MoveEvaluationStatus,
+)
 from deductra.families.logic_grid.play import (
     PLAY_GENESIS_HASH,
     CheckCompletion,
@@ -22,6 +26,7 @@ from deductra.memory.projections.events import (
     PROJECTION_GENESIS_HASH,
     AttemptCompleted,
     AttemptStarted,
+    MoveEvaluated,
     ProjectionEvent,
     ProjectionStreamKind,
     seal_projection_event,
@@ -29,7 +34,7 @@ from deductra.memory.projections.events import (
 from deductra.memory.projections.model import AttemptProjection
 from deductra.memory.projections.rebuild import rebuild_attempt_projection
 
-ATTEMPT_RECORD_SCHEMA_VERSION = "1.0.0"
+ATTEMPT_RECORD_SCHEMA_VERSION = "1.1.0"
 type Sha256Digest = Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{64}$")]
 type PlayActionKind = Literal[
     "assign_cell",
@@ -75,6 +80,23 @@ class ObservedPlayEvent(DomainModel):
             raise ValueError("occurred_at must include a timezone offset")
         if self.observation_hash != compute_observation_hash(self):
             raise ValueError("observation_hash does not match the observed play event")
+        return self
+
+
+class ObservedMoveEvaluation(DomainModel):
+    """One durably observed cross-verified move evaluation, hash-chained by arrival order."""
+
+    evaluation: LogicGridMoveEvaluation
+    occurred_at: datetime
+    previous_observation_hash: Sha256Digest
+    observation_hash: Sha256Digest
+
+    @model_validator(mode="after")
+    def validate_observation(self) -> ObservedMoveEvaluation:
+        if self.occurred_at.tzinfo is None or self.occurred_at.utcoffset() is None:
+            raise ValueError("occurred_at must include a timezone offset")
+        if self.observation_hash != compute_move_evaluation_observation_hash(self):
+            raise ValueError("observation_hash does not match the observed move evaluation")
         return self
 
 
@@ -140,11 +162,12 @@ class LogicGridAttemptEvidence(DomainModel):
 class PersistedLogicGridAttempt(DomainModel):
     """Validated durable view of one local attempt and its derived evidence."""
 
-    schema_version: Literal["1.0.0"] = ATTEMPT_RECORD_SCHEMA_VERSION
+    schema_version: Literal["1.1.0"] = ATTEMPT_RECORD_SCHEMA_VERSION
     user_id: UserId
     started_at: datetime
     updated_at: datetime
     observations: tuple[ObservedPlayEvent, ...]
+    move_evaluations: tuple[ObservedMoveEvaluation, ...]
     session: LogicGridPlaySession
     evidence: LogicGridAttemptEvidence
     projection_events: tuple[ProjectionEvent, ...]
@@ -164,7 +187,31 @@ class PersistedLogicGridAttempt(DomainModel):
         observation_times = tuple(item.occurred_at for item in self.observations)
         if observation_times != tuple(sorted(observation_times)):
             raise ValueError("play observations must use chronological order")
-        expected_updated = observation_times[-1] if observation_times else self.started_at
+        evaluation_times = tuple(item.occurred_at for item in self.move_evaluations)
+        if evaluation_times != tuple(sorted(evaluation_times)):
+            raise ValueError("move evaluation observations must use chronological order")
+        previous_evaluation_hash = PLAY_GENESIS_HASH
+        for item in self.move_evaluations:
+            if item.previous_observation_hash != previous_evaluation_hash:
+                raise ValueError("move evaluation observations are not hash-chained in order")
+            if item.evaluation.attempt_id != self.session.attempt_id:
+                raise ValueError("move evaluation attempt identity does not match this attempt")
+            if item.evaluation.puzzle_revision_id != self.session.puzzle_revision_id:
+                raise ValueError("move evaluation puzzle revision does not match this attempt")
+            if item.evaluation.source_event_id not in {
+                event.event_id for event in self.session.events
+            }:
+                raise ValueError(
+                    "move evaluation references an event outside the durable play history"
+                )
+            previous_evaluation_hash = item.observation_hash
+        expected_updated = max(
+            (
+                *observation_times,
+                *evaluation_times,
+                self.started_at,
+            )
+        )
         if self.updated_at != expected_updated:
             raise ValueError("updated_at must equal the latest durable observation time")
         expected_evidence = build_logic_grid_attempt_evidence(
@@ -178,6 +225,7 @@ class PersistedLogicGridAttempt(DomainModel):
             user_id=self.user_id,
             started_at=self.started_at,
             observations=self.observations,
+            move_evaluations=self.move_evaluations,
         )
         if self.projection_events != expected_events:
             raise ValueError("memory events do not equal normalized play lifecycle evidence")
@@ -213,6 +261,16 @@ class LogicGridAttemptStore(Protocol):
         """Atomically append the one new event carried by ``session``."""
         ...
 
+    def record_move_evaluation(
+        self,
+        puzzle: LogicGridSpec,
+        evaluation: LogicGridMoveEvaluation,
+        *,
+        occurred_at: datetime,
+    ) -> PersistedLogicGridAttempt:
+        """Atomically append one already cross-verified move evaluation."""
+        ...
+
     def read(
         self,
         puzzle: LogicGridSpec,
@@ -242,6 +300,32 @@ def observe_play_event(event: PlayEvent, *, occurred_at: datetime) -> ObservedPl
         event=event,
         occurred_at=occurred_at,
         observation_hash=compute_observation_hash(unsigned),
+    )
+
+
+def compute_move_evaluation_observation_hash(observation: ObservedMoveEvaluation) -> str:
+    """Hash a sealed move evaluation, its arrival time, and its chain predecessor."""
+    return canonical_sha256(observation.model_dump(mode="json", exclude={"observation_hash"}))
+
+
+def observe_move_evaluation(
+    evaluation: LogicGridMoveEvaluation,
+    *,
+    occurred_at: datetime,
+    previous_observation_hash: str,
+) -> ObservedMoveEvaluation:
+    """Seal one durable, hash-chained observation of an already cross-verified evaluation."""
+    unsigned = ObservedMoveEvaluation.model_construct(
+        evaluation=evaluation,
+        occurred_at=occurred_at,
+        previous_observation_hash=previous_observation_hash,
+        observation_hash=PLAY_GENESIS_HASH,
+    )
+    return ObservedMoveEvaluation(
+        evaluation=evaluation,
+        occurred_at=occurred_at,
+        previous_observation_hash=previous_observation_hash,
+        observation_hash=compute_move_evaluation_observation_hash(unsigned),
     )
 
 
@@ -295,12 +379,19 @@ def _projection_event_id(attempt_id: AttemptId, source: str) -> str:
     return f"deductra:projection:event:{digest}"
 
 
+_DECIDED_EVALUATION_STATUSES = (
+    MoveEvaluationStatus.SUPPORTED,
+    MoveEvaluationStatus.CONTRADICTED,
+)
+
+
 def build_attempt_projection_events(
     session: LogicGridPlaySession,
     *,
     user_id: UserId,
     started_at: datetime,
     observations: tuple[ObservedPlayEvent, ...],
+    move_evaluations: tuple[ObservedMoveEvaluation, ...] = (),
 ) -> tuple[ProjectionEvent, ...]:
     """Normalize only authoritative attempt lifecycle facts for common memory."""
     stream_id = _projection_stream_id(session.attempt_id)
@@ -329,6 +420,52 @@ def build_attempt_projection_events(
         ),
         None,
     )
+
+    eligible = tuple(
+        item
+        for item in move_evaluations
+        if item.evaluation.status in _DECIDED_EVALUATION_STATUSES
+        and (completion is None or item.occurred_at < completion.occurred_at)
+    )
+    ordered = tuple(
+        sorted(eligible, key=lambda item: (item.occurred_at, item.evaluation.evaluation_hash))
+    )
+    seen_evaluation_hashes: set[str] = set()
+    previous_hash = started.event_hash
+    for item in ordered:
+        evaluation_hash = item.evaluation.evaluation_hash
+        if evaluation_hash in seen_evaluation_hashes:
+            continue
+        seen_evaluation_hashes.add(evaluation_hash)
+        rule_id: RuleId | None = (
+            item.evaluation.technique.rule.rule_id
+            if item.evaluation.technique is not None
+            else None
+        )
+        outcome: Literal["accepted", "rejected"] = (
+            "accepted" if item.evaluation.status is MoveEvaluationStatus.SUPPORTED else "rejected"
+        )
+        move_event = seal_projection_event(
+            event_id=_projection_event_id(
+                session.attempt_id,
+                f"move-evaluated:{evaluation_hash}",
+            ),
+            stream_id=stream_id,
+            stream_kind=ProjectionStreamKind.ATTEMPT,
+            sequence_no=len(events),
+            schema_version="1.0.0",
+            occurred_at=item.occurred_at,
+            previous_event_hash=previous_hash,
+            payload=MoveEvaluated(
+                attempt_id=session.attempt_id,
+                outcome=outcome,
+                rule_id=rule_id,
+                duration_ms=0,
+            ),
+        )
+        events.append(move_event)
+        previous_hash = move_event.event_hash
+
     if completion is not None:
         events.append(
             seal_projection_event(
@@ -338,10 +475,10 @@ def build_attempt_projection_events(
                 ),
                 stream_id=stream_id,
                 stream_kind=ProjectionStreamKind.ATTEMPT,
-                sequence_no=1,
+                sequence_no=len(events),
                 schema_version="1.0.0",
                 occurred_at=completion.occurred_at,
-                previous_event_hash=started.event_hash,
+                previous_event_hash=previous_hash,
                 payload=AttemptCompleted(attempt_id=session.attempt_id),
             )
         )
@@ -358,15 +495,23 @@ def build_persisted_logic_grid_attempt(
     user_id: UserId,
     started_at: datetime,
     observations: tuple[ObservedPlayEvent, ...],
+    move_evaluations: tuple[ObservedMoveEvaluation, ...] = (),
 ) -> PersistedLogicGridAttempt:
     """Build and seal the complete verified durable attempt view."""
-    updated_at = observations[-1].occurred_at if observations else started_at
+    updated_at = max(
+        (
+            *(item.occurred_at for item in observations),
+            *(item.occurred_at for item in move_evaluations),
+            started_at,
+        )
+    )
     evidence = build_logic_grid_attempt_evidence(session, user_id=user_id)
     projection_events = build_attempt_projection_events(
         session,
         user_id=user_id,
         started_at=started_at,
         observations=observations,
+        move_evaluations=move_evaluations,
     )
     attempt_projection = rebuild_attempt_projection(projection_events)
     values = {
@@ -375,6 +520,7 @@ def build_persisted_logic_grid_attempt(
         "started_at": started_at,
         "updated_at": updated_at,
         "observations": observations,
+        "move_evaluations": move_evaluations,
         "session": session,
         "evidence": evidence,
         "projection_events": projection_events,
@@ -386,6 +532,7 @@ def build_persisted_logic_grid_attempt(
         started_at=started_at,
         updated_at=updated_at,
         observations=observations,
+        move_evaluations=move_evaluations,
         session=session,
         evidence=evidence,
         projection_events=projection_events,

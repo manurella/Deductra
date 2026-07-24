@@ -1,6 +1,6 @@
 # Dependency Rules
 
-Last reviewed: 2026-07-20
+Last reviewed: 2026-07-24
 
 ## Foundation rules
 
@@ -42,11 +42,15 @@ inside the adapter. Structured input does not authorize filesystem, delivery, pe
 generation, report, or agent dependencies.
 
 Logic Grid attempt persistence is a reviewed family-specific outer adapter. Its typed attempt
-contract may compose Logic Grid play with common memory projection contracts; its SQLite module may
-additionally depend on the standard-library database driver. Neither module may be imported by the
-specification, play service, reasoning rules, verification backends, or common memory package.
-SQLite imports remain confined to this adapter and the common canonical-event adapter. A shared
-interaction persistence framework is deferred until a second family proves common semantics.
+contract may compose Logic Grid play, the family's sealed assistance evidence contracts, and common
+memory projection contracts; its SQLite module may additionally depend on the standard-library
+database driver. Neither module may be imported by the specification, play service, reasoning rules,
+verification backends, assistance service, or common memory package. Persistence consumes only the
+already cross-verified `LogicGridMoveEvaluation` document the assistance service returns; it never
+imports the verification or reasoning boundaries the assistance service composes, and it never
+re-verifies a stored evaluation. SQLite imports remain confined to this adapter and the common
+canonical-event adapter. A shared interaction persistence framework is deferred until a second family
+proves common semantics.
 
 This direction is a constraint, not permission to create speculative layers. Until a capability exists, the corresponding package should not exist.
 

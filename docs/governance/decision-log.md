@@ -1,6 +1,6 @@
 # Decision Log
 
-Last reviewed: 2026-07-20
+Last reviewed: 2026-07-24
 
 This log summarizes accepted project-level decisions. Architecturally significant decisions link to a detailed record containing context and consequences.
 
@@ -38,5 +38,6 @@ This log summarizes accepted project-level decisions. Architecturally significan
 | D-030 | Treat play validation modes as disclosure policy, retain pause and checkpoint actions in canonical play history, and reserve correctness authority for final checking. | Accepted | Repository owner | [ADR-0018](../architecture/decisions/0018-separate-validation-disclosure-from-proof.md) |
 | D-031 | Persist the complete Logic Grid play log before deriving attempt views, and normalize only start and independently verified completion into common memory. | Accepted | Repository owner | [ADR-0019](../architecture/decisions/0019-persist-play-before-projecting-attempt-evidence.md) |
 | D-032 | Cross-verify Logic Grid move evaluation and human-rule hint evidence before deriving progressive disclosure, without mutating play or persistence. | Accepted | Repository owner | [ADR-0020](../architecture/decisions/0020-cross-verify-assistance-before-disclosure.md) |
+| D-033 | Durably retain cross-verified Logic Grid move evaluations in attempt memory and normalize only decided outcomes into common `MoveEvaluated` evidence. | Accepted | Repository owner | [ADR-0021](../architecture/decisions/0021-persist-verified-move-evaluations-into-attempt-memory.md) |
 
 New decisions receive the next sequential identifier. A superseding decision retains the old entry and links both records rather than erasing the earlier ruling.

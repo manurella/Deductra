@@ -1,6 +1,6 @@
 # Current State
 
-Last reviewed: 2026-07-20
+Last reviewed: 2026-07-24
 
 ## Summary
 
@@ -82,6 +82,13 @@ The repository remains one Python distribution and one `deductra` import package
   rule, conclusion, state, and certificate evidence separated from progressive disclosure.
 - Exam-mode withholding, correction-first handling for contradicted active marks, explicit
   human-rule exhaustion, and a checked-in Logic Grid Assistance v1 JSON Schema.
+- A durable, hash-chained log of already cross-verified Logic Grid move evaluations, fail-closed
+  against a stale or foreign attempt head, stored independently of the play event stream.
+- Normalization of only decided (supported or contradicted) move evaluations into the common
+  `MoveEvaluated` projection and rule-specific attempt and learning evidence, deduplicated by
+  evaluation content hash and excluded once an attempt is complete.
+- A `1.1.0` Logic Grid Attempt Record contract reflecting both persisted play history and persisted
+  move-evaluation evidence.
 
 ## Latest verification evidence
 
@@ -130,18 +137,20 @@ presentation-neutral play and replay boundary while keeping tentative marks outs
 FAM-LG-008 completes its validation-disclosure, pause, and checkpoint lifecycle. FAM-LG-009 persists
 complete play history and local lifecycle evidence while refusing to treat tentative marks as
 evaluated learning moves. FAM-LG-010 adds separate clue-aware evaluation and progressive verified
-hints without mutating play state or persistence. Later M3 behavior must consume these boundaries
-and cannot bypass cross-verification.
+hints without mutating play state or persistence. FAM-LG-011 durably retains those cross-verified
+move evaluations in the same attempt adapter and normalizes only their decided outcomes into common
+attempt and learning evidence, without re-verifying stored evidence or persisting hint evidence.
+Later M3 behavior must consume these boundaries and cannot bypass cross-verification.
 
 ## Explicitly unavailable
 
-The current repository does not yet persist assistance evidence, normalize evaluated moves into
-learning projections, apply hints automatically, or provide attempt abandonment or deletion
-controls, retention and backup policy, an interactive or filesystem
+The current repository does not yet persist hint evidence, apply hints automatically, or provide
+attempt abandonment or deletion controls, retention and backup policy, an interactive or filesystem
 authoring adapter, a disclosed general search path, a concrete generator, a playable queue, an
 interactive interface, composed solve reports, a stable cross-family public Python API, complete
 learning behavior, named agent experiences, additional playable puzzle families, or release
-installers.
+installers. Only cross-verified move evaluations are durably persisted and normalized into learning
+evidence; hint requests and their disclosure remain non-durable and outside common memory.
 
 ## Accepted administrative risk
 

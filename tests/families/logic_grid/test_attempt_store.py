@@ -18,11 +18,15 @@ from deductra.families.logic_grid import (
     AttemptConflictError,
     AttemptIntegrityError,
     CheckCompletion,
+    ExcludeCell,
+    HintLevel,
     LogicGridAttemptStore,
     LogicGridPlaySession,
     LogicGridSpec,
+    MoveEvaluationStatus,
     SQLiteLogicGridAttemptStore,
     apply_logic_grid_play_action,
+    default_logic_grid_assistance_service,
     gallery_opening,
     harbor_morning,
     logic_grid_attempt_record_json_schema,
@@ -288,7 +292,141 @@ def test_attempt_record_schema_is_checked_in_and_strict() -> None:
     )
 
     assert schema["$id"] == "urn:deductra:schema:logic-grid-attempt-record:1"
-    assert schema["properties"]["schema_version"]["const"] == "1.0.0"
+    assert schema["properties"]["schema_version"]["const"] == "1.1.0"
     assert schema["additionalProperties"] is False
     assert json.loads(checked_in) == schema
     assert checked_in == rendered_logic_grid_attempt_record_json_schema()
+
+
+def _first_hint_move(
+    puzzle: LogicGridSpec,
+) -> tuple[LogicGridPlaySession, AssignCell | ExcludeCell]:
+    service = default_logic_grid_assistance_service()
+    session = start_logic_grid_play(puzzle, attempt_id=ATTEMPT_ID)
+    hint_result = service.request_hint(puzzle, session, level=HintLevel.CONTINUE)
+    assert hint_result.hint is not None
+    action = hint_result.hint.disclosure.suggested_action
+    assert isinstance(action, (AssignCell, ExcludeCell))
+    return session, action
+
+
+def test_move_evaluation_is_persisted_and_normalized_into_the_attempt_projection(
+    tmp_path: Path,
+) -> None:
+    database = tmp_path / "attempts.sqlite3"
+    puzzle = harbor_morning()
+    service = default_logic_grid_assistance_service()
+    session, action = _first_hint_move(puzzle)
+    moved = apply_logic_grid_play_action(
+        session,
+        puzzle,
+        event_id="assistance-move",
+        action=action,
+    ).session
+
+    with SQLiteLogicGridAttemptStore(database) as store:
+        store.create(puzzle, session, user_id=USER_ID, occurred_at=STARTED_AT)
+        appended = store.append(
+            puzzle,
+            moved,
+            occurred_at=STARTED_AT + timedelta(seconds=1),
+        )
+        evaluation = service.evaluate_move(
+            puzzle,
+            appended.session,
+            source_event_id="assistance-move",
+        )
+        assert evaluation.status is MoveEvaluationStatus.SUPPORTED
+        assert evaluation.technique is not None
+
+        record = store.record_move_evaluation(
+            puzzle,
+            evaluation,
+            occurred_at=STARTED_AT + timedelta(seconds=2),
+        )
+        assert len(record.move_evaluations) == 1
+        assert record.move_evaluations[0].evaluation == evaluation
+        assert record.attempt_projection.accepted_moves == 1
+        assert record.attempt_projection.rejected_moves == 0
+        assert record.attempt_projection.rule_evidence[0].rule_id == (
+            evaluation.technique.rule.rule_id
+        )
+        assert "move_evaluated" in {item.payload.kind for item in record.projection_events}
+        assert store.read(puzzle, ATTEMPT_ID) == record
+
+        # Recording the identical, already-verified evaluation again is retained as
+        # additional evidence but is not double-counted in the common projection.
+        again = store.record_move_evaluation(
+            puzzle,
+            evaluation,
+            occurred_at=STARTED_AT + timedelta(seconds=3),
+        )
+        assert len(again.move_evaluations) == 2
+        assert again.attempt_projection.accepted_moves == 1
+
+    with SQLiteLogicGridAttemptStore(database) as reopened:
+        assert reopened.read(puzzle, ATTEMPT_ID) == again
+
+
+def test_move_evaluation_requires_an_existing_attempt_stream(tmp_path: Path) -> None:
+    database = tmp_path / "attempts.sqlite3"
+    puzzle = harbor_morning()
+    service = default_logic_grid_assistance_service()
+    session, action = _first_hint_move(puzzle)
+    moved = apply_logic_grid_play_action(
+        session,
+        puzzle,
+        event_id="assistance-move",
+        action=action,
+    ).session
+    evaluation = service.evaluate_move(
+        puzzle,
+        moved,
+        source_event_id="assistance-move",
+    )
+
+    with SQLiteLogicGridAttemptStore(database) as store, pytest.raises(AttemptConflictError):
+        store.record_move_evaluation(puzzle, evaluation, occurred_at=STARTED_AT)
+
+
+def test_move_evaluation_rejects_stale_evidence_relative_to_the_current_head(
+    tmp_path: Path,
+) -> None:
+    database = tmp_path / "attempts.sqlite3"
+    puzzle = harbor_morning()
+    service = default_logic_grid_assistance_service()
+    session, action = _first_hint_move(puzzle)
+    moved = apply_logic_grid_play_action(
+        session,
+        puzzle,
+        event_id="assistance-move",
+        action=action,
+    ).session
+
+    with SQLiteLogicGridAttemptStore(database) as store:
+        store.create(puzzle, session, user_id=USER_ID, occurred_at=STARTED_AT)
+        appended = store.append(
+            puzzle,
+            moved,
+            occurred_at=STARTED_AT + timedelta(seconds=1),
+        )
+        stale_evaluation = service.evaluate_move(
+            puzzle,
+            appended.session,
+            source_event_id="assistance-move",
+        )
+
+        advanced = apply_logic_grid_play_action(
+            appended.session,
+            puzzle,
+            event_id="move-2",
+            action=CheckCompletion(),
+        ).session
+        store.append(puzzle, advanced, occurred_at=STARTED_AT + timedelta(seconds=2))
+
+        with pytest.raises(AttemptConflictError):
+            store.record_move_evaluation(
+                puzzle,
+                stale_evaluation,
+                occurred_at=STARTED_AT + timedelta(seconds=3),
+            )
